@@ -2,9 +2,10 @@ import express from "express";
 import cors from "cors";
 import chalk from "chalk";
 
-// import authRoutes from "./routes/auth";
+// Import the routes
+import authRoutes from "./routes/auth.js";
 
-const port = process.env.PORT || 8000;
+const port = process.env.APP_BACKEND_PORT || 8000;
 
 // Create Express server
 const app = express();
@@ -19,10 +20,10 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
 // Use imported routes
-// app.use("/auth", authRoutes);
+app.use("/auth", authRoutes);
 
 app.listen(port, () => {
   console.info(
-    `${`${chalk.green(`CORS-enabled web Server started on port: ${port}`)}`}`
+    `${`${chalk.yellow(`CORS-enabled web Server started on port: ${port}`)}`}`
   );
 });
