@@ -1,0 +1,64 @@
+version: '3.7'
+services:
+  server:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    image: app-server
+    container_name: app-backend
+    command: npm run dev
+    volumes:
+      - ./server/:/server
+      - /server/node_modules
+    ports:
+      - "5000:5000"
+    depends_on:
+      - db
+    env_file: ./server/.env
+    environment:
+      # - NODE_ENV=development
+      DATABASE_URL: postgres://postgres:123456@db:5432/login_matcha
+    networks:
+      - default
+
+  client:
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+    image: app-client
+    container_name: app-frontend
+    command: npm start
+    volumes:
+      - ./client/:/client
+      - /client/node_modules
+    depends_on:
+      - server
+    ports:
+      - "3000:3000"
+    networks:
+      - default
+
+  db:
+    image: postgres:10.4
+    build:
+      context: ./db
+      dockerfile: Dockerfile
+    environment:
+      POSTGRES_USER: "postgres"
+      POSTGRES_PASSWORD: "123456"
+      POSTGRES_DB: "login_matcha"
+    volumes:
+      - data-volume:/data/db
+    ports:
+      - "5433:5432"
+    networks:
+      - default
+
+networks:
+    app-default:
+
+volumes:
+    data-volume:
+    node_modules:
+    web-root:
+      driver: local
