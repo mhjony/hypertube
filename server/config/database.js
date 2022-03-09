@@ -10,4 +10,17 @@ const pool = new Pool({
   dialect: "postgres",
 });
 
+pool.getConnection((err) => {
+  console.info("Connected to PostgresSQL");
+  if (err) {
+    console.error("Error connecting to PostgresSQL", err.message);
+  }
+});
+
+pool.on("connection", (connection) => {
+  connection.on("error", (error) => {
+    console.error("Database error:", error.message);
+  });
+});
+
 module.exports = pool;
