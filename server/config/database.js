@@ -1,20 +1,16 @@
-require("dotenv").config();
-const Pool = require("pg").Pool;
+//www.npmjs.com/package/pg-pool
+// import Pool from "pg-pool";
+import pkg from "pg";
+const { Pool } = pkg;
+
+import dotenv from "dotenv";
 
 const pool = new Pool({
-  username: process.env.DB_USERNAME || postgres,
+  user: process.env.DB_USERNAME || "postgres",
   password: process.env.DB_PASSWORD || 123456,
-  database: process.env.DB_NAME || hypertube,
-  host: process.env.DB_HOST || localhost,
+  database: process.env.DB_NAME || "hypertube",
+  host: process.env.DB_HOST || "localhost",
   port: process.env.DB_PORT || 5432,
-  dialect: "postgres",
-});
-
-pool.getConnection((err) => {
-  console.info("Connected to PostgresSQL");
-  if (err) {
-    console.error("Error connecting to PostgresSQL", err.message);
-  }
 });
 
 pool.on("connection", (connection) => {
@@ -23,4 +19,4 @@ pool.on("connection", (connection) => {
   });
 });
 
-module.exports = pool;
+export default pool;
