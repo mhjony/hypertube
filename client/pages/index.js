@@ -1,4 +1,6 @@
 import Head from 'next/head'
+import Navbar from '../components/Navbar'
+// import Layout from '../components/Layout'
 import styles from '../styles/Home.module.css'
 
 export default function Home() {
@@ -10,6 +12,7 @@ export default function Home() {
       </Head>
 
       {/* <Header /> */}
+      <Navbar />
 
       <main className={styles.main}>
         <h1 className="text-3xl font-bold">Welcome to Hypertube</h1>
@@ -20,10 +23,8 @@ export default function Home() {
         <div className={styles.grid}></div>
       </main>
 
-      <footer className={styles.footer}>
-        {/* <Footer /> */}
-        All right reserved by @team_hypertube
-      </footer>
+      {/* <Footer /> */}
+      <footer className={styles.footer}>All right reserved by @team_hypertube</footer>
     </div>
   )
 }

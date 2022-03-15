@@ -71,20 +71,31 @@ const login = ({ providers, csrfToken }) => {
           </div>
         </div>
 
-        {Object.values(providers).map(provider => (
-          <div className="flex items-center justify-center">
-            {/* <img src={`/logo-${provider.id}.png`} alt={provider.name} className="w-8 mb-5" /> */}
+        <div className="items-center justify-center flex-wrap">
+          {Object.values(providers).map(provider => (
+            <div className="flex items-center justify-center border-2 border-red-500 rounded-md hover:bg-red-300">
+              <img src={`/logo-${provider.id}.png`} alt={provider.name} className="auth-logo" />
 
-            <button
-              key={provider.id}
-              className="bg-black hover:bg-green-700 text-white font-bold py-2 px-4 border-red-500 rounded-md"
-              onClick={() => signIn(provider.id, { callbackUrl: '/' })}
-            >
-              Login with {provider.name}
-            </button>
-          </div>
-        ))}
+              <button
+                key={provider.id}
+                className="text-red-600  py-2 px-2"
+                onClick={() => signIn(provider.id, { callbackUrl: '/' })}
+              >
+                Login with {provider.name}
+              </button>
+            </div>
+          ))}
+        </div>
       </div>
+      <style jsx>{`
+        .auth-logo {
+          display: inline-block;
+          margin-right: 10px;
+          margin-left: 10px;
+          max-height: 18px;
+          max-width: 18px;
+        }
+      `}</style>
     </div>
   )
 }
