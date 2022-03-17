@@ -31,110 +31,43 @@ const login = async (req, res) => {
     const { provider, username, password } = body;
     console.log("body", body);
 
-    if (provider === "credentials") {
-      //1.  Check if the username & Password is not empty
-      if (!password || !username) {
-        res.status(422).send({ error: "Fields can not be empty" }).end();
-        return;
-      }
+    //1.  Check if the username & Password is not empty
+    if (!password || !username) {
+      res.status(422).send({ error: "Fields can not be empty" }).end();
+      return;
+    }
 
-      //2. Find the user
-      const user = await findUserInfoFromDB("username", username.toLowerCase());
+    //2. Find the user
+    const user = await findUserInfoFromDB("username", username.toLowerCase());
 
-      //3. Check if user found or not
-      if (!user) {
-        res.status(401).send({ error: "User not found" }).end();
-        return;
-      }
+    //3. Check if user found or not
+    if (!user) {
+      res.status(401).send({ error: "User not found" }).end();
+      return;
+    }
 
-      // Check if the password is correct or not
-      //4. if (!bcrypt.compareSync(password, user.password)) // FIXME: Need to fix bcyrpt
-      if (bcrypt.compareSync(password, user.password))
-        return res
-          .status(401)
-          .json({ message: "Incorrect password, please try again!" });
+    // Check if the password is correct or not
+    //4. if (!bcrypt.compareSync(password, user.password)) // FIXME: Need to fix bcyrpt
+    if (bcrypt.compareSync(password, user.password))
+      return res
+        .status(401)
+        .json({ message: "Incorrect password, please try again!" });
 
-      //5. Check if user is verified or not
-      if (user.verified === 0) {
-        return res.status(426).json({
-          message:
-            "Your account is not activated yet. Please, verify your account first!",
-        });
-      }
-
-      //6. Generate auth Token
-      const userWithToken = generateToken(user);
-      return res.status(200).send({
-        userWithToken,
-        accessToken: userWithToken.token,
-        provider: "credentials",
+    //5. Check if user is verified or not
+    if (user.verified === 0) {
+      return res.status(426).json({
+        message:
+          "Your account is not activated yet. Please, verify your account first!",
       });
     }
 
-    if (provider === "google") {
-      // Check is the oauth2 token valid
-      const { id_token, idToken } = body.account;
-      console.log("dfafdfjh -----------------------------");
-      let googleIdToken = idToken;
-
-      if (!idToken) {
-        googleIdToken = id_token;
-      }
-
-      const googleVerificationUrl = `https://oauth2.googleapis.com/tokeninfo?id_token=${googleIdToken}`;
-      // const googleReq = await fetch(googleVerificationUrl);
-      // const googleReqJson = await googleReq.json();
-      // const sub = `google-oauth2|${googleReqJson.sub}`;
-
-      //2. Find the user
-      // const profile = await findUserInfoFromDB(
-      //   "username",
-      //   username.toLowerCase()
-      // );
-
-      /*
-      if (!profile) {
-        // create account for google user which does not have exolyt account
-        try {
-          const { email } = googleReqJson;
-
-          // Validate email
-          if (validator.isEmail(email)) {
-            // create new user
-            const createdUser = await User.create({
-              // sub,
-              email,
-              email_verified: true,
-            });
-
-            profile = await await findUserInfoFromDB(
-              "username",
-              username.toLowerCase()
-            );
-          } else {
-            res.status(401).json({
-              message:
-                "Unexpected error: can't create account with that Google account",
-            });
-            return;
-          }
-        } catch (e) {
-          res.status(500).send({ error: "google authentication error" }).end();
-          return;
-        }
-      }*/
-
-      //6. Generate auth Token
-      // const userWithToken = generateToken(user);
-      return res.status(200).send({
-        // userWithToken,
-        // accessToken: userWithToken.token,
-        provider: "google",
-        id_token,
-        idToken,
-        googleVerificationUrl,
-      });
-    }
+    //6. Generate auth Token
+    const userWithToken = generateToken(user);
+    return res.status(200).send({
+      userWithToken,
+      accessToken: userWithToken.token,
+      provider: "credentials",
+    });
   } catch (e) {
     res
       .status(500)

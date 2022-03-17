@@ -1,31 +1,32 @@
 import React, { useState } from 'react'
-import { signIn, useSession, getProviders, getCsrfToken } from 'next-auth/react'
+import { signIn, useSession, getProviders } from 'next-auth/react'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 
 import FormInput from '../../components/FormInput'
 import Button from '../../components/Button'
 
-const login = ({ providers, csrfToken }) => {
+const login = ({ providers }) => {
   const { query } = useRouter()
   const { data: session } = useSession()
 
   const { error, success } = query
 
   const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
+  const [username, setUsername] = useState('tasmia')
+  const [password, setPassword] = useState('1234aA')
   const [loading, setLoading] = useState(false)
 
   const onSubmit = async event => {
     event.preventDefault()
     setLoading(true)
-    signIn('credentials', { username: email, password })
+    signIn('credentials', { username, password })
   }
 
-  const errorMessage = error ? t(`authLogin.errors.${error}`) : null
-  const showError = error && email.length === 0 && password.length === 0
-  const showSuccess = success && email.length === 0 && password.length === 0
-  const hasEmptyField = password.length === 0 || email.length === 0
+  const errorMessage = error ? 'Error while trying to login' : null
+  const showError = error && username.length === 0 && password.length === 0
+  const showSuccess = success && username.length === 0 && password.length === 0
+  const hasEmptyField = username.length === 0 || password.length === 0
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen w-full">
@@ -33,14 +34,14 @@ const login = ({ providers, csrfToken }) => {
         <form onSubmit={onSubmit} className="mb-6 md:mb-8">
           <h2 className="font-bold text-xl md:text-2xl mb-4">Hypertube</h2>
 
-          <input name="csrfToken" type="hidden" defaultValue={csrfToken} />
+          {/* <input name="csrfToken" type="hidden" defaultValue={csrfToken} /> */}
           <div className="mb-4">
             <FormInput
-              label="Email"
-              placeholder="Email"
-              onChange={setEmail}
-              value={email}
-              autocomplete="email"
+              label="Username"
+              placeholder="Username"
+              onChange={setUsername}
+              value={username}
+              autocomplete="username"
             />
           </div>
 
@@ -51,7 +52,7 @@ const login = ({ providers, csrfToken }) => {
               onChange={setPassword}
               value={password}
               type="password"
-              autocomplete="current-password"
+              autocomplete="password"
               onEnter={onSubmit}
             />
             {showSuccess && <p className="text-green-600 text-sm mt-2 mb-2">{t(success)}</p>}
@@ -62,7 +63,16 @@ const login = ({ providers, csrfToken }) => {
           </Button>
         </form>
 
-        <div className="flex items-center justify-center">
+        <div className="flex items-center justify-center mb-2">
+          <div className="text-xs sm:text-sm">
+            Forgot Password?
+            <Link href="/auth/forgot-password">
+              <a className="font-bold border-b-2 border-solid border-gray-300">Forgot Password?</a>
+            </Link>
+          </div>
+        </div>
+
+        <div className="flex items-center justify-center mb-2">
           <div className="text-xs sm:text-sm">
             Don't have an account?
             <Link href="/auth/register">
@@ -72,8 +82,11 @@ const login = ({ providers, csrfToken }) => {
         </div>
 
         <div className="items-center justify-center flex-wrap">
-          {Object.values(providers).map(provider => (
-            <div className="flex items-center justify-center border-2 border-red-500 rounded-md hover:bg-red-300">
+          {Object?.values(providers).map(provider => (
+            <div
+              key={provider.name}
+              className="flex items-center justify-center border-2 border-red-500 rounded-md hover:bg-red-300"
+            >
               <img src={`/logo-${provider.id}.png`} alt={provider.name} className="auth-logo" />
 
               <button
@@ -104,8 +117,9 @@ export default login
 
 export async function getServerSideProps() {
   const providers = await getProviders()
-  const csrfToken = await getCsrfToken()
+  // const csrfToken = await getCsrfToken()
   return {
-    props: { providers, csrfToken }
+    // props: { providers, csrfToken }
+    props: { providers }
   }
 }

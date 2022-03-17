@@ -1,8 +1,9 @@
 /* eslint-disable prefer-promise-reject-errors */
 /* eslint-disable no-param-reassign */
+//https://next-auth.js.org/tutorials/refresh-token-rotation
 import NextAuth from 'next-auth'
 import GoogleProvider from 'next-auth/providers/google'
-// import CredentialsProvider from 'next-auth/providers/credentials'
+import CredentialsProvider from 'next-auth/providers/credentials'
 import fetch from 'isomorphic-unfetch'
 
 const baseurl = 'http://localhost:8080'
@@ -10,33 +11,40 @@ const DEFAULT_REGISTRATION_URL = 'auth/register'
 
 const providers = [
   GoogleProvider({
-    clientId: process.env.GOOGLE_ID,
-    clientSecret: process.env.GOOGLE_SECRET
+    clientId: process.env.GOOGLE_CLIENT_ID,
+    clientSecret: process.env.GOOGLE_CLIENT_SECRET
   }),
   CredentialsProvider({
-    server: process.env.EMAIL_SERVER,
-    from: 'hive.web.branch@gmail.com',
-    authorize: async credentials => {
-      const body = {
-        username: credentials.username,
-        password: credentials.password,
-        provider: 'credentials'
-      }
+    // The name to display on the sign in form (e.g. "Sign in with...")
+    id: 'Credentials',
+    credentials: {
+      username: { label: 'Username', type: 'text', placeholder: 'tasmia' },
+      password: { label: 'Password', type: 'password' }
+    },
+
+    async authorize(credentials, req) {
       try {
-        const backendJWT = await fetch(`${baseurl}/business/auth/get-jwt`, {
-          method: 'post',
+        const res = await fetch('http://localhost:8000/auth/login', {
+          method: 'POST',
+          body: JSON.stringify({
+            username: 'tasmia',
+            password: '1234aA'
+          }),
           headers: {
             'Content-Type': 'application/json'
-          },
-          body: JSON.stringify(body)
+          }
         })
-        const backendJWTJson = await backendJWT.json()
-        return {
-          provider: 'credentials',
-          error: false,
-          ...backendJWTJson
+
+        const user = await res.json()
+
+        // If no error and we have user data, return it
+        if (res.ok && user) {
+          return user
         }
-      } catch (e) {
+        // Return null if user data could not be retrieved
+        return null
+      } catch (error) {
+        console.log(error)
         return {
           provider: 'credentials',
           error: true
@@ -58,8 +66,6 @@ const options = {
     // signOut: '/auth/logout',
     error: '/auth/login', // Error code passed in query string as ?error=
     // verifyRequest: '/auth/verify-request', // (used for check email message)
-    // If set, new users will be directed here on first sign in
-    // https://www.youtube.com/watch?v=YFNsRogBqb0
     newUser: DEFAULT_REGISTRATION_URL
   },
   session: {
@@ -69,42 +75,6 @@ const options = {
     maxAge: 30 * 24 * 60 * 60 // 30 days
   },
   callbacks: {
-    signIn: async ({ user, account }) => {
-      if (account.provider === 'google') {
-        const google = {
-          provider: 'google',
-          account
-        }
-        try {
-          const backendJWT = await fetch(`${baseurl}/auth/login`, {
-            method: 'post',
-            headers: {
-              'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(google)
-          })
-          const backendJWTJson = await backendJWT.json()
-          user.accessToken = backendJWTJson.token
-          return true
-        } catch (e) {
-          return false
-        }
-      }
-
-      if (account.type === 'credentials' && user.accessToken) {
-        return true
-      }
-
-      // if user does not have accessToken or backend response errored
-      if (account.type === 'credentials' || user.error) {
-        return false
-      }
-
-      if (user?.error) {
-        return false
-      }
-      return true
-    },
     session: async ({ session, token }) => {
       session.accessToken = token.accessToken
       return { ...session, ...token }
@@ -124,6 +94,8 @@ const options = {
       return baseUrl
     }
   }
+  // Enable debug messages in the console if you are having problems
+  // debug: 'development'
 }
 
 export default NextAuth(options)
