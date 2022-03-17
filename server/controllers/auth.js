@@ -1,11 +1,43 @@
 // require("dotenv").config();
+import dotenv from "dotenv";
 import pool from "../config/database.js";
 // import generateToken from "../utils/generateToken";
 import jwt from "jsonwebtoken";
 import * as bcrypt from "bcrypt";
 import validator from "validator";
+import crypto from "crypto";
+import nodemailer from "nodemailer";
 
 // import sendEmail from "../utils/email";
+const sendEmail = (email, token) => {
+  console.log(`Sending email to ${email}`);
+  const transporter = nodemailer.createTransport({
+    service: "gmail",
+    auth: {
+      // user: 'hive.web.branch',
+      // pass: 'hive.web.branch93'
+      //   type: 'OAuth2',
+      user: process.env.APP_EMAIL,
+      pass: process.env.APP_PASS,
+      //   clientId: appClientId,
+      //   clientSecret: appClientSecret,
+      //   refreshToken: appRefreshToken
+    },
+  });
+  const mailOptions = {
+    from: "hive.web.branch@gmail.com",
+    to: email,
+    subject: "Activate Your Hypertube Account Now",
+    text: `Hello! Here is your account activation link. Please click the link to verify your account: http://localhost:8000/auth/registrationVerify?token=${token}`,
+  };
+  transporter.sendMail(mailOptions, function (error, info) {
+    if (error) {
+      console.log(error);
+    } else {
+      console.log("Email sent: " + info.response);
+    }
+  });
+};
 
 const findUserInfoFromDB = async (key, value, ...args) => {
   const info = args.length == 0 ? "*" : args.join(", ");
@@ -83,7 +115,7 @@ const login = async (req, res) => {
 // @access  Public
 const register = async (req, res) => {
   try {
-    const { first_name, last_name, user_name, email, password, token } =
+    const { first_name, last_name, username, email, password, token } =
       req.body;
 
     //2. check if user exists in the db (if not exists, then throw error)
@@ -106,11 +138,13 @@ const register = async (req, res) => {
 
     //5. create & enter the new user info with generated token inside my database
     const newUser = await pool.query(
-      "INSERT INTO users (first_name, last_name, user_name, email, password, token) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *",
-      [first_name, last_name, user_name, email, bcryptPassword, jwtToken]
+      "INSERT INTO users (first_name, last_name, username, email, password, token) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *",
+      [first_name, last_name, username, email, bcryptPassword, jwtToken]
     );
     res.json(newUser.rows[0]);
 
+    // TODO: Need to Fix the sendEmail import issue
+    // If that's not working i will move the sendEmail method in this file
     //6. Finally send the email to verify the registration
     // return res.json(sendEmail(email, jwtToken));
   } catch (err) {
