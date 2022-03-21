@@ -12,12 +12,14 @@ const login = ({ providers }) => {
 
   const { error, success } = query
 
-  const [email, setEmail] = useState('')
   const [username, setUsername] = useState('tasmia')
   const [password, setPassword] = useState('1234aA')
   const [loading, setLoading] = useState(false)
 
   const onSubmit = async event => {
+    console.log('username', username)
+    console.log('password', password)
+
     event.preventDefault()
     setLoading(true)
     signIn('credentials', { username, password })
@@ -53,7 +55,6 @@ const login = ({ providers }) => {
               value={password}
               type="password"
               autocomplete="password"
-              onEnter={onSubmit}
             />
             {showSuccess && <p className="text-green-600 text-sm mt-2 mb-2">{t(success)}</p>}
           </div>
@@ -82,22 +83,24 @@ const login = ({ providers }) => {
         </div>
 
         <div className="items-center justify-center flex-wrap">
-          {Object?.values(providers).map(provider => (
-            <div
-              key={provider.name}
-              className="flex items-center justify-center border-2 border-red-500 rounded-md hover:bg-red-300"
-            >
-              <img src={`/logo-${provider.id}.png`} alt={provider.name} className="auth-logo" />
-
-              <button
-                key={provider.id}
-                className="text-red-600  py-2 px-2"
-                onClick={() => signIn(provider.id, { callbackUrl: '/' })}
+          {Object?.values(providers)
+            .filter(provider => provider.id !== 'credentials')
+            .map(provider => (
+              <div
+                key={provider.name}
+                className="flex items-center justify-center border-2 border-red-500 rounded-md hover:bg-red-300"
               >
-                Login with {provider.name}
-              </button>
-            </div>
-          ))}
+                <img src={`/logo-${provider.id}.png`} alt={provider.name} className="auth-logo" />
+
+                <button
+                  key={provider.id}
+                  className="text-red-600  py-2 px-2"
+                  onClick={() => signIn(provider.id, { callbackUrl: '/' })}
+                >
+                  Login with {provider.name}
+                </button>
+              </div>
+            ))}
         </div>
       </div>
       <style jsx>{`

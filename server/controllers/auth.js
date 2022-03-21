@@ -58,53 +58,63 @@ const generateToken = (user) => {
 };
 
 const login = async (req, res) => {
-  try {
-    const { body } = req;
-    const { provider, username, password } = body;
-    console.log("body", body);
+  const { body } = req;
+  const { provider } = body;
 
-    //1.  Check if the username & Password is not empty
-    if (!password || !username) {
-      res.status(422).send({ error: "Fields can not be empty" }).end();
-      return;
-    }
+  if (provider === "credentials") {
+    const { password, username } = body;
+    try {
+      // const { provider, username, password } = body;
+      // console.log("body", body);
 
-    //2. Find the user
-    const user = await findUserInfoFromDB("username", username.toLowerCase());
+      //1.  Check if the username & Password is not empty
+      if (!password || !username) {
+        res.status(422).send({ error: "Fields can not be empty" }).end();
+        return;
+      }
 
-    //3. Check if user found or not
-    if (!user) {
-      res.status(401).send({ error: "User not found" }).end();
-      return;
-    }
+      //2. Find the user
+      const user = await findUserInfoFromDB("username", username.toLowerCase());
 
-    // Check if the password is correct or not
-    //4. if (!bcrypt.compareSync(password, user.password)) // FIXME: Need to fix bcyrpt
-    if (bcrypt.compareSync(password, user.password))
+      //3. Check if user found or not
+      if (!user) {
+        res.status(401).send({ error: "User not found" }).end();
+        return;
+      }
+
+      // Check if the password is correct or not
+      //4. if (!bcrypt.compareSync(password, user.password)) // FIXME: Need to fix bcyrpt
+      if (bcrypt.compareSync(password, user.password))
+        return res
+          .status(401)
+          .json({ message: "Incorrect password, please try again!" });
+
+      //5. Check if user is verified or not
+      if (user.verified === 0) {
+        return res.status(426).json({
+          message:
+            "Your account is not activated yet. Please, verify your account first!",
+        });
+      }
+
+      //6. Generate auth Token
+      const userWithToken = generateToken(user);
+
       return res
-        .status(401)
-        .json({ message: "Incorrect password, please try again!" });
-
-    //5. Check if user is verified or not
-    if (user.verified === 0) {
-      return res.status(426).json({
-        message:
-          "Your account is not activated yet. Please, verify your account first!",
-      });
+        .status(200)
+        .send({
+          ...userWithToken,
+          accessToken: userWithToken.token,
+          user: userWithToken.user,
+          provider: "credentials",
+        })
+        .end();
+    } catch (e) {
+      res
+        .status(500)
+        .send({ error: "Server Error From Credential Login controller" })
+        .end();
     }
-
-    //6. Generate auth Token
-    const userWithToken = generateToken(user);
-    return res.status(200).send({
-      userWithToken,
-      accessToken: userWithToken.token,
-      provider: "credentials",
-    });
-  } catch (e) {
-    res
-      .status(500)
-      .send({ error: "Server Error From Credential Login controller" })
-      .end();
   }
 
   res.status(401).send({ error: "Server Error from Login controller" }).end();
@@ -141,7 +151,18 @@ const register = async (req, res) => {
       "INSERT INTO users (first_name, last_name, username, email, password, token) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *",
       [first_name, last_name, username, email, bcryptPassword, jwtToken]
     );
-    res.json(newUser.rows[0]);
+
+    res
+      .status(200)
+      .send({
+        user: newUser.rows[0],
+        accessToken: token,
+        ...userForToken,
+        provider: "credentials",
+      })
+      .end();
+    return;
+    // res.json(newUser.rows[0]);
 
     // TODO: Need to Fix the sendEmail import issue
     // If that's not working i will move the sendEmail method in this file
@@ -152,6 +173,23 @@ const register = async (req, res) => {
     res.status(500).send("Server Error");
   }
 };
+
+/*
+// @route   GET /registrationVerify
+// @desc    Email verification of user registration
+// @access  Public
+exports.registrationVerify =
+  ('/registrationVerify',
+  (req, resp) => {
+    pool.query('UPDATE users SET verified = 1 WHERE token = $1', [req.query.token], (err, res) => {
+      if (res && res.rowCount === 1) {
+        resp.redirect('http://localhost:5000/registrationVerify')
+      } else {
+        resp.redirect('http://localhost:3000')
+      }
+    })
+  })
+  */
 
 export default {
   login,

@@ -1,6 +1,3 @@
-/* eslint-disable prefer-promise-reject-errors */
-/* eslint-disable no-param-reassign */
-//https://next-auth.js.org/tutorials/refresh-token-rotation
 import NextAuth from 'next-auth'
 import GoogleProvider from 'next-auth/providers/google'
 import CredentialsProvider from 'next-auth/providers/credentials'
@@ -14,37 +11,31 @@ const providers = [
     clientId: process.env.GOOGLE_CLIENT_ID,
     clientSecret: process.env.GOOGLE_CLIENT_SECRET
   }),
-  CredentialsProvider({
-    // The name to display on the sign in form (e.g. "Sign in with...")
-    id: 'Credentials',
-    credentials: {
-      username: { label: 'Username', type: 'text', placeholder: 'tasmia' },
-      password: { label: 'Password', type: 'password' }
-    },
 
-    async authorize(credentials, req) {
+  CredentialsProvider({
+    async authorize(credentials) {
+      const body = {
+        username: credentials.username,
+        password: credentials.password,
+        provider: 'credentials'
+      }
       try {
-        const res = await fetch('http://localhost:8000/auth/login', {
-          method: 'POST',
-          body: JSON.stringify({
-            username: 'tasmia',
-            password: '1234aA'
-          }),
+        const user = await fetch('http://localhost:8000/auth/login', {
+          method: 'post',
           headers: {
             'Content-Type': 'application/json'
-          }
+          },
+          body: JSON.stringify(body)
         })
-
-        const user = await res.json()
-
-        // If no error and we have user data, return it
-        if (res.ok && user) {
-          return user
+        const userJWTJson = await user.json()
+        console.log('*** userJWTJson *** ', userJWTJson)
+        return {
+          provider: 'credentials',
+          error: false,
+          ...userJWTJson
         }
-        // Return null if user data could not be retrieved
-        return null
-      } catch (error) {
-        console.log(error)
+      } catch (e) {
+        console.log('I am not able to make req::::', e)
         return {
           provider: 'credentials',
           error: true
@@ -63,7 +54,6 @@ const options = {
   },
   pages: {
     signIn: '/auth/login',
-    // signOut: '/auth/logout',
     error: '/auth/login', // Error code passed in query string as ?error=
     // verifyRequest: '/auth/verify-request', // (used for check email message)
     newUser: DEFAULT_REGISTRATION_URL
@@ -75,6 +65,17 @@ const options = {
     maxAge: 30 * 24 * 60 * 60 // 30 days
   },
   callbacks: {
+    signIn: async ({ user, account }) => {
+      if (account.type === 'credentials') {
+        return true
+      }
+
+      if (user?.error) {
+        return false
+      }
+
+      return true
+    },
     session: async ({ session, token }) => {
       session.accessToken = token.accessToken
       return { ...session, ...token }
