@@ -64,9 +64,6 @@ const login = async (req, res) => {
   if (provider === "credentials") {
     const { password, username } = body;
     try {
-      // const { provider, username, password } = body;
-      // console.log("body", body);
-
       //1.  Check if the username & Password is not empty
       if (!password || !username) {
         res.status(422).send({ error: "Fields can not be empty" }).end();
