@@ -14,18 +14,18 @@ RUN npm install
 COPY . .
 
 # ENV PORT
-ENV PORT 5000
+ENV PORT 8000
 
 # Expose port
-EXPOSE 5000
+EXPOSE 8000
 
 # Run server
 
-CMD ["npm", "run", "dev"]
+CMD ["npm", "run", "start"]
 
 
 # How to Build
-# docker build -t matcha/server:1.0 .
+# docker build -t hypertube/server:1.0 .
 
 # How to run
-# docker run -p 5001:5000 --name matcha_backend matcha/server:1.0
+# docker run -p 8001:8000 --name hypertube_backend hypertube/server:1.0

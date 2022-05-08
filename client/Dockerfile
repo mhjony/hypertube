@@ -18,11 +18,10 @@ EXPOSE 3000
 
 # Run app
 
-CMD ["npm", "start"]
-
+CMD ["npm", "run", "start"]
 
 # How to Build
-# docker build -t matcha/client:1.0 .
+# docker build -t hypertube/client:1.0 .
 
 # How to run
-# docker run -p 3002:3000 --name matcha_frontend matcha/client:1.0
+# docker run -p 3002:3000 --name hypertube_frontend hypertube/client:1.0
