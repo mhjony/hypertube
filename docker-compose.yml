@@ -17,7 +17,7 @@ services:
     env_file: ./server/.env
     environment:
       # - NODE_ENV=development
-      DATABASE_URL: postgres://postgres:123456@db:5432/login_matcha
+      DATABASE_URL: postgres://postgres:123456@db:5432/hypertube
     networks:
       - default
 
@@ -46,7 +46,7 @@ services:
     environment:
       POSTGRES_USER: "postgres"
       POSTGRES_PASSWORD: "123456"
-      POSTGRES_DB: "login_matcha"
+      POSTGRES_DB: "hypertube"
     volumes:
       - data-volume:/data/db
     ports:
