@@ -9,10 +9,6 @@
     "start": "nodemon index.js",
     "dev": "nodemon index.js",
     "setup": "nodemon setup.js"
-<<<<<<< HEAD
-
-=======
->>>>>>> ccdfd5303e5e3de53140f0a62c25960587f926ac
   },
   "keywords": [],
   "author": "",
