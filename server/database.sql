@@ -12,11 +12,7 @@ CREATE TABLE users (
 	username VARCHAR(50) NOT NULL UNIQUE,
 	email VARCHAR(255) NOT NULL UNIQUE,
 	password VARCHAR(255) NOT NULL,
-	token varchar(255) DEFAULT NULL,
 	verified SMALLINT NOT NULL DEFAULT 0,
-	avatar varchar(255) DEFAULT NULL,
-	-- interest VARCHAR(255)[{}], // Syntax error, need to figure out correct syntax
-	country varchar(255) NULL
 );
 
 
@@ -24,5 +20,7 @@ CREATE TABLE users (
 INSERT INTO users (first_name, last_name, username, email, verified, password)
 VALUES 
 ('admin', 'user', 'admin', 'admin@gmail.com', '1', '$2a$10$PAM0GqbRGkOS2bVupYY0he23LiSv2THGyfvtULZpcdRTzSM7BQ01u'),
-('demo', 'user', 'demo', 'demo@gmail.com', '1', '$2a$10$PAM0GqbRGkOS2bVupYY0he23LiSv2THGyfvtULZpcdRTzSM7BQ01u'),
-('Tasmia', 'Rahman', 'tasmia', 'tasmia@gmail.com', '1', '1234aA')
+-- ('demo', 'user', 'demo', 'demo@gmail.com', '1', '$2a$10$PAM0GqbRGkOS2bVupYY0he23LiSv2THGyfvtULZpcdRTzSM7BQ01u'),
+-- ('Tasmia', 'Rahman', 'tasmia', 'tasmia@gmail.com', '1', '1234aA')
+('Hyper', 'TUBE', 'tasmia', 'sdfasfd@gmail.com', '1', '$2a$10$PAM0GqbRGkOS2bVupYY0he23LiSv2THGyfvtULZpcdRTzSM7BQ01u')
+('Tasmia', 'Rahman', 'tasmia', 'fadf@gmail.com', '1', '$2a$10$PAM0GqbRGkOS2bVupYY0he23LiSv2THGyfvtULZpcdRTzSM7BQ01u')
