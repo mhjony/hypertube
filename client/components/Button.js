@@ -1,9 +1,9 @@
-import React, { useState } from "react";
+import React, { useState } from 'react'
 
-import Loader from "./Loader";
+import Loader from './Loader'
 
 const Button = ({
-  className = "",
+  className = '',
   size = null,
   children,
   onClick = () => {},
@@ -14,49 +14,50 @@ const Button = ({
   negativeLight = false,
   disabled = false,
   noHover = false,
-  style,
+  style
 }) => {
-  const [internalLoading, setInternalLoading] = useState(false);
+  const [internalLoading, setInternalLoading] = useState(false)
 
-  const onClickWithInternalLoading = async (e) => {
-    setInternalLoading(true);
-    await onClickWithLoading(e);
-    setInternalLoading(false);
-  };
+  const onClickWithInternalLoading = async e => {
+    setInternalLoading(true)
+    await onClickWithLoading(e)
+    setInternalLoading(false)
+  }
 
-  const usedOnClick = async (e) => {
+  const usedOnClick = async e => {
     if (onClickWithLoading) {
-      onClickWithInternalLoading(e);
-      return;
+      onClickWithInternalLoading(e)
+      return
     }
 
-    onClick(e);
-  };
+    onClick(e)
+  }
 
-  const usedLoading = loading || internalLoading;
+  const usedLoading = loading || internalLoading
 
   return (
     <>
       <button
         type="button"
-        className={`button ${loadingNew ? "button--loading" : ""} ${
-          negative ? "button--negative" : ""
-        } ${negativeLight ? "button--negative-light" : ""} ${className} ${
-          noHover ? "no-hover" : ""
-        } ${size ? `button--${size}` : ""}`}
+        className={`button ${loadingNew ? 'button--loading' : ''} ${
+          negative ? 'button--negative' : ''
+        } ${negativeLight ? 'button--negative-light' : ''} ${className} ${
+          noHover ? 'no-hover' : ''
+        } ${size ? `button--${size}` : ''}`}
         onClick={usedOnClick}
         disabled={disabled || loading}
         style={style}
       >
         {usedLoading ? <Loader size="20px" /> : <>{children}</>}
       </button>
+
       <style jsx>{`
         .no-hover {
           pointer-events: none;
         }
       `}</style>
     </>
-  );
-};
+  )
+}
 
-export default Button;
+export default Button

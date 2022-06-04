@@ -3,6 +3,9 @@ import { signIn, useSession, getProviders } from 'next-auth/react'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 
+import { ToastContainer, toast } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css'
+
 import FormInput from '../../components/FormInput'
 import Button from '../../components/Button'
 
@@ -17,9 +20,6 @@ const login = ({ providers }) => {
   const [loading, setLoading] = useState(false)
 
   const onSubmit = async event => {
-    console.log('username', username)
-    console.log('password', password)
-
     event.preventDefault()
     setLoading(true)
     signIn('credentials', { username, password })
@@ -32,7 +32,7 @@ const login = ({ providers }) => {
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen w-full">
-      <div className="box">
+      <div className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4 flex flex-col">
         <form onSubmit={onSubmit} className="mb-6 md:mb-8">
           <h2 className="font-bold text-xl md:text-2xl mb-4">Hypertube</h2>
 
@@ -68,10 +68,13 @@ const login = ({ providers }) => {
           <div className="text-xs sm:text-sm">
             Forgot Password?
             <Link href="/auth/forgot-password">
-              <a className="font-bold border-b-2 border-solid border-gray-300">Forgot Password?</a>
+              <a className="font-bold border-b-2 border-solid border-gray-300">
+                Forgotten your password?
+              </a>
             </Link>
           </div>
         </div>
+        <hr />
 
         <div className="flex items-center justify-center mb-2">
           <div className="text-xs sm:text-sm">
@@ -94,7 +97,7 @@ const login = ({ providers }) => {
 
                 <button
                   key={provider.id}
-                  className="text-red-600  py-2 px-2"
+                  className="text-red-600 py-2 px-2"
                   onClick={() => signIn(provider.id, { callbackUrl: '/' })}
                 >
                   Login with {provider.name}

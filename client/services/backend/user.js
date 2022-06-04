@@ -1,15 +1,16 @@
-import fetch from 'isomorphic-unfetch'
+// import fetch from 'isomorphic-unfetch'
 
-const API = 'http://localhost:8080'
+const API = 'http://localhost:8000'
 
-const signup = async (email, password) => {
-  const res = await fetch(`${API}/auth/create-user`, {
-    method: 'post',
+const signup = async (first_name, last_name, user_name, email, password) => {
+  const res = await fetch(`${API}/auth/register`, {
+    method: 'POST',
     headers: {
       'Content-Type': 'application/json'
     },
-    body: JSON.stringify({ email, password })
+    body: JSON.stringify({ first_name, last_name, user_name, email, password })
   })
+  console.log('I am inside signup service', res)
 
   const data = await res.json()
   return data
@@ -49,5 +50,5 @@ export default {
   API,
   getPasswordResetLink,
   signup,
-  resetPassword,
+  resetPassword
 }

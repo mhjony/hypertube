@@ -122,7 +122,7 @@ const login = async (req, res) => {
 // @access  Public
 const register = async (req, res) => {
   try {
-    const { first_name, last_name, username, email, password, token } =
+    const { first_name, last_name, user_name, email, password, token } =
       req.body;
 
     //2. check if user exists in the db (if not exists, then throw error)
@@ -145,8 +145,8 @@ const register = async (req, res) => {
 
     //5. create & enter the new user info with generated token inside my database
     const newUser = await pool.query(
-      "INSERT INTO users (first_name, last_name, username, email, password, token) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *",
-      [first_name, last_name, username, email, bcryptPassword, jwtToken]
+      "INSERT INTO users (first_name, last_name, user_name, email, password, token) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *",
+      [first_name, last_name, user_name, email, bcryptPassword, jwtToken]
     );
 
     res
@@ -154,8 +154,9 @@ const register = async (req, res) => {
       .send({
         user: newUser.rows[0],
         accessToken: token,
-        ...userForToken,
+        // ...userForToken,
         provider: "credentials",
+        message: "User account created successfully",
       })
       .end();
     return;
@@ -171,24 +172,28 @@ const register = async (req, res) => {
   }
 };
 
-/*
 // @route   GET /registrationVerify
 // @desc    Email verification of user registration
 // @access  Public
-exports.registrationVerify =
-  ('/registrationVerify',
-  (req, resp) => {
-    pool.query('UPDATE users SET verified = 1 WHERE token = $1', [req.query.token], (err, res) => {
+const registrationVerify = async (req, resp) => {
+  console.log("registrationVerify end-point Hit");
+  console.log("TOKEN", req.query.token);
+
+  await pool.query(
+    "UPDATE users SET verified = 1 WHERE token = $1",
+    [req.query.token],
+    (err, res) => {
       if (res && res.rowCount === 1) {
-        resp.redirect('http://localhost:8000/registrationVerify')
+        resp.redirect("http://localhost:8000/auth/registration-verify");
       } else {
-        resp.redirect('http://localhost:3000')
+        resp.redirect("http://localhost:3000");
       }
-    })
-  })
-  */
+    }
+  );
+};
 
 export default {
   login,
   register,
+  registrationVerify,
 };
