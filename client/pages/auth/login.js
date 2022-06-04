@@ -3,6 +3,9 @@ import { signIn, useSession, getProviders } from 'next-auth/react'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 
+import { ToastContainer, toast } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css'
+
 import FormInput from '../../components/FormInput'
 import Button from '../../components/Button'
 
@@ -17,9 +20,6 @@ const login = ({ providers }) => {
   const [loading, setLoading] = useState(false)
 
   const onSubmit = async event => {
-    console.log('username', username)
-    console.log('password', password)
-
     event.preventDefault()
     setLoading(true)
     signIn('credentials', { username, password })
