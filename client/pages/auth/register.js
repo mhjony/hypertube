@@ -64,7 +64,7 @@ export default function Register({ enabledProviders, csrfToken }) {
 
   return (
     <div className="flex flex-col items-center justify-center  min-h-screen w-full">
-      <div className="box">
+      <div className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4 flex flex-col">
         <h2 className="font-bold text-xl md:text-2xl mb-4">Register</h2>
 
         <form className="mb-6 md:mb-8" onSubmit={onSubmit}>
@@ -72,7 +72,7 @@ export default function Register({ enabledProviders, csrfToken }) {
 
           <div className="mb-4">
             <FormInput
-              label="First Name"
+              label="FIRST NAME"
               placeholder="firstName"
               autocomplete="firstName"
               onChange={value => setFirstName(value)}
@@ -83,7 +83,7 @@ export default function Register({ enabledProviders, csrfToken }) {
 
           <div className="mb-4">
             <FormInput
-              label="EMAIL ADDRESS"
+              label="LAST NAME"
               placeholder="lastName"
               autocomplete="lastName"
               onChange={value => setLastName(value)}
@@ -94,7 +94,7 @@ export default function Register({ enabledProviders, csrfToken }) {
 
           <div className="mb-4">
             <FormInput
-              label="EMAIL ADDRESS"
+              label="USERNAME"
               placeholder="Username"
               autocomplete="username"
               onChange={value => setUsername(value)}
@@ -104,7 +104,7 @@ export default function Register({ enabledProviders, csrfToken }) {
           </div>
           <div className="mb-4">
             <FormInput
-              label="EMAIL ADDRESS"
+              label="EMAIL"
               placeholder="Email"
               autocomplete="email"
               onChange={value => setEmail(value.replace(/\s/g, ''))}
@@ -126,7 +126,7 @@ export default function Register({ enabledProviders, csrfToken }) {
 
           <div className="mb-4">
             <FormInput
-              label="RE-ENTER PASSWORD"
+              label="CONFIRM PASSWORD"
               placeholder="Confirm Password"
               onChange={value => {
                 setPasswordConfirmationError(null)
@@ -135,7 +135,7 @@ export default function Register({ enabledProviders, csrfToken }) {
               value={passwordConfirmation}
               errorMsg={passwordConfirmationError}
               type="password"
-              autocomplete="new-password"
+              autocomplete="confirm-password"
             />
           </div>
 
