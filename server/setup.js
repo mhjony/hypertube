@@ -1,23 +1,23 @@
-const { Pool } = require("pg");
-const fs = require("fs");
+import pg from "pg";
+import fs from "fs";
 
 // queries to create all tables
-const data = fs.readFileSync("server/database.sql", "utf8");
+const database = fs.readFileSync("database.sql", "utf8");
 
 // TODO: I will replace this with process.env variables (Standard Practice)
 const config = {
   user: "postgres",
   password: "123456",
   database: "hypertube",
-  host: localhost,
+  host: "localhost",
   port: 5432,
 };
-
+const Pool = pg.Pool;
 const pool = new Pool(config);
 
 pool.on("connect", () => {
   console.log(`Connecting to database...`);
-  console.log(`Connected to the database  ${config.database}`);
+  console.log(`Connected to the database`);
 });
 
 pool.on("remove", () => {
@@ -25,20 +25,20 @@ pool.on("remove", () => {
 });
 
 const setupDatabase = async () => {
-  const createDbQuery = `CREATE DATABASE}"
-        WITH OWNER = "${config.user}" ENCODING = "UTF8";`;
+  // const createDbQuery = `CREATE DATABASE hypertube
+  //       WITH OWNER = "postgres" ENCODING = "UTF8";`;
 
-  await pool
-    .query(createDbQuery)
-    .then((res) => {
-      console.log(`\x1b[32mDatabase` + `  created` + `\x1b[0m`);
-    })
-    .catch((err) => {
-      console.log("\x1b[31m" + err + "\x1b[0m");
-    })
-    .finally(() => {
-      pool.end();
-    });
+  // await pool
+  //   .query(createDbQuery)
+  //   .then((res) => {
+  //     console.log(`\x1b[32mDatabase` + `  created` + `\x1b[0m`);
+  //   })
+  //   .catch((err) => {
+  //     console.log("\x1b[31m" + err + "\x1b[0m");
+  //   })
+  //   .finally(() => {
+  //     pool.end();
+  //   });
 
   const poolHypertube = new Pool(database);
 
