@@ -91,7 +91,7 @@ const login = ({ providers }) => {
             .map(provider => (
               <div
                 key={provider.name}
-                className="flex items-center justify-center border-2 border-red-500 rounded-md hover:bg-red-300"
+                className="flex items-center justify-center border-2 border-red-500 m-2 rounded-md hover:bg-red-300"
               >
                 <img src={`/logo-${provider.id}.png`} alt={provider.name} className="auth-logo" />
 

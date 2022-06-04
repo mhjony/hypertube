@@ -14,7 +14,7 @@ CREATE TABLE users (
 	email VARCHAR(255) NOT NULL UNIQUE,
 	password VARCHAR(255) NOT NULL,
 	token varchar(255) DEFAULT NULL,
-	verified SMALLINT NOT NULL DEFAULT 0,
+	verified SMALLINT NOT NULL DEFAULT 0
 );
 
 -- Insert predifined users for admin to use
