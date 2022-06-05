@@ -42,7 +42,7 @@ export default function Register({ enabledProviders, csrfToken }) {
       const signupResponse = await api.signup(firstName, lastName, username, email, password)
 
       if (signupResponse.message === 'User account created successfully') {
-        notify()
+        
       }
 
       Router.push('/auth/login')
