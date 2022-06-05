@@ -2,7 +2,7 @@ import NextAuth from 'next-auth'
 import GoogleProvider from 'next-auth/providers/google'
 import CredentialsProvider from 'next-auth/providers/credentials'
 import fetch from 'isomorphic-unfetch'
-import FortyTwoProvider from "next-auth/providers/42-school";
+import FortyTwoProvider from 'next-auth/providers/42-school'
 
 const baseurl = 'http://localhost:8080'
 const DEFAULT_REGISTRATION_URL = 'auth/register/'

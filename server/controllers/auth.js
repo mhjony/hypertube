@@ -67,12 +67,18 @@ const login = async (req, res) => {
       }
 
       //2. Find the user
-      const user = await findUserInfoFromDB("username", username.toLowerCase());
+      const user = await findUserInfoFromDB(
+        "user_name",
+        username.toLowerCase()
+      );
 
+      console.log("user from DB:----", user);
       //3. Check if user found or not
       if (!user) {
-        res.status(401).send({ error: "User not found" }).end();
-        return;
+        return res.status(500).json({
+          message:
+            "User Not Found. Please check your username and password and try again.",
+        });
       }
 
       // Check if the password is correct or not
