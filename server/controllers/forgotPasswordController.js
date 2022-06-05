@@ -46,7 +46,7 @@ const findUserInfoFromDB = async (key, value, ...args) => {
   return res.rows[0];
 };
 
-// Function to generate token
+// Helper Function to update the token in the database
 const updateAccount = async (user_id, data) => {
   const keys = Object.keys(data);
   const info = keys.map((key, i) => `${key} = $${i + 1}`).join(", ");
@@ -111,6 +111,39 @@ const forgotPassword = async (req, res) => {
   }
 };
 
+const resetPassword = async (req, resp) => {
+  const { token, password } = req.body;
+
+  // Hash the password
+  const saltRounds = 10;
+  const hashedPassword = await bcrypt.hash(password, saltRounds);
+
+  // Update the password in the database
+  await pool.query(
+    "SELECT token FROM users WHERE token = $1",
+    [token],
+    (err, res) => {
+      if (res && res.rows[0]) {
+        pool.query(
+          "UPDATE users SET password = $1 WHERE token = $2",
+          [hashedPassword, token],
+          (err, re) => {
+            if (re)
+              resp.status(200).send({ message: "Password has been changed" });
+            else resp.status(500).send(err);
+          }
+        );
+      } else if (res) resp.status(500).send({ error: "No token found" });
+      else resp.status(500).send({ error: err.detail });
+    }
+  );
+};
+
 export default {
   forgotPassword,
+  resetPassword,
 };
+
+// Plan🧮 : User the forgot password button, which will send an email to the user with a link to reset the password.
+// Then, when the user clicks on the link, the user will be redirected to the reset password page.
+// The user will be able to enter a new password and confirm it.
