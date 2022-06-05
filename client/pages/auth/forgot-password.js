@@ -1,27 +1,31 @@
 import React, { useState } from 'react'
-import { signIn, useSession, getProviders } from 'next-auth/react'
-import Link from 'next/link'
 import { useRouter } from 'next/router'
+import Link from 'next/link'
+import { signIn, useSession } from 'next-auth/react'
+
+import api from '../../services/backend/forgotPassword'
 
 import FormInput from '../../components/FormInput'
-import Button from '../../components/Button'
 
 const forgotPassword = () => {
   const { query } = useRouter()
-  const { data: session } = useSession()
 
-  const [email, setEmail] = useState('admin@gmail.com')
+  const [email, setEmail] = useState('tasmiata@gmail.com')
   const [successMessage, setSuccessMessage] = useState(false)
 
   const onSubmit = async event => {
     event.preventDefault()
     setSuccessMessage(true)
-    // will send an email to the user with a link to reset password
+    try {
+      await api.forgotPassword(email)
+    } catch (error) {
+      console.log(error)
+    }
   }
 
   const hasEmptyField = email.length === 0
 
-  const Results = () => (
+  const Message = () => (
     <div className="text-green-600 text-sm mt-2 mb-2">
       We've sent an email to {email} with a link to get back into your account.
     </div>
@@ -50,7 +54,7 @@ const forgotPassword = () => {
             Send Login Link
           </button>
 
-          {successMessage ? <Results /> : null}
+          {successMessage ? <Message /> : null}
         </form>
 
         <hr className="my-4" />

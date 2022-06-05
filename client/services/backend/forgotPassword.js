@@ -2,16 +2,14 @@
 
 const API = 'http://localhost:8000'
 
-const forgotPassword = async (email, resetPasswordCode, password) => {
+const forgotPassword = async email => {
   const res = await fetch(`${API}/auth/forgot-password`, {
     method: 'post',
     headers: {
       'Content-Type': 'application/json'
     },
     body: JSON.stringify({
-      email: decodeURIComponent(email),
-      passwordResetCode: decodeURIComponent(resetPasswordCode),
-      password
+      email: decodeURIComponent(email)
     })
   })
 

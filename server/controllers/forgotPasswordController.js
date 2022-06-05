@@ -8,27 +8,26 @@ import validator from "validator";
 import crypto from "crypto";
 import nodemailer from "nodemailer";
 
-const sendEmail = (email, token) => {
+const resetEmail = (email, token) => {
   console.log(`Sending email to ${email}`);
   const transporter = nodemailer.createTransport({
     service: "gmail",
     auth: {
-      // user: 'hive.web.branch',
-      // pass: 'hive.web.branch93'
-      //   type: 'OAuth2',
-      user: process.env.APP_EMAIL,
-      pass: process.env.APP_PASS,
-      //   clientId: appClientId,
-      //   clientSecret: appClientSecret,
-      //   refreshToken: appRefreshToken
+      type: "OAuth2",
+      user: process.env.USER_EMAIL,
+      pass: process.env.USER_PASS,
+      clientId: process.env.CLIENT_ID,
+      clientSecret: process.env.CLIENT_SECRET,
+      refreshToken: process.env.REFRESH_TOKEN,
     },
   });
+
   const mailOptions = {
-    from: "hive.web.branch@gmail.com",
     to: email,
-    subject: "Activate Your Hypertube Account Now",
-    text: `Hello! Here is your account activation link. Please click the link to verify your account: http://localhost:8000/auth/registrationVerify?token=${token}`,
+    subject: "Reset Your Hypertube Password",
+    text: `Forgot Your Password? That's okay! you can reset your password by clicking following link: http://localhost:3000/auth/reset-password?token=${token}`,
   };
+
   transporter.sendMail(mailOptions, function (error, info) {
     if (error) {
       console.log(error);
@@ -103,8 +102,8 @@ const forgotPassword = async (req, res) => {
     await updateAccount(user.user_id, { token: jwtToken });
 
     // Send email to reset the password
-    // return res.json(resetEmail(email, token)); // Send email to reset the password
-    res.status(200).json({ user: user.rows, jwtToken }); // After email is working, then remove this line
+    return res.json(resetEmail(email, jwtToken)); // Send email to reset the password
+    // res.status(200).json({ user: user.rows, jwtToken }); // After email is working, then remove this line
   } catch (err) {
     console.error(err.message);
     res.status(500).send("Server Error");
@@ -112,7 +111,9 @@ const forgotPassword = async (req, res) => {
 };
 
 const resetPassword = async (req, resp) => {
-  const { token, password } = req.body;
+  console.log("registrationVerify end-point Hit");
+  const { password } = req.body;
+  const { token } = req.query;
 
   // Hash the password
   const saltRounds = 10;
@@ -143,7 +144,3 @@ export default {
   forgotPassword,
   resetPassword,
 };
-
-// Plan🧮 : User the forgot password button, which will send an email to the user with a link to reset the password.
-// Then, when the user clicks on the link, the user will be redirected to the reset password page.
-// The user will be able to enter a new password and confirm it.

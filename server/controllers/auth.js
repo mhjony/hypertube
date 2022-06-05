@@ -1,4 +1,3 @@
-// require("dotenv").config();
 import dotenv from "dotenv";
 import pool from "../config/database.js";
 // import generateToken from "../utils/generateToken";
@@ -14,12 +13,12 @@ const sendEmail = (email, token) => {
   const transporter = nodemailer.createTransport({
     service: "gmail",
     auth: {
-      type: 'OAuth2',
+      type: "OAuth2",
       user: process.env.USER_EMAIL,
       pass: process.env.USER_PASS,
       clientId: process.env.CLIENT_ID,
       clientSecret: process.env.CLIENT_SECRET,
-      refreshToken: process.env.REFRESH_TOKEN
+      refreshToken: process.env.REFRESH_TOKEN,
     },
   });
   const mailOptions = {
@@ -27,7 +26,6 @@ const sendEmail = (email, token) => {
     subject: "Activate Your Hypertube Account Now",
     text: `Hello! Here is your account activation link. Please click the link to verify your account: http://localhost:8000/auth/registration-verify?token=${token}`,
   };
-  console.log('1');
   transporter.sendMail(mailOptions, function (error, info) {
     if (error) {
       console.log(error);
@@ -146,7 +144,7 @@ const register = async (req, res) => {
       "INSERT INTO users (first_name, last_name, user_name, email, password, token) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *",
       [first_name, last_name, user_name, email, bcryptPassword, jwtToken]
     );
-	sendEmail(email, jwtToken);
+    sendEmail(email, jwtToken);
     res
       .status(200)
       .send({
@@ -174,11 +172,11 @@ const register = async (req, res) => {
 // @access  Public
 const registrationVerify = async (req, resp) => {
   console.log("registrationVerify end-point Hit");
-  console.log("TOKEN", req.query.token);
+  const { token } = req.query;
 
   await pool.query(
     "UPDATE users SET verified = 1 WHERE token = $1",
-    [req.query.token],
+    [token],
     (err, res) => {
       if (res && res.rowCount === 1) {
         resp.redirect("http://localhost:8000/auth/registration-verify");
