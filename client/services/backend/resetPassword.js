@@ -1,15 +1,14 @@
-// import fetch from 'isomorphic-unfetch'
-
 const API = 'http://localhost:8000'
 
-const forgotPassword = async email => {
-  const res = await fetch(`${API}/auth/forgot-password`, {
+const resetPassword = async (resetPasswordCode, password) => {
+  const res = await fetch(`${API}/auth/reset-password`, {
     method: 'post',
     headers: {
       'Content-Type': 'application/json'
     },
     body: JSON.stringify({
-      email: decodeURIComponent(email)
+      passwordResetCode: decodeURIComponent(resetPasswordCode),
+      password
     })
   })
 
@@ -19,5 +18,5 @@ const forgotPassword = async email => {
 
 export default {
   API,
-  forgotPassword
+  resetPassword
 }

@@ -33,9 +33,19 @@ const login = ({ providers }) => {
   return (
     <div className="flex flex-col items-center justify-center min-h-screen w-full">
       <div className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4 flex flex-col">
+        <div className="flex justify-between p-4 bg-gray-100">
+          <div>
+            <Link href="/auth/login">
+              <a className="text-xl font-bold">HyperTube</a>
+            </Link>
+          </div>
+          <div>
+            <Link href="/auth/register">
+              <a className="text-xl font-bold">Register</a>
+            </Link>
+          </div>
+        </div>
         <form onSubmit={onSubmit} className="mb-6 md:mb-8">
-          <h2 className="font-bold text-xl md:text-2xl mb-4">Hypertube</h2>
-
           {/* <input name="csrfToken" type="hidden" defaultValue={csrfToken} /> */}
           <div className="mb-4">
             <FormInput
@@ -63,7 +73,6 @@ const login = ({ providers }) => {
             Login
           </Button>
         </form>
-
         <div className="flex items-center justify-center mb-2">
           <div className="text-xs sm:text-sm">
             Forgot Password?
@@ -74,7 +83,8 @@ const login = ({ providers }) => {
             </Link>
           </div>
         </div>
-        <hr />
+
+        <hr className="font-bold" />
 
         <div className="flex items-center justify-center mb-2">
           <div className="text-xs sm:text-sm">
@@ -84,7 +94,6 @@ const login = ({ providers }) => {
             </Link>
           </div>
         </div>
-
         <div className="items-center justify-center flex-wrap">
           {Object?.values(providers)
             .filter(provider => provider.id !== 'credentials')

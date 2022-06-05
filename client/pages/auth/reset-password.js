@@ -2,16 +2,12 @@
 import React, { useState } from 'react'
 import Router from 'next/router'
 import Link from 'next/link'
-import { getSession, signIn, getCsrfToken, getProviders } from 'next-auth/react'
-
-import { ToastContainer, toast } from 'react-toastify'
-import 'react-toastify/dist/ReactToastify.css'
 
 import FormInput from '../../components/FormInput'
 
-import api from '../../services/backend/user'
+import api from '../../services/backend/resetPassword'
 
-export default function resetPassword({ enabledProviders, csrfToken }) {
+export default function resetPassword() {
   const [password, setPassword] = useState('Odvhut93')
   const [passwordConfirmation, setPasswordConfirmation] = useState('Odvhut93')
   const [loading, setLoading] = useState(false)
@@ -33,24 +29,30 @@ export default function resetPassword({ enabledProviders, csrfToken }) {
       return
     }
 
+    // Password complexity check (uppercase, lowercase, number, special character)
+    // if (!password.match(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/)) {
+    //   setPasswordConfirmationError(
+    //     'Password must contain at least one uppercase, one lowercase, one number and one special character'
+    //   )
+    //   return
+    // OdvhutTanjin9
+    // }
+
     setLoading(true)
 
     try {
-      const signupResponse = await api.resetPassword(password)
-
-      if (signupResponse.message === 'User account created successfully') {
-        notify()
-      }
+      await api.resetPassword(password)
+      setLoading(false)
 
       Router.push('/auth/login')
     } catch (e) {
-      setError('An error occured while registering. Please try again.')
+      setError('Something went wrong. Please try again!')
     }
 
     setLoading(false)
   }
 
-  const disabled = password.length === 0 || passwordConfirmation.length === 0
+  // const disabled = password.length === 0 || passwordConfirmation.length === 0 // I will disable the button if the password is empty
 
   return (
     <div className="flex flex-col items-center justify-center  min-h-screen">
