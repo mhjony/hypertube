@@ -4,9 +4,6 @@ import Router from 'next/router'
 import Link from 'next/link'
 import { getSession, signIn, getCsrfToken, getProviders } from 'next-auth/react'
 
-import { ToastContainer, toast } from 'react-toastify'
-import 'react-toastify/dist/ReactToastify.css'
-
 import Button from '../../components/Button'
 import FormInput from '../../components/FormInput'
 
@@ -23,8 +20,6 @@ export default function Register({ enabledProviders, csrfToken }) {
   const [error, setError] = useState(null)
   const [passwordConfirmationError, setPasswordConfirmationError] = useState(null)
   const [isChecked, setIsChecked] = useState(false)
-
-  const notify = () => toast('Wow so easy!')
 
   const onSubmit = async event => {
     event.preventDefault()
@@ -47,7 +42,7 @@ export default function Register({ enabledProviders, csrfToken }) {
       const signupResponse = await api.signup(firstName, lastName, username, email, password)
 
       if (signupResponse.message === 'User account created successfully') {
-        notify()
+        
       }
 
       Router.push('/auth/login')
@@ -160,7 +155,6 @@ export default function Register({ enabledProviders, csrfToken }) {
 
       <div>
         {/* <button onClick={notify}>Notify!</button> */}
-        <ToastContainer />
       </div>
     </div>
   )
