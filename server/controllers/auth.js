@@ -14,22 +14,20 @@ const sendEmail = (email, token) => {
   const transporter = nodemailer.createTransport({
     service: "gmail",
     auth: {
-      // user: 'hive.web.branch',
-      // pass: 'hive.web.branch93'
-      //   type: 'OAuth2',
-      user: process.env.APP_EMAIL,
-      pass: process.env.APP_PASS,
-      //   clientId: appClientId,
-      //   clientSecret: appClientSecret,
-      //   refreshToken: appRefreshToken
+      type: 'OAuth2',
+      user: process.env.USER_EMAIL,
+      pass: process.env.USER_PASS,
+      clientId: process.env.CLIENT_ID,
+      clientSecret: process.env.CLIENT_SECRET,
+      refreshToken: process.env.REFRESH_TOKEN
     },
   });
   const mailOptions = {
-    from: "hive.web.branch@gmail.com",
     to: email,
     subject: "Activate Your Hypertube Account Now",
-    text: `Hello! Here is your account activation link. Please click the link to verify your account: http://localhost:8000/auth/registrationVerify?token=${token}`,
+    text: `Hello! Here is your account activation link. Please click the link to verify your account: http://localhost:8000/auth/registration-verify?token=${token}`,
   };
+  console.log('1');
   transporter.sendMail(mailOptions, function (error, info) {
     if (error) {
       console.log(error);
@@ -148,7 +146,7 @@ const register = async (req, res) => {
       "INSERT INTO users (first_name, last_name, user_name, email, password, token) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *",
       [first_name, last_name, user_name, email, bcryptPassword, jwtToken]
     );
-
+	sendEmail(email, jwtToken);
     res
       .status(200)
       .send({
@@ -165,7 +163,6 @@ const register = async (req, res) => {
     // TODO: Need to Fix the sendEmail import issue
     // If that's not working i will move the sendEmail method in this file
     //6. Finally send the email to verify the registration
-    // return res.json(sendEmail(email, jwtToken));
   } catch (err) {
     console.error(err.message);
     res.status(500).send("Server Error");
