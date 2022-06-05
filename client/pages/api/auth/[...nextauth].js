@@ -26,22 +26,20 @@ const providers = [
         provider: 'credentials'
       }
       try {
-        const user = await fetch('http://localhost:8000/auth/login', {
+        const backendJWT = await fetch('http://localhost:8000/auth/login', {
           method: 'post',
           headers: {
             'Content-Type': 'application/json'
           },
           body: JSON.stringify(body)
         })
-        const userJWTJson = await user.json()
-        console.log('*** userJWTJson *** ', userJWTJson)
+        const backendJWTJson = await backendJWT.json()
         return {
           provider: 'credentials',
           error: false,
-          ...userJWTJson
+          ...backendJWTJson
         }
       } catch (e) {
-        console.log('I am not able to make req::::', e)
         return {
           provider: 'credentials',
           error: true
@@ -72,8 +70,12 @@ const options = {
   },
   callbacks: {
     signIn: async ({ user, account }) => {
-      if (account.type === 'credentials') {
+      if (account.type === 'credentials' && user.accessToken) {
         return true
+      }
+
+      if (account.type === 'credentials' || user.error) {
+        return false
       }
 
       if (user?.error) {

@@ -15,8 +15,8 @@ const login = ({ providers }) => {
 
   const { error, success } = query
 
-  const [username, setUsername] = useState('tasmia')
-  const [password, setPassword] = useState('1234aA')
+  const [username, setUsername] = useState('testuser')
+  const [password, setPassword] = useState('aaaa11')
   const [loading, setLoading] = useState(false)
 
   const onSubmit = async event => {

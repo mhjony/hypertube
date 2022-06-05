@@ -75,15 +75,17 @@ const login = async (req, res) => {
       console.log("user from DB:----", user);
       //3. Check if user found or not
       if (!user) {
-        return res.status(500).json({
-          message:
-            "User Not Found. Please check your username and password and try again.",
-        });
+        return res
+          .status(500)
+          .send({
+            error:
+              "User Not Found. Please check your username and password and try again.",
+          })
+          .end();
       }
 
-      // Check if the password is correct or not
-      //4. if (!bcrypt.compareSync(password, user.password)) // FIXME: Need to fix bcyrpt
-      if (bcrypt.compareSync(password, user.password))
+      //4. Check if the password is correct or not
+      if (!bcrypt.compareSync(password, user.password))
         return res
           .status(401)
           .json({ message: "Incorrect password, please try again!" });
