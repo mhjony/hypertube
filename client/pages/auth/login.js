@@ -3,8 +3,6 @@ import { signIn, useSession, getProviders } from 'next-auth/react'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 
-import { ToastContainer, toast } from 'react-toastify'
-import 'react-toastify/dist/ReactToastify.css'
 
 import FormInput from '../../components/FormInput'
 import Button from '../../components/Button'
