@@ -42,6 +42,7 @@ export default function resetPassword() {
 
     try {
       await api.resetPassword(password)
+	  console.log(password);
       setLoading(false)
 
       Router.push('/auth/login')

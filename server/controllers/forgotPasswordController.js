@@ -80,7 +80,7 @@ const forgotPassword = async (req, res) => {
     ]);
 
     // If user does not exist in the db, then throw error
-    if (user.rows.length === 0) {
+    if (user.rows[0].length === 0) {
       return res
         .status(404)
         .json(
@@ -89,7 +89,7 @@ const forgotPassword = async (req, res) => {
     }
 
     // Check if account activated or not
-    if (user.rows.verified === 0) {
+    if (user.rows[0].verified === 0) {
       return res
         .status(426)
         .json("Account is not activated yet, please check your email!");
@@ -97,9 +97,16 @@ const forgotPassword = async (req, res) => {
 
     // Create new token to reset password
     const jwtToken = crypto.randomBytes(42).toString("hex");
+	console.log(jwtToken);
 
     // Update the token inside database with freshly generated token
-    await updateAccount(user.user_id, { token: jwtToken });
+	console.log(user.rows[0].user_id);
+    try {
+		let ret = await updateAccount(user.rows[0].user_id, { token: jwtToken });
+		console.log(ret);
+	} catch (e) {
+		console.log(e);
+	}
 
     // Send email to reset the password
     return res.json(resetEmail(email, jwtToken)); // Send email to reset the password
@@ -111,9 +118,11 @@ const forgotPassword = async (req, res) => {
 };
 
 const resetPassword = async (req, resp) => {
-  console.log("registrationVerify end-point Hit");
+  console.log("resetPassword end-point Hit");
   const { password } = req.body;
   const { token } = req.query;
+  console.log(req.body);
+  console.log(token);
 
   // Hash the password
   const saltRounds = 10;
