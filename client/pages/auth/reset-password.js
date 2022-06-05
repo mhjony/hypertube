@@ -8,8 +8,8 @@ import FormInput from '../../components/FormInput'
 import api from '../../services/backend/resetPassword'
 
 export default function resetPassword() {
-  const [password, setPassword] = useState('Odvhut93')
-  const [passwordConfirmation, setPasswordConfirmation] = useState('Odvhut93')
+  const [password, setPassword] = useState('')
+  const [passwordConfirmation, setPasswordConfirmation] = useState('')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
   const [passwordConfirmationError, setPasswordConfirmationError] = useState(null)
@@ -42,7 +42,7 @@ export default function resetPassword() {
 
     try {
       await api.resetPassword(password)
-	  console.log(password);
+      console.log(password)
       setLoading(false)
 
       Router.push('/auth/login')
