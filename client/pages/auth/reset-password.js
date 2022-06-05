@@ -1,6 +1,6 @@
 /* eslint-disable jsx-a11y/label-has-associated-control */
 import React, { useState } from 'react'
-import Router from 'next/router'
+import Router, { useRouter } from 'next/router'
 import Link from 'next/link'
 
 import FormInput from '../../components/FormInput'
@@ -13,6 +13,9 @@ export default function resetPassword() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
   const [passwordConfirmationError, setPasswordConfirmationError] = useState(null)
+
+  const router = useRouter()
+  const { token } = router.query
 
   const onSubmit = async event => {
     event.preventDefault()
@@ -30,18 +33,17 @@ export default function resetPassword() {
     }
 
     // Password complexity check (uppercase, lowercase, number, special character)
-    // if (!password.match(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/)) {
-    //   setPasswordConfirmationError(
-    //     'Password must contain at least one uppercase, one lowercase, one number and one special character'
-    //   )
-    //   return
-    // OdvhutTanjin9
-    // }
+    if (!password.match(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/)) {
+      setPasswordConfirmationError(
+        'Password must contain at least one uppercase, one lowercase, one number and one special character'
+      )
+      return
+    }
 
     setLoading(true)
 
     try {
-      await api.resetPassword(password)
+      await api.resetPassword(password, token)
       console.log(password)
       setLoading(false)
 

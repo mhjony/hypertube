@@ -1,4 +1,3 @@
-// require("dotenv").config();
 import dotenv from "dotenv";
 import pool from "../config/database.js";
 // import generateToken from "../utils/generateToken";
@@ -97,16 +96,16 @@ const forgotPassword = async (req, res) => {
 
     // Create new token to reset password
     const jwtToken = crypto.randomBytes(42).toString("hex");
-	console.log(jwtToken);
+    console.log(jwtToken);
 
     // Update the token inside database with freshly generated token
-	console.log(user.rows[0].user_id);
+    console.log(user.rows[0].user_id);
     try {
-		let ret = await updateAccount(user.rows[0].user_id, { token: jwtToken });
-		console.log(ret);
-	} catch (e) {
-		console.log(e);
-	}
+      let ret = await updateAccount(user.rows[0].user_id, { token: jwtToken });
+      console.log(ret);
+    } catch (e) {
+      console.log(e);
+    }
 
     // Send email to reset the password
     return res.json(resetEmail(email, jwtToken)); // Send email to reset the password
@@ -119,10 +118,7 @@ const forgotPassword = async (req, res) => {
 
 const resetPassword = async (req, resp) => {
   console.log("resetPassword end-point Hit");
-  const { password } = req.body;
-  const { token } = req.query;
-  console.log(req.body);
-  console.log(token);
+  const { password, token } = req.body;
 
   // Hash the password
   const saltRounds = 10;
