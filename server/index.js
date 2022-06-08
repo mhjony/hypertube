@@ -5,6 +5,8 @@ import chalk from "chalk";
 // Import the routes
 import authRoutes from "./routes/auth.js";
 import forgotPasswordRoute from "./routes/forgotPassword.js";
+import movieRoutes from "./routes/movie.js";
+
 
 const port = process.env.APP_BACKEND_PORT || 8000;
 
@@ -23,6 +25,7 @@ app.use(express.json());
 // Use imported routes
 app.use("/auth", authRoutes);
 app.use("/auth", forgotPasswordRoute);
+app.use("/movie", movieRoutes);
 
 app.listen(port, () => {
   console.info(
