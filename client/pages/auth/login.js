@@ -30,15 +30,10 @@ const login = ({ providers }) => {
   return (
     <div className="flex flex-col items-center justify-center min-h-screen w-full">
       <div className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4 flex flex-col">
-        <div className="flex justify-between p-4 bg-gray-100">
+        <div className="flex justify-between p-4">
           <div>
             <Link href="/auth/login">
-              <a className="text-xl font-bold">HyperTube</a>
-            </Link>
-          </div>
-          <div>
-            <Link href="/auth/register">
-              <a className="text-xl font-bold">Register</a>
+              <a className="text-xl font-bold text-center">HyperTube</a>
             </Link>
           </div>
         </div>
