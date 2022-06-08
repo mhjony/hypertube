@@ -3,7 +3,6 @@ import { signIn, useSession, getProviders } from 'next-auth/react'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 
-
 import FormInput from '../../components/FormInput'
 import Button from '../../components/Button'
 
@@ -47,7 +46,6 @@ const login = ({ providers }) => {
           {/* <input name="csrfToken" type="hidden" defaultValue={csrfToken} /> */}
           <div className="mb-4">
             <FormInput
-              label="Username"
               placeholder="Username"
               onChange={setUsername}
               value={username}
@@ -57,7 +55,6 @@ const login = ({ providers }) => {
 
           <div className="mb-4">
             <FormInput
-              label="Password"
               placeholder="Password"
               onChange={setPassword}
               value={password}
@@ -67,31 +64,18 @@ const login = ({ providers }) => {
             {showSuccess && <p className="text-green-600 text-sm mt-2 mb-2">{t(success)}</p>}
           </div>
 
-          <Button loading={loading} onClick={onSubmit} disabled={hasEmptyField} className="w-full">
+          <button
+            className="bg-red-400 hover:bg-red-600 text-white font-bold py-2 px-4 rounded w-full"
+            onClick={onSubmit}
+          >
             Login
-          </Button>
+          </button>
         </form>
-        <div className="flex items-center justify-center mb-2">
-          <div className="text-xs sm:text-sm">
-            Forgot Password?
-            <Link href="/auth/forgot-password">
-              <a className="font-bold border-b-2 border-solid border-gray-300">
-                Forgotten your password?
-              </a>
-            </Link>
-          </div>
+
+        <div className="flex items-center my-4 before:flex-1 before:border-t before:border-gray-300 before:mt-0.5 after:flex-1 after:border-t after:border-gray-300 after:mt-0.5">
+          <p className="text-center font-semibold mx-4 mb-0">Or</p>
         </div>
 
-        <hr className="font-bold" />
-
-        <div className="flex items-center justify-center mb-2">
-          <div className="text-xs sm:text-sm">
-            Don't have an account?
-            <Link href="/auth/register">
-              <a className="font-bold border-b-2 border-solid border-gray-300">Create an account</a>
-            </Link>
-          </div>
-        </div>
         <div className="items-center justify-center flex-wrap">
           {Object?.values(providers)
             .filter(provider => provider.id !== 'credentials')
@@ -112,6 +96,23 @@ const login = ({ providers }) => {
               </div>
             ))}
         </div>
+
+        <div className="flex items-center justify-center mb-2">
+          <div className="text-xs sm:text-sm">
+            <Link href="/auth/forgot-password">
+              <a className="font-bold border-b-2 border-solid border-gray-300">
+                Forgotten your password?
+              </a>
+            </Link>
+          </div>
+        </div>
+
+        <button className="flex items-center justify-center mb-2 mt-8 bg-red-400 hover:bg-red-600 text-white font-bold py-2 px-4 rounded w-full">
+          Don't have an account?
+          <Link href="/auth/register">
+            <a className="font-bold border-b-2 border-solid border-gray-300"> Sign up</a>
+          </Link>
+        </button>
       </div>
       <style jsx>{`
         .auth-logo {
