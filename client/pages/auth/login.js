@@ -4,7 +4,6 @@ import Link from 'next/link'
 import { useRouter } from 'next/router'
 
 import FormInput from '../../components/FormInput'
-import Button from '../../components/Button'
 
 const login = ({ providers }) => {
   const { query } = useRouter()
