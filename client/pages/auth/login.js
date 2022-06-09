@@ -1,11 +1,11 @@
 import React, { useState } from 'react'
-import { signIn, useSession, getProviders } from 'next-auth/react'
+import { signIn, useSession, getProviders, getCsrfToken } from 'next-auth/react'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 
 import FormInput from '../../components/FormInput'
 
-const login = ({ providers }) => {
+const login = ({ providers, csrfToken }) => {
   const { query } = useRouter()
   const { data: session } = useSession()
 
@@ -27,19 +27,20 @@ const login = ({ providers }) => {
   const hasEmptyField = username.length === 0 || password.length === 0
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen w-full">
-      <div className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4 flex flex-col">
-        <div className="flex justify-between p-4">
-          <div>
-            <Link href="/auth/login">
-              <a className="text-xl font-bold text-center">HyperTube</a>
-            </Link>
-          </div>
+    <div className="flex flex-col items-center justify-center min-h-screen w-full  bg-gradient-to-r from-red-400 to-red-800">
+      <div className="shadow-lg rounded-lg bg-white border-0 px-14 pt-6 pb-8 mb-4 flex flex-col">
+        <div>
+          <Link href="/auth/login">
+            <a className="text-xl font-bold text-center">HyperTube</a>
+          </Link>
         </div>
-        <form onSubmit={onSubmit} className="mb-6 md:mb-8">
-          {/* <input name="csrfToken" type="hidden" defaultValue={csrfToken} /> */}
+
+        <form onSubmit={onSubmit} className="mb-2 md:mb-4 pt-6">
+          <input name="csrfToken" type="hidden" defaultValue={csrfToken} />
+
           <div className="mb-4">
             <FormInput
+              label="username"
               placeholder="Username"
               onChange={setUsername}
               value={username}
@@ -49,6 +50,7 @@ const login = ({ providers }) => {
 
           <div className="mb-4">
             <FormInput
+              label="password"
               placeholder="Password"
               onChange={setPassword}
               value={password}
@@ -59,7 +61,7 @@ const login = ({ providers }) => {
           </div>
 
           <button
-            className="bg-red-400 hover:bg-red-600 text-white font-bold py-2 px-4 rounded w-full"
+            className="bg-gradient-to-r from-red-400 to-red-800 hover:bg-red-600 text-white font-bold py-2 px-4 rounded w-full"
             onClick={onSubmit}
           >
             Login
@@ -76,7 +78,7 @@ const login = ({ providers }) => {
             .map(provider => (
               <div
                 key={provider.name}
-                className="flex items-center justify-center border-2 border-red-500 m-2 rounded-md hover:bg-red-300"
+                className="flex items-center justify-center border-2 border-red-500 m-2 rounded-md"
               >
                 <img src={`/logo-${provider.id}.png`} alt={provider.name} className="auth-logo" />
 
@@ -91,7 +93,7 @@ const login = ({ providers }) => {
             ))}
         </div>
 
-        <div className="flex items-center justify-center mb-2">
+        <div className="flex items-center justify-center mt-4">
           <div className="text-xs sm:text-sm">
             <Link href="/auth/forgot-password">
               <a className="font-bold border-b-2 border-solid border-gray-300">
@@ -101,12 +103,19 @@ const login = ({ providers }) => {
           </div>
         </div>
 
-        <button className="flex items-center justify-center mb-2 mt-8 bg-red-400 hover:bg-red-600 text-white font-bold py-2 px-4 rounded w-full">
+        {/* <button className="bg-gradient-to-r from-red-400 to-red-800 hover:bg-red-600 text-white font-bold py-2 px-4 rounded w-full">
           Don't have an account?
           <Link href="/auth/register">
             <a className="font-bold border-b-2 border-solid border-gray-300"> Sign up</a>
           </Link>
-        </button>
+        </button> */}
+
+        <div className="py-2 px-4 rounded w-full">
+          Don't have an account?
+          <Link href="/auth/register">
+            <a className=""> Sign up</a>
+          </Link>
+        </div>
       </div>
       <style jsx>{`
         .auth-logo {
@@ -125,9 +134,8 @@ export default login
 
 export async function getServerSideProps() {
   const providers = await getProviders()
-  // const csrfToken = await getCsrfToken()
+  const csrfToken = await getCsrfToken()
   return {
-    // props: { providers, csrfToken }
-    props: { providers }
+    props: { providers, csrfToken }
   }
 }
