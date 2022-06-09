@@ -28,21 +28,16 @@ const profileUpdate = async (req, res) => {
   console.log("profileUpdate end-point Hit", req.body);
 
   try {
-    const { email, newEmail, user_name, first_name, last_name } = req.body;
+    const { user_id, email, user_name, first_name, last_name } = req.body;
 
-    // let avatar = null;
-    // if (req.file) {
-    //   avatar = req.file.filename;
-    // }
-
-    // Check if user entered any email or not
-    if (!email) {
-      return res.status(400).json("Field can not be empty");
+    // Check if user entered any info or not
+    if (!email && !user_name && !first_name && !last_name) {
+      return res.status(400).json("Fields can not be empty");
     }
 
     //1. check if user exists in the db (if not exists, then throw error)
-    const user = await pool.query("SELECT * FROM users WHERE email = $1", [
-      email,
+    const user = await pool.query("SELECT * FROM users WHERE user_id = $1", [
+      user_id,
     ]);
 
     //2. Check if user found
@@ -58,7 +53,7 @@ const profileUpdate = async (req, res) => {
 
     //4. Update the user table inside database with new information
     const updatedProfile = await updateAccount(user.rows[0].user_id, {
-      email: newEmail,
+      email,
       user_name,
       first_name,
       last_name,
@@ -73,6 +68,37 @@ const profileUpdate = async (req, res) => {
   }
 };
 
+/*
+// https://stackabuse.com/handling-file-uploads-in-node-js-with-expres-and-multer/
+const profilePictureUpload = async (req, res) => {
+  console.log("profilePictureUpload end-point Hit", req.body);
+
+  // 'profile_pic' is the name of our file input field in the HTML form
+  let upload = multer({
+    storage: storage,
+    fileFilter: helpers.imageFilter,
+  }).single("profile_pic");
+
+  // req.file contains information of uploaded file
+  // req.body contains information of text fields, if there were any
+  if (req.fileValidationError) {
+    return res.send(req.fileValidationError);
+  } else if (!req.file) {
+    return res.send("Please select an image to upload");
+  } else if (err instanceof multer.MulterError) {
+    return res.send(err);
+  } else if (err) {
+    return res.send(err);
+  }
+
+  // Display uploaded image for user validation
+  res.send(
+    `You have uploaded this image: <hr/><img src="${req.file.path}" width="500"><hr /><a href="./">Upload another image</a>`
+  );
+};
+*/
+
 export default {
   profileUpdate,
+  // profilePictureUpload,
 };

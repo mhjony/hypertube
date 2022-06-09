@@ -18,6 +18,10 @@ app.use(cors());
 // parse application/x-www-form-urlencoded: Parse URL-encoded bodies
 app.use(express.urlencoded({ extended: true }));
 
+// to be able to serve image from a static source
+// app.use(express.static(__dirname + "/public"));
+// app.use("/uploads", express.static(__dirname + "/uploads"));
+
 // parse application/json
 app.use(express.json());
 
