@@ -15,29 +15,27 @@ const buildMovieList = async (filters) => {
     order_by: filters.order_by,
     query_term: filters.search || '',*/
   };
-  console.log('In buildMovieList.');
+  //onsole.log('In buildMovieList.');
   try {
     let res = await axios.get(`${process.env.TORRENT_API}`, { params });
     const moviesData = res.data.data;
     const movieList = res.data.data.movies;
-    console.log('Response: ');
-    console.log(res);
+    console.log('Movie list: ');
+    console.log(movieList);
 
     if (moviesData.movie_count === 0) {
       console.log('Error, no movies found!');//throw notFoundError();
     }
     if (moviesData.movie_count <= params.limit * params.page) {
       hasMore = false;
-      console.log('1');
     }
     if (movieList) {
-      console.log('2');
-      /*await Promise.all(
+      await Promise.all(
         movieList.map(async (movie) => {
-          res = await axios.get(`http://www.omdbapi.com/?i=${movie.imdb_code}&apikey=${OMDB_KEY}`);
-          movie.thumbnail = res.data.Poster; // eslint-disable-line no-param-reassign
+          res = await axios.get(`http://www.omdbapi.com/?i=${movie.imdb_code}&apikey=${process.env.OMDB_KEY}`);
+		  movie.thumbnail = res.data.Poster; // eslint-disable-line no-param-reassign
         }),
-      );*/
+      );
       movies = movieList//.map((movie) => filteredMovieData(movie));
     }
   } catch (e) {
