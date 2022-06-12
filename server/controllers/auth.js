@@ -45,11 +45,11 @@ const findUserInfoFromDB = async (key, value, ...args) => {
 
 // Function to generate token
 const generateToken = (user) => {
-  console.log("Generating token.");
   delete user.password;
   // payload is user in this case
+  // const token = jwt.sign(user, process.env.JWT_SECRET, { expiresIn: 86400 });
   const token = jwt.sign(user, "dfasdfhjsadhfkja34343", { expiresIn: 86400 });
-  console.log(token);
+  console.log("generateToken Function", token);
   return { ...{ user }, ...{ token } };
 };
 
