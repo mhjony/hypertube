@@ -15,6 +15,7 @@
   */
 
 import axios from "axios";
+import movieUtils from '../utils/movie.js';
 
 
 // @route   GET /movie-search
@@ -31,6 +32,31 @@ const movieSearch = async (req, res) => {
         .send(ret.data);
 };
 
+// @route   GET /get-movie-list
+// @desc    return movie list
+// @access  Public
+const getMovieList = async (req, res) => {
+  //const userId = req.user;
+  //const filters = req.query;
+  const filters = {
+    page: 1,
+    minimum_rating: 0,
+    /*genre: filters.genre,
+    sort_by: filters.sort_by,
+    order_by: filters.order_by,
+    query_term: filters.search || '',*/
+  }
+  const movies = await movieUtils.buildMovieList(filters);
+  //const user = await User.findById(userId);
+
+  /*movies.movies = movies.movies.map((movie) => {
+    const tempMovie = { ...movie };
+    tempMovie.watched = user.watched.some((elem) => elem.movieId === movie.imdbCode);
+    return tempMovie;
+  });*/
+  res.json(movies);
+};
+
 export default {
-  movieSearch,
+  getMovieList,
 };
