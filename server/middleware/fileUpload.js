@@ -6,7 +6,7 @@ import multer from "multer";
 import fs from "fs";
 import path from "path";
 
-exports.userFile = ((req, res, next) => {
+const userFile = ((req, res, next) => {
   // All the helper functions
 
   const getFileType = (file) => {
@@ -39,11 +39,11 @@ exports.userFile = ((req, res, next) => {
   const storage = multer.diskStorage({
     destination: function (req, file, cb) {
       console.log(`Request body in image saver: `);
-      console.log(req.body);
-      const id = req.user.user_id;
-      console.log(`id: ${id}`);
+      console.log("BODY", req.body.user_id);
+      const id = req.body.user_id;
+
       console.log(`User in image saver: `);
-      console.log(req.user);
+      console.log(req.body);
       const dest = `uploads/user/${id}`;
 
       fs.access(dest, (error) => {
@@ -70,5 +70,7 @@ exports.userFile = ((req, res, next) => {
     },
     filename: generateFileName,
   });
-  return multer({ storage, fileFilter }).single("uploadAvatar");
+  return multer({ storage, fileFilter }).single("avatar");
 })();
+
+export default userFile;

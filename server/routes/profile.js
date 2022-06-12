@@ -1,19 +1,17 @@
 import express from "express";
 import profileController from "../controllers/profile.js";
 
-// import fileUpload from "../middleware/fileUpload";
-// import auth from "../middleware/auth";
+import validate from "../validators/index.js";
+import fileUpload from "../middleware/fileUpload.js";
+import auth from "../middleware/auth.js";
 
 const router = express.Router();
 
-// This will be the final version after adding the middleware validation rules!
-// This is super important!
-// router.post(
-//   "/update",
-//   [auth, fileUpload, updateRules, validate],
-//   profileUpdate
-// );
-
-router.post("/update", profileController.profileUpdate);
+router.post(
+  "/update",
+  // [auth, validate, fileUpload],
+  [validate, fileUpload],
+  profileController.profileUpdate
+);
 
 export default router;
