@@ -1,5 +1,6 @@
 import dotenv from "dotenv";
 import pool from "../config/database.js";
+import validator from "validator";
 
 // Helper Function to update the user data
 const updateAccount = async (user_id, data) => {
@@ -24,6 +25,10 @@ const profileUpdate = async (req, res) => {
 
   try {
     const { user_id, email, user_name, first_name, last_name } = req.body;
+
+    if (!validator.isEmail(email)) {
+      return res.status(400).json("Invalid Email");
+    }
 
     // get the uploaded picture data
     let avatar = null;

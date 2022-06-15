@@ -1,6 +1,7 @@
 const API = 'http://localhost:8000'
 
-const updateProfile = async (user_id, email, newEmail, user_name, first_name, last_name) => {
+// const updateProfile = async (user_id, email, newEmail, user_name, first_name, last_name) => {
+const updateProfile = async (user_id, email, user_name, first_name, last_name, avatar) => {
   console.log('I am updateProfile SERVICE 02')
 
   const res = await fetch(`${API}/profile/update`, {
@@ -11,11 +12,11 @@ const updateProfile = async (user_id, email, newEmail, user_name, first_name, la
     body: JSON.stringify({
       user_id,
       email: decodeURIComponent(email),
-      newEmail: decodeURIComponent(newEmail),
       first_name,
       last_name,
       user_name,
-      email
+      email,
+      avatar
     })
   })
   console.log('I am updateProfile SERVICE 03')

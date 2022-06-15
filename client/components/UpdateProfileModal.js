@@ -6,41 +6,56 @@ import FormInput from './FormInput'
 
 import apiUpdateProfile from '../services/backend/updateProfile'
 
-const InternalNotesModal = () => {
+const UpdateProfileModal = ({ userInfo }) => {
   const { data: session } = useSession()
 
-  const userInfo = session?.user
-  console.log('asd userInfo', userInfo)
+  // const userInfo = session?.user
+  console.log('asd UpdateProfileModal userInfo', userInfo)
 
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [loading, setLoading] = useState(false)
-  // const [firstname, setFirstname] = useState(userInfo?.first_name)
-  // const [lastname, setLastname] = useState(userInfo?.last_name)
-  // const [username, setUsername] = useState(userInfo?.user_name)
-  // const [email, setEmail] = useState(userInfo?.email)
+  const [firstname, setFirstname] = useState(userInfo?.first_name)
+  const [lastname, setLastname] = useState(userInfo?.last_name)
+  const [username, setUsername] = useState(userInfo?.user_name)
+  const [email, setEmail] = useState(userInfo?.email)
 
-  const [firstname, setFirstname] = useState('')
-  const [lastname, setLastname] = useState('')
-  const [username, setUsername] = useState('')
-  const [email, setEmail] = useState('')
+  // const [firstname, setFirstname] = useState('')
+  // const [lastname, setLastname] = useState('')
+  // const [username, setUsername] = useState('')
+  // const [email, setEmail] = useState('')
+  const [avatar, setAvatar] = useState('')
 
   const user_id = session?.user.user_id
-  const newEmail = 'hivehelsinki@gmail.com'
 
-  const handleProfileUpdate = async () => {
+  const handleProfileUpdate = async e => {
+    // e.preventDefaut()
     try {
-      console.log('I am handleProfileUpdate 01')
+      console.log('asd I am handleProfileUpdate 01')
       setLoading(true)
 
+      // const form = { user_id, email, firstname, lastname, username, email, avatar }
+
+      // const formData = new FormData()
+
+      // for (const key in form) {
+      //   console.log('asd formData 01', key)
+      //   formData.append(key, form[key])
+      // }
+
+      // console.log('asd formData', formData)
+      // console.log('asd form', form)
+
+      // await apiUpdateProfile.updateProfile(formData)
       await apiUpdateProfile.updateProfile(
         user_id,
         email,
-        newEmail,
         firstname,
         lastname,
         username,
-        email
+        email,
+        avatar
       )
+
       console.log('I am handleProfileUpdate 04')
 
       setIsModalOpen(false)
@@ -102,6 +117,21 @@ const InternalNotesModal = () => {
                   autocomplete="Email"
                 />
               </div>
+
+              <label htmlFor="avatar">Upload Avatar</label>
+              <div className="mb-4">
+                <input onChange={e => setAvatar(e.target.files[0])} type="file" accept="image/*" />
+              </div>
+
+              {/* <FormInput
+                  type="file"
+                  label="profilePicture"
+                  placeholder="ProfilePicture"
+                  onChange={setProfilePicture}
+                  value={profilePicture}
+                  autocomplete="profilePicture"
+                  accept="image/*"
+                /> */}
             </form>
 
             <button
@@ -117,4 +147,4 @@ const InternalNotesModal = () => {
   )
 }
 
-export default InternalNotesModal
+export default UpdateProfileModal
