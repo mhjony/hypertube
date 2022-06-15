@@ -9,7 +9,7 @@ const buildMovieList = async (filters) => {
   const params = {
     limit: 20,
     page: filters.page || 1,
-    /*minimum_rating: filters.imdb || 0,
+    /*minimum_rating: filters.rating || 0,
     genre: filters.genre,
     sort_by: filters.sort_by,
     order_by: filters.order_by,
@@ -36,7 +36,7 @@ const buildMovieList = async (filters) => {
 		  movie.thumbnail = res.data.Poster; // eslint-disable-line no-param-reassign
         }),
       );
-      movies = movieList//.map((movie) => filteredMovieData(movie));
+      movies = movieList//.map((movie) => filterMovieData(movie));
     }
   } catch (e) {
     return { movies: [], hasMore: false, e };
