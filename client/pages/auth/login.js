@@ -11,7 +11,7 @@ const login = ({ providers, csrfToken }) => {
 
   const { error, success } = query
 
-  const [username, setUsername] = useState('adminuser')
+  const [username, setUsername] = useState('admin')
   const [password, setPassword] = useState('aaaa11')
   const [loading, setLoading] = useState(false)
 

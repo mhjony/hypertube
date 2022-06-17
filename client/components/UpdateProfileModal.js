@@ -5,12 +5,12 @@ import Modal from './Modal'
 import FormInput from './FormInput'
 
 import apiUpdateProfile from '../services/backend/updateProfile'
+import ImageUpload from './ImageUpload'
 
-const UpdateProfileModal = ({ userInfo }) => {
+const UpdateProfileModal = () => {
   const { data: session } = useSession()
 
-  // const userInfo = session?.user
-  console.log('asd UpdateProfileModal userInfo', userInfo)
+  const userInfo = session?.user
 
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [loading, setLoading] = useState(false)
@@ -18,45 +18,15 @@ const UpdateProfileModal = ({ userInfo }) => {
   const [lastname, setLastname] = useState(userInfo?.last_name)
   const [username, setUsername] = useState(userInfo?.user_name)
   const [email, setEmail] = useState(userInfo?.email)
-
-  // const [firstname, setFirstname] = useState('')
-  // const [lastname, setLastname] = useState('')
-  // const [username, setUsername] = useState('')
-  // const [email, setEmail] = useState('')
-  const [avatar, setAvatar] = useState('')
+  const [avatar, setAvatar] = useState(userInfo?.avatar)
 
   const user_id = session?.user.user_id
 
-  const handleProfileUpdate = async e => {
-    // e.preventDefaut()
+  const handleProfileUpdate = async () => {
     try {
-      console.log('asd I am handleProfileUpdate 01')
       setLoading(true)
 
-      // const form = { user_id, email, firstname, lastname, username, email, avatar }
-
-      // const formData = new FormData()
-
-      // for (const key in form) {
-      //   console.log('asd formData 01', key)
-      //   formData.append(key, form[key])
-      // }
-
-      // console.log('asd formData', formData)
-      // console.log('asd form', form)
-
-      // await apiUpdateProfile.updateProfile(formData)
-      await apiUpdateProfile.updateProfile(
-        user_id,
-        email,
-        firstname,
-        lastname,
-        username,
-        email,
-        avatar
-      )
-
-      console.log('I am handleProfileUpdate 04')
+      await apiUpdateProfile.updateProfile(user_id, email, username, firstname, lastname, email)
 
       setIsModalOpen(false)
       setLoading(false)
@@ -117,29 +87,18 @@ const UpdateProfileModal = ({ userInfo }) => {
                   autocomplete="Email"
                 />
               </div>
-
-              <label htmlFor="avatar">Upload Avatar</label>
-              <div className="mb-4">
-                <input onChange={e => setAvatar(e.target.files[0])} type="file" accept="image/*" />
-              </div>
-
-              {/* <FormInput
-                  type="file"
-                  label="profilePicture"
-                  placeholder="ProfilePicture"
-                  onChange={setProfilePicture}
-                  value={profilePicture}
-                  autocomplete="profilePicture"
-                  accept="image/*"
-                /> */}
             </form>
 
             <button
               className="bg-red-400 hover:bg-red-600 text-white font-bold py-2 px-4 rounded w-full"
               onClick={handleProfileUpdate}
             >
-              Update
+              Update Profile Info
             </button>
+
+            <div className="mt-8">
+              <ImageUpload user_id={user_id} />
+            </div>
           </Modal>
         )}
       </div>
