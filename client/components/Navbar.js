@@ -1,9 +1,17 @@
-/*  ./components/Navbar.jsx     */
 import Link from 'next/link'
+
 import { useState } from 'react'
+import { signOut } from 'next-auth/react'
+import { useSession } from 'next-auth/react'
+import Router from 'next/router'
+
+import UpdateProfileModal from './UpdateProfileModal'
 
 const Navbar = () => {
   const [active, setActive] = useState(false)
+  const { data: session } = useSession()
+
+  const userInfo = session?.user
 
   const handleClick = () => {
     setActive(!active)
@@ -49,16 +57,38 @@ const Navbar = () => {
         {/*Note that in this div we will use a ternary operator to decide whether or not to display the content of the div  */}
         <div className={`${active ? '' : 'hidden'}   w-full lg:inline-flex lg:flex-grow lg:w-auto`}>
           <div className="lg:inline-flex lg:flex-row lg:ml-auto lg:w-auto w-full lg:items-center items-start  flex flex-col lg:h-auto">
-            <Link href="/profile">
-              <a className="lg:inline-flex lg:w-auto w-full px-3 py-2 rounded text-white font-bold items-center justify-center hover:bg-green-600 hover:text-white ">
-                Profile
-              </a>
-            </Link>
-            <Link href="/auth/login">
+            <UpdateProfileModal />
+            {/* <UpdateProfileModal userInfo={userInfo} /> */}
+            {/* <Link href="/auth/login">
               <a className="lg:inline-flex lg:w-auto w-full px-3 py-2 rounded text-white font-bold items-center justify-center hover:bg-green-600 hover:text-white">
-                Logout
+                LogOut
               </a>
-            </Link>
+            </Link> */}
+
+            {session ? (
+              <div className="">
+                {/* <div className="flex justify-center items-center gap-x-2 rounded-md bg-red-200 p-2"> */}
+                {/* <div>
+                  <h2 className="text-sm font-bold break-word">{session?.user?.user_name}</h2>
+                  <div className="text-sm text-gray-600 mb-2">{session?.user?.email}</div>
+                </div> */}
+
+                <button
+                  className="lg:inline-flex lg:w-auto w-full px-3 py-2 rounded text-white font-bold items-center justify-center hover:bg-red-200 hover:text-black"
+                  onClick={() => signOut()}
+                  type="button"
+                >
+                  LogOut
+                </button>
+              </div>
+            ) : (
+              // Router.push('/auth/login')
+              <Link href="/auth/login">
+                <a className="lg:inline-flex lg:w-auto w-full px-3 py-2 rounded text-white font-bold items-center justify-center hover:bg-green-600 hover:text-white">
+                  LogIn
+                </a>
+              </Link>
+            )}
           </div>
         </div>
       </nav>
