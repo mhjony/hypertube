@@ -1,5 +1,6 @@
 import Head from 'next/head'
 import Navbar from '../components/Navbar'
+import MovieSearch from '../components/movieSearch'
 // import Layout from '../components/Layout'
 import styles from '../styles/Home.module.css'
 
@@ -19,6 +20,7 @@ export default function Home() {
 
         <p className={styles.description}>This is the Main section</p>
         {/* <Body /> */}
+				<MovieSearch/>
 
         <div className={styles.grid}></div>
       </main>
