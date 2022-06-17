@@ -17,6 +17,7 @@ CREATE TABLE users (
 	movies_watched VARCHAR(255)[] DEFAULT '{}',
 	language VARCHAR(255),
 	verified SMALLINT NOT NULL DEFAULT 0
+	avatar varchar(255) DEFAULT NULL
 );
 
 -- Create the movies table

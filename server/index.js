@@ -6,7 +6,7 @@ import chalk from "chalk";
 import authRoutes from "./routes/auth.js";
 import forgotPasswordRoute from "./routes/forgotPassword.js";
 import movieRoutes from "./routes/movie.js";
-
+import profileRoute from "./routes/profile.js";
 
 const port = process.env.APP_BACKEND_PORT || 8000;
 
@@ -19,6 +19,10 @@ app.use(cors());
 // parse application/x-www-form-urlencoded: Parse URL-encoded bodies
 app.use(express.urlencoded({ extended: true }));
 
+// to be able to serve image from a static source
+// app.use(express.static(__dirname + "/public"));
+// app.use("/uploads", express.static(__dirname + "/uploads"));
+
 // parse application/json
 app.use(express.json());
 
@@ -26,6 +30,7 @@ app.use(express.json());
 app.use("/auth", authRoutes);
 app.use("/auth", forgotPasswordRoute);
 app.use("/movie", movieRoutes);
+app.use("/profile", profileRoute);
 
 app.listen(port, () => {
   console.info(
