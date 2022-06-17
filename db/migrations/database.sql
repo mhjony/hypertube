@@ -15,7 +15,7 @@ CREATE TABLE users (
 	password VARCHAR(255) NOT NULL,
 	token varchar(255) DEFAULT NULL,
 	movies_watched VARCHAR(255)[] DEFAULT '{}',
-	language VARCHAR(255) NOT NULL,
+	language VARCHAR(255),
 	verified SMALLINT NOT NULL DEFAULT 0
 );
 
@@ -28,18 +28,17 @@ CREATE TABLE movies (
 	size INT DEFAULT 0,
 	server_location VARCHAR(255) DEFAULT NULL,
 	downloaded SMALLINT NOT NULL DEFAULT 0,
-	subtitle_paths VARCHAR(255)[] '{}',
+	subtitle_paths VARCHAR(255)[] DEFAULT '{}',
 	magnet VARCHAR(255) NOT NULL
 );
 
 -- Create the comments table
 CREATE TABLE comments (
 	id uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
-	CONSTRAINT fk_user_id
-      FOREIGN KEY(user_id) 
-	  REFERENCES users(user_id)
+	user_id uuid NOT NULL,
+	CONSTRAINT fk_user_id FOREIGN KEY(user_id) REFERENCES users(user_id),
 	comment_body VARCHAR(255) NOT NULL,
-	created_at timestamp DEFAULT CURRENT_TIMESTAMP()
+	created_at timestamp DEFAULT CURRENT_TIMESTAMP
 );
 
 -- Insert predifined users for admin to use
