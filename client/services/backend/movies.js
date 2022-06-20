@@ -2,7 +2,8 @@
 
 const API = 'http://localhost:8000'
 
-const getMoviesList = async() => {
+const getMoviesList = async () => {
+  console.log('I am in getMoviesList Service')
   const res = await fetch(`${API}/movie/get-movie-list`, {
     method: 'get',
     headers: {
@@ -10,8 +11,9 @@ const getMoviesList = async() => {
     }
   })
 
-	const data = await res.json();
-	return data;
+  const data = await res.json()
+  console.log('I am the movie data', data)
+  return data
 }
 
 export default {

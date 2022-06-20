@@ -1,4 +1,4 @@
-  /*
+/*
   Fields for movie DB:
   imbd rating: float
   year: int
@@ -15,8 +15,7 @@
   */
 
 import axios from "axios";
-import movieUtils from '../utils/movie.js';
-
+import movieUtils from "../utils/movie.js";
 
 // @route   GET /movie-search
 // @desc    return movie search results
@@ -25,11 +24,12 @@ const movieSearch = async (req, res) => {
   console.log("movie-search end-point Hit");
   const { string } = req.query;
 
-  const ret = await axios.get(`http://www.omdbapi.com/?t=${string}&apikey=${process.env.OMDB_KEY}`);
-  console.log('Ret:');
+  const ret = await axios.get(
+    `http://www.omdbapi.com/?t=${string}&apikey=${process.env.OMDB_KEY}`
+  );
+  console.log("Ret:");
   console.log(ret);
-  return res
-        .send(ret.data);
+  return res.send(ret.data);
 };
 
 // @route   GET /get-movie-list
@@ -45,7 +45,7 @@ const getMovieList = async (req, res) => {
     sort_by: filters.sort_by,
     order_by: filters.order_by,
     query_term: filters.search || '',*/
-  }
+  };
   const movies = await movieUtils.buildMovieList(filters);
   //const user = await User.findById(userId);
 

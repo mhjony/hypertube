@@ -1,18 +1,21 @@
 import React, { useEffect, useState } from 'react'
-import { signIn, useSession, getProviders } from 'next-auth/react'
-import Link from 'next/link'
-import { useRouter } from 'next/router'
+import Image from 'next/image'
+import dynamic from 'next/dynamic'
+
 import api from '../services/backend/movies'
 
+import SearchAndFilter from './SearchAndFilter'
+
 const MovieSearch = () => {
-	const [movies, setMovies] = useState([])
-	const getAffiliateData = async () => {
+  const [movies, setMovies] = useState([])
+
+  const getAffiliateData = async () => {
     setLoading(true)
-    
+
     setLoading(false)
   }
-	const getMovies = async() => {
-		try {
+  const getMovies = async () => {
+    try {
       const res = await api.getMoviesList()
       if (res.error) {
         throw new Error(res.error)
@@ -22,25 +25,17 @@ const MovieSearch = () => {
     } catch (err) {
       console.log(err)
     }
-	}
+  }
 
-	useEffect(() => {
-			getMovies();
-		}, [])
-	
-	let moviesToShow = movies.movies ? movies.movies.map((movie) => {
-		return (
-			<div key={movie.imbd_id} >
-				<h1>{movie.title}</h1>
-				<img src={movie.thumbnail}></img>
-			</div>
-		);
-	}
-	) : null
+  useEffect(() => {
+    getMovies()
+  }, [])
 
   return (
     <div>
-      {moviesToShow}
+      <h1 className="flex content-center text-3xl font-bold mb-4">Filter and Search Movie</h1>
+
+      <SearchAndFilter movies={movies} />
     </div>
   )
 }

@@ -1,6 +1,6 @@
 import Head from 'next/head'
 import Navbar from '../components/Navbar'
-import MovieSearch from '../components/movieSearch'
+import MovieSearch from '../components/MovieSearch'
 // import Layout from '../components/Layout'
 import styles from '../styles/Home.module.css'
 
@@ -16,11 +16,9 @@ export default function Home() {
       <Navbar />
 
       <main className={styles.main}>
-        <h1 className="text-3xl font-bold">Welcome to Hypertube</h1>
-
-        <p className={styles.description}>This is the Main section</p>
         {/* <Body /> */}
-				<MovieSearch/>
+        {/* SearchAndFilter */}
+        <MovieSearch />
 
         <div className={styles.grid}></div>
       </main>
