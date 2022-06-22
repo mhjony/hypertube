@@ -17,10 +17,11 @@ export default function Home() {
 
       <main className={styles.main}>
         {/* <Body /> */}
-        {/* SearchAndFilter */}
         <MovieSearch />
 
-        <div className={styles.grid}></div>
+        {/* <div className={styles.grid}>
+          <MovieSearch />
+        </div> */}
       </main>
 
       {/* <Footer /> */}

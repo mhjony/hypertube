@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
 import isToday from 'dayjs/plugin/isToday'
@@ -6,6 +6,7 @@ import isToday from 'dayjs/plugin/isToday'
 import Modal from './Modal'
 import DateRange from './DateRange'
 import MovieDisplay from './MovieDisplay'
+import FormInput from './FormInput'
 
 dayjs.extend(isToday)
 dayjs.extend(relativeTime)
@@ -18,6 +19,7 @@ const SearchAndFilter = ({ movies }) => {
   const [dateModalOpen, setDateModalOpen] = useState(false)
   const [startDate, setStartDate] = useState(new Date(oldestVid?.date_uploaded || null))
   const [endDate, setEndDate] = useState(new Date())
+  const [search, setSearch] = useState('')
 
   const formatDate = date => {
     if (dayjs(date).isToday()) {
@@ -29,12 +31,19 @@ const SearchAndFilter = ({ movies }) => {
   const startDateMs = startDate.getTime()
   const endDateMs = endDate.getTime()
 
+  const searchSplit = search.toLowerCase().split(' ')
   const filteredMovies = movies?.movies
     ?.filter(video => {
+      let matchesSearchFilter = true
+      if (search.length > 0) {
+        const name = (video.title || '').toLowerCase()
+        matchesSearchFilter = !searchSplit.some(splitted => !name.includes(splitted))
+      }
+
       const videoUploaded = new Date(video.date_uploaded).getTime()
       const inDateRange = videoUploaded >= startDateMs && videoUploaded <= endDateMs
 
-      return inDateRange
+      return matchesSearchFilter && inDateRange
     })
     .sort((a, b) => new Date(b.date_uploaded) - new Date(a.date_uploaded))
 
@@ -43,24 +52,15 @@ const SearchAndFilter = ({ movies }) => {
 
   return (
     <div>
-      <div className="bg-black pb-4 flex items-center justify-around mb-1 rounded gap-4">
-        <div className="">
-          <div className="input-group relative flex flex-wrap items-stretch w-full mb-4">
-            <input
-              type="search"
-              className="form-control relative flex-auto min-w-0 block w-full px-3 py-1.5 text-base font-normal text-gray-700 bg-white bg-clip-padding border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none"
-              placeholder="Search by Genre"
-              aria-label="Search"
-              aria-describedby="button-addon3"
-            />
-            <button
-              className="btn inline-block px-6 py-2 border-2 border-blue-600 text-blue-600 font-medium text-xs leading-tight uppercase rounded hover:bg-black hover:bg-opacity-5 focus:outline-none focus:ring-0 transition duration-150 ease-in-out"
-              type="button"
-              id="button-addon3"
-            >
-              Search
-            </button>
-          </div>
+      <div className="bg-black w-full pb-4 flex items-center justify-around mb-1 rounded gap-4">
+        <div className="mr-4 w-full md:w-1/6">
+          <p className="text-white uppercase text-md pt-2">Search By name</p>
+          <FormInput
+            isValid={search?.length > 0}
+            placeholder="Search by Name"
+            onChange={val => setSearch(val)}
+            value={search}
+          />
         </div>
 
         <div>
@@ -68,7 +68,7 @@ const SearchAndFilter = ({ movies }) => {
           <button
             type="button"
             onClick={() => setDateModalOpen(true)}
-            className="inline-block px-6 py-2 border-2 border-green-500 text-green-500 font-medium text-xs leading-tight uppercase rounded hover:bg-black hover:bg-opacity-5 focus:outline-none focus:ring-0 transition duration-150 ease-in-out"
+            className="inline-block px-6 py-2 border-2 border-gray-500 text-green-600 font-medium text-xs leading-tight uppercase rounded hover:bg-black hover:bg-opacity-5 focus:outline-none focus:ring-0 transition duration-150 ease-in-out"
           >
             {formattedStart === formattedEnd
               ? formattedStart
