@@ -15,6 +15,7 @@ export default function Home() {
       {/* <Header /> */}
       <Navbar />
 
+      {/* <main className={styles.main}> */}
       <main className={styles.main}>
         {/* <Body /> */}
         <MovieSearch />

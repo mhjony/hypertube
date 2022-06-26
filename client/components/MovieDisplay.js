@@ -47,7 +47,7 @@ const MovieSearch = ({ filteredMovies }) => {
           display: block;
           position: relative;
           min-width: 140px;
-          width: 100%;
+          width: 300px;
           height: 450px;
           text-shadow: 0px 0px 12px rgba(0, 0, 0, 1), 0px 0px 12px rgba(0, 0, 0, 1);
           transform: scale3d(1, 1, 1);
@@ -58,6 +58,7 @@ const MovieSearch = ({ filteredMovies }) => {
         }
         .video--img {
           height: 100%;
+          width: 100%;
           left: 0;
           overflow: hidden;
           position: absolute;
