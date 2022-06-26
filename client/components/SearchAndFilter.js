@@ -20,6 +20,7 @@ const SearchAndFilter = ({ movies }) => {
   const [startDate, setStartDate] = useState(new Date(oldestVid?.date_uploaded || null))
   const [endDate, setEndDate] = useState(new Date())
   const [search, setSearch] = useState('')
+  const [searchByGenre, setSearchByGenre] = useState('')
 
   const formatDate = date => {
     if (dayjs(date).isToday()) {
@@ -34,16 +35,25 @@ const SearchAndFilter = ({ movies }) => {
   const searchSplit = search.toLowerCase().split(' ')
   const filteredMovies = movies?.movies
     ?.filter(video => {
+      // Search By name
       let matchesSearchFilter = true
       if (search.length > 0) {
         const name = (video.title || '').toLowerCase()
         matchesSearchFilter = !searchSplit.some(splitted => !name.includes(splitted))
       }
 
+      // Filter by Genre
+      let movieByGenre = true
+      if (searchByGenre?.length > 0) {
+        const genre = video.genres || []
+        movieByGenre = genre.some(genre => genre.toLowerCase().includes(searchByGenre))
+      }
+
+      // Filter by Production year
       const videoUploaded = new Date(video.date_uploaded).getTime()
       const inDateRange = videoUploaded >= startDateMs && videoUploaded <= endDateMs
 
-      return matchesSearchFilter && inDateRange
+      return matchesSearchFilter && movieByGenre && inDateRange
     })
     .sort((a, b) => new Date(b.date_uploaded) - new Date(a.date_uploaded))
 
@@ -60,6 +70,16 @@ const SearchAndFilter = ({ movies }) => {
             placeholder="Search by Name"
             onChange={val => setSearch(val)}
             value={search}
+          />
+        </div>
+
+        <div className="mr-4 w-full md:w-1/6">
+          <p className="text-white uppercase text-md pt-2">Search By Genre</p>
+          <FormInput
+            isValid={searchByGenre?.length > 0}
+            placeholder="Search by Genre"
+            onChange={val => setSearchByGenre(val)}
+            value={searchByGenre}
           />
         </div>
 
