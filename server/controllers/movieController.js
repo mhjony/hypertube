@@ -36,6 +36,7 @@ const movieSearch = async (req, res) => {
 // @desc    return movie list
 // @access  Public
 const getMovieList = async (req, res) => {
+	console.log("get-movie-list end-point Hit");
   //const userId = req.user;
   //const filters = req.query;
   const filters = {
@@ -57,6 +58,28 @@ const getMovieList = async (req, res) => {
   res.json(movies);
 };
 
+// @route   GET /get-single-movie
+// @desc    return movie list
+// @access  Public
+const getSingleMovie = async (req, res) => {
+	console.log("get-single-movie end-point Hit");
+  const { id } = req.query;
+  const movieInfo = await movieUtils.getMovieInfo(id);
+  //const user = await User.findById(userId);
+
+  /*movies.movies = movies.movies.map((movie) => {
+    const tempMovie = { ...movie };
+    tempMovie.watched = user.watched.some((elem) => elem.movieId === movie.imdbCode);
+    return tempMovie;
+  });*/
+	let comments = [];
+	let subtitles = [];
+	//console.log(movieInfo);
+	const ret = movieUtils.formatSingleMovieEntry(movieInfo, comments, subtitles);
+  res.json(ret);
+};
+
 export default {
   getMovieList,
+	getSingleMovie,
 };
