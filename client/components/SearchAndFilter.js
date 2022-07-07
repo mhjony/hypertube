@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useMemo } from 'react'
 import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
 import isToday from 'dayjs/plugin/isToday'
@@ -7,9 +7,12 @@ import Modal from './Modal'
 import DateRange from './DateRange'
 import MovieDisplay from './MovieDisplay'
 import FormInput from './FormInput'
+import Pagination from './Pagination'
 
 dayjs.extend(isToday)
 dayjs.extend(relativeTime)
+
+let PageSize = 10
 
 const SearchAndFilter = ({ movies }) => {
   const oldestVid = movies?.movies?.sort(
@@ -21,6 +24,7 @@ const SearchAndFilter = ({ movies }) => {
   const [endDate, setEndDate] = useState(new Date())
   const [search, setSearch] = useState('')
   const [searchByGenre, setSearchByGenre] = useState('')
+  const [currentPage, setCurrentPage] = useState(1)
 
   const formatDate = date => {
     if (dayjs(date).isToday()) {
@@ -59,6 +63,14 @@ const SearchAndFilter = ({ movies }) => {
 
   const formattedStart = formatDate(startDate)
   const formattedEnd = formatDate(endDate)
+
+  const currentPageData = useMemo(() => {
+    const firstPageIndex = (currentPage - 1) * PageSize
+    const lastPageIndex = firstPageIndex + PageSize
+    return movies?.movies?.slice(firstPageIndex, lastPageIndex)
+  }, [currentPage])
+
+  console.log('currentPageData', currentPageData)
 
   return (
     <div>
@@ -107,6 +119,14 @@ const SearchAndFilter = ({ movies }) => {
       </div>
 
       <MovieDisplay filteredMovies={filteredMovies} />
+
+      <Pagination
+        className="pagination-bar"
+        currentPage={currentPage}
+        totalCount={movies?.length}
+        pageSize={PageSize}
+        onPageChange={page => setCurrentPage(page)}
+      />
     </div>
   )
 }
