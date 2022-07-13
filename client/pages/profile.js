@@ -1,5 +1,7 @@
 import React, { useState, useMemo, useEffect } from 'react'
 import Pagination from '../components/Pagination'
+import Player from '../components/videoPlayer/Player'
+import Comments from '../components/videoPlayer/Comments'
 
 import api from '../services/backend/movies'
 
@@ -8,23 +10,6 @@ let PageSize = 10
 const profile = () => {
   const [currentPage, setCurrentPage] = useState(1)
   const [data, setData] = useState([])
-
-  const getMovies = async () => {
-    try {
-      const res = await api.getMoviesList()
-      if (res?.error) {
-        throw new Error(res.error)
-      } else {
-        setData(res)
-      }
-    } catch (err) {
-      console.log(err)
-    }
-  }
-
-  useEffect(() => {
-    getMovies()
-  }, [])
 
   const currentTableData = useMemo(() => {
     const firstPageIndex = (currentPage - 1) * PageSize
@@ -41,15 +26,15 @@ const profile = () => {
 
   return (
     <div>
-      <h>This is profile page</h>
-      <p>User will be able to update their profile settings from here</p>
-      <Pagination
+      <Player />
+
+      {/* <Pagination
         className="pagination-bar"
         currentPage={currentPage}
         totalCount={data.length}
         pageSize={PageSize}
         onPageChange={page => setCurrentPage(page)}
-      />
+      /> */}
     </div>
   )
 }
