@@ -57,19 +57,34 @@ const getMovieList = async (req, res) => {
   res.json(movies);
 };
 
-// @route   POST /movie/comments/:movieId/add
+// @route   POST /movie/comments/add/:movieId
 // @desc    return movie search results
 // @access  Private
 const addComment = async (req, res) => {
-  const { movieId } = req.query;
+  const { movieId } = req.params;
+  const { text } = req.body;
+
   console.log("addComment end-point Hit", movieId);
+
   // TODO: add the logic here!
 
-  return res.send(ret.data);
+  return res.send(text);
+};
+
+// @route   GET /movie/comments/:movieId
+// @desc    return movie search results
+// @access  Private
+const getMovieComments = async (req, res) => {
+  const { movieId } = req.params;
+  console.log("getMovieComments end-point Hit", movieId);
+  // TODO: add the logic here!
+
+  return res.send(movieId);
 };
 
 export default {
   getMovieList,
   movieSearch,
   addComment,
+  getMovieComments,
 };
