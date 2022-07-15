@@ -38,6 +38,7 @@ CREATE TABLE comments (
 	id uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
 	user_id uuid NOT NULL,
 	CONSTRAINT fk_user_id FOREIGN KEY(user_id) REFERENCES users(user_id),
+	CONSTRAINT fk_movie_id FOREIGN KEY(id) REFERENCES movies(id),
 	comment_body VARCHAR(255) NOT NULL,
 	created_at timestamp DEFAULT CURRENT_TIMESTAMP
 );
