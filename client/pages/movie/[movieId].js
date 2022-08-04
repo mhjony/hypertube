@@ -9,31 +9,32 @@ import { useRouter } from 'next/router'
 // import Hero from '../../components/Hero'
 import { PlusIcon, XIcon, PlayIcon, UserGroupIcon } from '@heroicons/react/solid'
 import ReactPlayer from 'react-player/lazy'
+import Navbar from '../../components/Navbar'
 
 const movieId = ({ movie }) => {
   const { data: session } = useSession()
 
-  const BASE_URL = 'https://image.tmdb.org/t/p/original/'
   const router = useRouter()
   const [showPlayer, setShowPlayer] = useState(false)
 
   console.log('session in single Movie Page ', session)
   console.log('movie', movie)
 
-  //   useEffect(() => {
-  //     if (!session) {
-  //       router.push('/')
-  //     }
-  //   }, [])
+  // useEffect(() => {
+  //   if (!session) {
+  //     router.push('/')
+  //   }
+  // }, [session])
 
   return (
     <div>
-      <Head>
+      {/* <Head>
         <title>{movie.name}</title>
-      </Head>
+      </Head> */}
       {session ? (
         <>
           {/* TODO: Add the NavBar here */}
+          <Navbar />
           <section className="relative z-50">
             <div className="relative min-h-[calc(100vh-72px)]">
               {/* <img src={movie.image.original} alt={movie.image.original} /> */}
@@ -43,7 +44,10 @@ const movieId = ({ movie }) => {
             <div className="absolute inset-y-28 md:inset-y-auto md:bottom-10 inset-x-4 md:inset-x-12 space-y-6 z-50">
               <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold">{movie.name}</h1>
               <div className="flex items-center space-x-3 md:space-x-5">
-                <button className="text-xs md:text-base bg-[#f9f9f9] text-black flex items-center justify-center py-2.5 px-6 rounded hover:bg-[#c6c6c6]">
+                <button
+                  className="text-xs md:text-base bg-[#f9f9f9] text-black flex items-center justify-center py-2.5 px-6 rounded hover:bg-[#c6c6c6]"
+                  onClick={() => setShowPlayer(true)}
+                >
                   <PlayIcon className="h-6 md:h-8" />
                   <span className="uppercase font-medium tracking-wide">Play</span>
                 </button>
@@ -95,6 +99,7 @@ const movieId = ({ movie }) => {
 
               <div className="relative pt-[56.25%]">
                 {/* Play Tailer */}
+                {/* TODO: use movie streaming url here */}
                 <ReactPlayer
                   url={`https://www.youtube.com/watch?v=zMXHYSqltmU&ab_channel=ILWYennefer`}
                   width="100%"
@@ -125,6 +130,7 @@ export async function getServerSideProps(context) {
   //   const session = await getSession({ req })
 
   // TODO: Replace this with a real API call what we have from the server
+  // TODO: we have a api called getSingleMovie that returns the movie details, so use it here
   const movieDetails = await fetch(`https://api.tvmaze.com/shows/${movieId}`).then(response =>
     response.json()
   )

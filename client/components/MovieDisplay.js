@@ -1,7 +1,20 @@
-import React from 'react'
+import React, { useState, useMemo } from 'react'
 
-const MovieSearch = ({ filteredMovies }) => {
+const MovieDisplay = ({ filteredMovies }) => {
+  const [currentPage, setCurrentPage] = useState(1)
   console.log('Filtered Movies', filteredMovies)
+
+  let PageSize = 10
+  const currentPageData = useMemo(() => {
+    const firstPageIndex = (currentPage - 1) * PageSize
+    const lastPageIndex = firstPageIndex + PageSize
+    console.log('test', firstPageIndex)
+    console.log('test', lastPageIndex)
+    return filteredMovies?.slice(firstPageIndex, lastPageIndex)
+  }, [currentPage])
+
+  console.log('currentPageData 01', filteredMovies?.slice(0, 10))
+  console.log('currentPageData 02', currentPageData)
 
   return (
     <div>
@@ -33,6 +46,68 @@ const MovieSearch = ({ filteredMovies }) => {
             ))
           : null}
       </div>
+
+      {/* TODO: Pagination here */}
+
+      <div className="pt-16 mt-8 flex justify-center items-center bg-red-400">
+        <div className="font-bold pl-4 flex-grow text-xs">{`${filteredMovies?.length} videos`}</div>
+        <button
+          type="button"
+          className="button button--xs mr-4 bg-gray-200"
+          // onClick={() => gotoPage(0)}
+          // disabled={!canPreviousPage}
+        >
+          First
+        </button>
+        <button
+          type="button"
+          className="button button--xs mr-4"
+          // onClick={() => previousPage()}
+          // disabled={!canPreviousPage}
+        >
+          Previous
+        </button>
+        <div className="flex flex-col justify-center items-center text-xs">
+          <div className="text-gray-700 px-2 mx-8">
+            Page 1 of 5
+            {/* <span className="font-bold text-black">
+              {pageIndex + 1} of {pageOptions.length}
+            </span> */}
+          </div>
+        </div>
+        <button
+          type="button"
+          className="button button--xs mr-4"
+          // onClick={() => nextPage()}
+          // disabled={!canNextPage}
+        >
+          Next
+        </button>
+        <button
+          type="button"
+          className="button button--xs ml-2"
+          // onClick={() => gotoPage(pageCount - 1)}
+          // disabled={!canNextPage}
+        >
+          Last
+        </button>
+        <div className="ml-2 flex-grow flex items-center justify-end pr-2">
+          <select
+            className="text-xs"
+            // value={pageSize}
+            // onChange={e => {
+            //   setPageSize(Number(e.target.value))
+            // }}
+          >
+            {/* {[20, 50, 100, 250, 500].map(_pageSize => (
+              <option key={_pageSize} value={_pageSize}>
+                {`${_pageSize} numbers per page`}
+              </option>
+            ))} */}
+          </select>
+        </div>
+      </div>
+
       <style jsx>{`
         .video,
         .video--img,
@@ -153,4 +228,4 @@ const MovieSearch = ({ filteredMovies }) => {
   )
 }
 
-export default MovieSearch
+export default MovieDisplay

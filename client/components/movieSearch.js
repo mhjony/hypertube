@@ -29,7 +29,7 @@ const MovieSearch = ({ session }) => {
 
   return (
     <>
-      <SearchAndFilter movies={movies} />
+      <SearchAndFilter movies={movies} session={session} />
     </>
   )
 }

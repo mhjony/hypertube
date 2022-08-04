@@ -14,7 +14,7 @@ dayjs.extend(relativeTime)
 
 let PageSize = 10
 
-const SearchAndFilter = ({ movies }) => {
+const SearchAndFilter = ({ movies, session }) => {
   const oldestVid = movies?.movies?.sort(
     (a, b) => new Date(a.date_uploaded) - new Date(b.date_uploaded)
   )[0]
@@ -73,61 +73,63 @@ const SearchAndFilter = ({ movies }) => {
   console.log('currentPageData', currentPageData)
 
   return (
-    <div>
-      <div className="bg-black w-full pb-4 flex items-center justify-around mb-0.5 rounded gap-4">
-        <div className="mr-4 w-full md:w-1/6">
-          <p className="text-white uppercase text-md pt-2">Search By name</p>
-          <FormInput
-            isValid={search?.length > 0}
-            placeholder="Search by Name"
-            onChange={val => setSearch(val)}
-            value={search}
-          />
+    <>
+      <div>
+        <div className="bg-black w-full pb-4 flex items-center justify-around mb-0.5 rounded gap-4">
+          <div className="mr-4 w-full md:w-1/6">
+            <p className="text-white uppercase text-md pt-2">Search By name</p>
+            <FormInput
+              isValid={search?.length > 0}
+              placeholder="Search by Name"
+              onChange={val => setSearch(val)}
+              value={search}
+            />
+          </div>
+
+          <div className="mr-4 w-full md:w-1/6">
+            <p className="text-white uppercase text-md pt-2">Search By Genre</p>
+            <FormInput
+              isValid={searchByGenre?.length > 0}
+              placeholder="Search by Genre"
+              onChange={val => setSearchByGenre(val)}
+              value={searchByGenre}
+            />
+          </div>
+
+          <div>
+            <p className="text-md text-white uppercase">Filter By date</p>
+            <button
+              type="button"
+              onClick={() => setDateModalOpen(true)}
+              className="inline-block px-6 py-2 border-2 border-gray-500 text-green-600 font-medium text-xs leading-tight uppercase rounded hover:bg-black hover:bg-opacity-5 focus:outline-none focus:ring-0 transition duration-150 ease-in-out"
+            >
+              {formattedStart === formattedEnd
+                ? formattedStart
+                : `${formattedStart} — ${formattedEnd}`}
+            </button>
+          </div>
+
+          <Modal center isOpen={dateModalOpen} close={() => setDateModalOpen(false)}>
+            <DateRange
+              startDate={startDate}
+              setStartDate={setStartDate}
+              endDate={endDate}
+              setEndDate={setEndDate}
+            />
+          </Modal>
         </div>
 
-        <div className="mr-4 w-full md:w-1/6">
-          <p className="text-white uppercase text-md pt-2">Search By Genre</p>
-          <FormInput
-            isValid={searchByGenre?.length > 0}
-            placeholder="Search by Genre"
-            onChange={val => setSearchByGenre(val)}
-            value={searchByGenre}
-          />
-        </div>
+        <MovieDisplay filteredMovies={filteredMovies} />
 
-        <div>
-          <p className="text-md text-white uppercase">Filter By date</p>
-          <button
-            type="button"
-            onClick={() => setDateModalOpen(true)}
-            className="inline-block px-6 py-2 border-2 border-gray-500 text-green-600 font-medium text-xs leading-tight uppercase rounded hover:bg-black hover:bg-opacity-5 focus:outline-none focus:ring-0 transition duration-150 ease-in-out"
-          >
-            {formattedStart === formattedEnd
-              ? formattedStart
-              : `${formattedStart} — ${formattedEnd}`}
-          </button>
-        </div>
-
-        <Modal center isOpen={dateModalOpen} close={() => setDateModalOpen(false)}>
-          <DateRange
-            startDate={startDate}
-            setStartDate={setStartDate}
-            endDate={endDate}
-            setEndDate={setEndDate}
-          />
-        </Modal>
+        <Pagination
+          className="pagination-bar"
+          currentPage={currentPage}
+          totalCount={movies?.length}
+          pageSize={PageSize}
+          onPageChange={page => setCurrentPage(page)}
+        />
       </div>
-
-      <MovieDisplay filteredMovies={filteredMovies} />
-
-      <Pagination
-        className="pagination-bar"
-        currentPage={currentPage}
-        totalCount={movies?.length}
-        pageSize={PageSize}
-        onPageChange={page => setCurrentPage(page)}
-      />
-    </div>
+    </>
   )
 }
 
