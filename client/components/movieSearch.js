@@ -4,12 +4,15 @@ import api from '../services/backend/movies'
 
 import SearchAndFilter from './SearchAndFilter'
 
-const MovieSearch = () => {
+const MovieSearch = ({ session }) => {
   const [movies, setMovies] = useState([])
 
-  const getMovies = async () => {
+  const getMovies = async session => {
     try {
-      const res = await api.getMoviesList()
+      const { accessToken } = session
+
+      const res = await api.getMoviesList(accessToken)
+
       if (res?.error) {
         throw new Error(res.error)
       } else {
@@ -21,8 +24,8 @@ const MovieSearch = () => {
   }
 
   useEffect(() => {
-    getMovies()
-  }, [])
+    getMovies(session)
+  }, [session])
 
   return (
     <>

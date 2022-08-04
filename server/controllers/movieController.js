@@ -36,6 +36,7 @@ const movieSearch = async (req, res) => {
 // @desc    return movie list
 // @access  Public
 const getMovieList = async (req, res) => {
+  console.log("getMovieList end-point Hit");
   //const userId = req.user;
   //const filters = req.query;
   const filters = {

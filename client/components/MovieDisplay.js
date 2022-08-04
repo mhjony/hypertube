@@ -5,29 +5,29 @@ const MovieSearch = ({ filteredMovies }) => {
 
   return (
     <div>
-      <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
+      <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-4">
         {filteredMovies
           ? filteredMovies?.map(video => (
-              <div className="video" key={video.id}>
-                <div className="video--img">
-                  <img src={video.thumbnail} alt={video.title}></img>
-                </div>
+              <div>
+                <div className="video" key={video.id}>
+                  <div className="video--img">
+                    <img src={video.thumbnail} alt={video.title}></img>
+                  </div>
 
-                {/* Video Info */}
-                <div className="video-overlay">
-                  <div className="video--info">
-                    <div className="flex items-center mb-1 md:mb-2">
-                      <div className="video--icon"></div>
+                  {/* Video Info */}
+                  <div className="video-overlay">
+                    <div className="video--info">
+                      <div className="flex items-center mb-1 md:mb-2">
+                        <div className="video--icon"></div>
+                      </div>
                     </div>
                   </div>
 
-                  <div className="flex" key={video.imbd_id}>
-                    <div className="pt-10 px-10 text-red-600 text-xl">
-                      {video.title}
-                      <div className="video--date">Production Year: {video.year}</div>
-                      <div className="flex items-center mb-1 md:mb-2">Rating: {video.rating}</div>
-                    </div>
+                  <div className="text-sm">
+                    {' '}
+                    {video.title} ({video.year})
                   </div>
+                  <div className="text-xs">IMBD rating: {video.rating}</div>
                 </div>
               </div>
             ))

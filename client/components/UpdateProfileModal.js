@@ -20,13 +20,21 @@ const UpdateProfileModal = () => {
   const [email, setEmail] = useState(userInfo?.email)
   const [avatar, setAvatar] = useState(userInfo?.avatar)
 
-  const user_id = session?.user.user_id
+  // const user_id = session?.user.user_id
+  const { accessToken, user_id } = session
 
   const handleProfileUpdate = async () => {
     try {
       setLoading(true)
 
-      await apiUpdateProfile.updateProfile(user_id, email, username, firstname, lastname, email)
+      await apiUpdateProfile.updateProfile(
+        user_id,
+        email,
+        username,
+        firstname,
+        lastname,
+        accessToken
+      )
 
       setIsModalOpen(false)
       setLoading(false)

@@ -12,14 +12,14 @@ const router = express.Router();
 
 router.post(
   "/update",
-  [fileUpload],
+  [fileUpload, auth],
   // [auth, rules, validate, fileUpload],
   profileController.profileUpdate
 );
 
 router.post(
   "/updateProfilePicture",
-  [fileUpload],
+  [fileUpload, auth],
   // [auth, rules, validate, fileUpload],
   profileController.profilePictureUpdate
 );

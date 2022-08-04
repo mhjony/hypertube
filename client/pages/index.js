@@ -1,3 +1,4 @@
+import { useSession } from 'next-auth/react'
 import Head from 'next/head'
 import Navbar from '../components/Navbar'
 import MovieSearch from '../components/MovieSearch'
@@ -5,6 +6,8 @@ import MovieSearch from '../components/MovieSearch'
 import styles from '../styles/Home.module.css'
 
 export default function Home() {
+  const { data: session } = useSession()
+
   return (
     <div className={styles.container}>
       <Head>
@@ -18,7 +21,7 @@ export default function Home() {
       {/* <main className={styles.main}> */}
       <main className={styles.main}>
         {/* <Body /> */}
-        <MovieSearch />
+        <MovieSearch session={session} />
 
         {/* <div className={styles.grid}>
           <MovieSearch />
