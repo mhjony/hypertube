@@ -7,7 +7,7 @@ const router = express.Router();
 router.get("/get-movie-list", [auth], movieController.getMovieList);
 
 // Router for movie comments
-router.get("/comments/:movieId", [auth], movieController.getMovieComments);
-router.post("/comment/add/:movieId", [auth], movieController.addComment);
+router.get("/comments/:imdb_code", [auth], movieController.getMovieComments);
+router.post("/comment/add/:imdb_code", [auth], movieController.addComment);
 
 export default router;

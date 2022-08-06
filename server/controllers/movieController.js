@@ -1,19 +1,4 @@
-/*
-  Fields for movie DB:
-  imbd rating: float
-  year: int
-  genre: string
-  description: string
-  director: string
-  cast: actor array (IDs to other table?)
-  comments: comment table IDs
-  subtitles: langcodes?
-
-  Comments table:
-  comment_body: string
-  user: user id?
-  */
-
+import pool from "../config/database.js";
 import axios from "axios";
 import movieUtils from "../utils/movie.js";
 
@@ -52,35 +37,40 @@ const getMovieList = async (req, res) => {
 
   /*movies.movies = movies.movies.map((movie) => {
     const tempMovie = { ...movie };
-    tempMovie.watched = user.watched.some((elem) => elem.movieId === movie.imdbCode);
+    tempMovie.watched = user.watched.some((elem) => elem.imdb_code  === movie.imdbCode);
     return tempMovie;
   });*/
   res.json(movies);
 };
 
-// @route   POST /movie/comments/add/:movieId
+// @route   POST /movie/comments/add/:imdb_code
 // @desc    return movie search results
 // @access  Private
 const addComment = async (req, res) => {
-  const { movieId } = req.params;
-  const { text } = req.body;
+  const { imdb_code } = req.params;
+  const { user_id, comment_body } = req.body;
 
-  console.log("addComment end-point Hit", movieId);
+  const newUser = await pool.query(
+    "INSERT INTO comments (user_id, imdb_code, comment_body) VALUES ($1, $2, $3) RETURNING *",
+    [user_id, imdb_code, comment_body]
+  );
 
-  // TODO: add the logic here!
-
-  return res.send(text);
+  return res
+    .status(200)
+    .json({ success: true, message: "Comment added successfully" });
 };
 
-// @route   GET /movie/comments/:movieId
+// @route   GET /movie/comments/:imdb_code
 // @desc    return movie search results
 // @access  Private
 const getMovieComments = async (req, res) => {
-  const { movieId } = req.params;
-  console.log("getMovieComments end-point Hit", movieId);
-  // TODO: add the logic here!
+  const { imdb_code } = req.params;
 
-  return res.send(movieId);
+  const comments = await pool.query(
+    "SELECT * FROM comments WHERE imdb_code = $1",
+    [imdb_code]
+  );
+  return res.status(200).json(comments.rows);
 };
 
 export default {
