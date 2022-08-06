@@ -23,14 +23,13 @@ CREATE TABLE users (
 -- Create the movies table
 CREATE TABLE movies (
 	id uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
-	imdb_code VARCHAR(50) NOT NULL,
+	imdb_code VARCHAR(50) NOT NULL UNIQUE,
 	title VARCHAR(255) NOT NULL,
 	last_watched timestamp DEFAULT NULL,
 	size INT DEFAULT 0,
 	server_location VARCHAR(255) DEFAULT NULL,
 	downloaded SMALLINT NOT NULL DEFAULT 0,
 	subtitle_paths VARCHAR(255)[] DEFAULT '{}',
-	comments  DEFAULT '{}',
 	magnet VARCHAR(255) NOT NULL
 );
 
@@ -38,9 +37,11 @@ CREATE TABLE movies (
 CREATE TABLE comments (
 	id uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
 	user_id uuid NOT NULL,
+	imdb_code VARCHAR(50) NOT NULL,
 	CONSTRAINT fk_user_id FOREIGN KEY(user_id) REFERENCES users(user_id),
+	CONSTRAINT fk_imdb_code FOREIGN KEY(imdb_code) REFERENCES movies(imdb_code),
 	comment_body VARCHAR(255) NOT NULL,
-	created_at timestamp DEFAULT CURRENT_TIMESTAMP
+	created_at timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
 -- Insert predifined users for admin to use
