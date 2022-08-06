@@ -2,7 +2,7 @@ import React from 'react'
 import Player from './Player'
 import Comments from './Comments'
 
-const MovieInfo = () => {
+const MovieInfo = ({ session }) => {
   return (
     <div>
       <div className="min-h-screen bg-gray-800 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
@@ -46,7 +46,7 @@ const MovieInfo = () => {
               </p>
             </div>
 
-            <Comments />
+            <Comments session={session} />
           </div>
         </div>
       </div>

@@ -1,7 +1,8 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 
 import Button from '../Button'
 import Textarea from '../Textarea'
+import api from '../../services/backend/movies'
 
 const Comment = ({ comment, onClick = null }) => (
   <div
@@ -11,34 +12,45 @@ const Comment = ({ comment, onClick = null }) => (
     onClick={onClick || (() => {})}
   >
     <div>
-      <div className="text-sm text-gray-800">{comment.comment}</div>
+      <div className="text-sm text-gray-800">{comment.comment_body}</div>
       <div className="text-xs text-gray-600">{comment.updatedAt}</div>
     </div>
   </div>
 )
 
-const Comments = ({ id }) => {
+const Comments = ({ session }) => {
   const [loading, setLoading] = useState(false)
   const [newComment, setNewComment] = useState('')
+  const [comments, setComments] = useState([])
 
-  const comments = [
-    {
-      id: 1,
-      comment: 'This is a comment',
-      updatedAt: '12 July 2022'
-    },
-    {
-      id: 2,
-      comment: 'This is a comment',
-      updatedAt: '12 July 2022'
+  const imdb_code = '234324'
+  const user_id = 'b3e6c2dc-8d21-4f9c-9149-d89d2495afe8'
+
+  const getMovieComments = async (session, imdb_code) => {
+    try {
+      const { accessToken } = session
+
+      const res = await api.getMovieComments(accessToken, imdb_code)
+
+      if (res?.error) {
+        throw new Error(res.error)
+      } else {
+        setComments(res)
+      }
+    } catch (err) {
+      console.log(err)
     }
-  ]
+  }
+
+  useEffect(() => {
+    getMovieComments(session, imdb_code)
+  }, [session])
 
   const handleSubmit = async () => {
     try {
       setLoading(true)
 
-      // const res = await commentApi.createComment(comment, movieId)
+      const res = await api.addComment(session.accessToken, imdb_code, user_id, newComment)
       if (!res.error) {
         setNewComment('')
       }
