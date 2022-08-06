@@ -1,111 +1,68 @@
 import React, { useState, useMemo } from 'react'
+import Button from './Button'
 
 const MovieDisplay = ({ filteredMovies }) => {
-  const [currentPage, setCurrentPage] = useState(1)
+  const [page, setPage] = useState(0)
+
   console.log('Filtered Movies', filteredMovies)
 
-  let PageSize = 10
-  const currentPageData = useMemo(() => {
-    const firstPageIndex = (currentPage - 1) * PageSize
-    const lastPageIndex = firstPageIndex + PageSize
-    console.log('test', firstPageIndex)
-    console.log('test', lastPageIndex)
-    return filteredMovies?.slice(firstPageIndex, lastPageIndex)
-  }, [currentPage])
+  let PER_PAGE = 10
 
-  console.log('currentPageData 01', filteredMovies?.slice(0, 10))
-  console.log('currentPageData 02', currentPageData)
+  const limitStart = page * PER_PAGE
+  const limitEnd = (page + 1) * PER_PAGE
+
+  const totalPages = Math.ceil(filteredMovies?.length / PER_PAGE)
 
   return (
     <div>
       <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-4">
         {filteredMovies
-          ? filteredMovies?.map(video => (
-              <div>
-                <div className="video" key={video.id}>
-                  <div className="video--img">
-                    <img src={video.thumbnail} alt={video.title}></img>
-                  </div>
+          ? filteredMovies?.slice(limitStart, limitEnd)?.map(video => (
+              <div className="video" key={video.id}>
+                <div className="video--img">
+                  <img src={video.thumbnail} alt={video.title}></img>
+                </div>
 
-                  {/* Video Info */}
-                  <div className="video-overlay">
-                    <div className="video--info">
-                      <div className="flex items-center mb-1 md:mb-2">
-                        <div className="video--icon"></div>
-                      </div>
+                {/* Video Info */}
+                <div className="video-overlay">
+                  <div className="video--info">
+                    <div className="flex items-center mb-1 md:mb-2">
+                      <div className="video--icon"></div>
                     </div>
                   </div>
-
-                  <div className="text-sm">
-                    {' '}
-                    {video.title} ({video.year})
-                  </div>
-                  <div className="text-xs">IMBD rating: {video.rating}</div>
                 </div>
+
+                <div className="text-sm">
+                  {' '}
+                  {video.title} ({video.year})
+                </div>
+                <div className="text-xs">IMBD rating: {video.rating}</div>
               </div>
+              // </div>
             ))
           : null}
       </div>
 
-      {/* TODO: Pagination here */}
-
-      <div className="pt-16 mt-8 flex justify-center items-center bg-red-400">
-        <div className="font-bold pl-4 flex-grow text-xs">{`${filteredMovies?.length} videos`}</div>
-        <button
-          type="button"
-          className="button button--xs mr-4 bg-gray-200"
-          // onClick={() => gotoPage(0)}
-          // disabled={!canPreviousPage}
+      <div className="flex justify-center items-center mt-16">
+        <Button
+          onClick={() => {
+            setPage(page - 1)
+          }}
+          className="bg-red-500 font-bold"
+          disabled={page === 0}
         >
-          First
-        </button>
-        <button
-          type="button"
-          className="button button--xs mr-4"
-          // onClick={() => previousPage()}
-          // disabled={!canPreviousPage}
+          {'<'}
+        </Button>
+        <div className="px-3 text-gray-200 text-md">{`Page ${page + 1} / ${totalPages}`}</div>
+        <Button
+          onClick={() => {
+            setPage(page + 1)
+          }}
+          className="bg-red-500 font-bold"
+          disabled={filteredMovies?.length < limitEnd ? true : false}
         >
-          Previous
-        </button>
-        <div className="flex flex-col justify-center items-center text-xs">
-          <div className="text-gray-700 px-2 mx-8">
-            Page 1 of 5
-            {/* <span className="font-bold text-black">
-              {pageIndex + 1} of {pageOptions.length}
-            </span> */}
-          </div>
-        </div>
-        <button
-          type="button"
-          className="button button--xs mr-4"
-          // onClick={() => nextPage()}
-          // disabled={!canNextPage}
-        >
-          Next
-        </button>
-        <button
-          type="button"
-          className="button button--xs ml-2"
-          // onClick={() => gotoPage(pageCount - 1)}
-          // disabled={!canNextPage}
-        >
-          Last
-        </button>
-        <div className="ml-2 flex-grow flex items-center justify-end pr-2">
-          <select
-            className="text-xs"
-            // value={pageSize}
-            // onChange={e => {
-            //   setPageSize(Number(e.target.value))
-            // }}
-          >
-            {/* {[20, 50, 100, 250, 500].map(_pageSize => (
-              <option key={_pageSize} value={_pageSize}>
-                {`${_pageSize} numbers per page`}
-              </option>
-            ))} */}
-          </select>
-        </div>
+          {'>'}
+        </Button>
       </div>
 
       <style jsx>{`
