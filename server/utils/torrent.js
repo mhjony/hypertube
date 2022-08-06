@@ -7,7 +7,14 @@ import ffmpeg from 'fluent-ffmpeg';
 
 import movieUtils from './movie.js';
 
-// Save file path to database.
+// Save path to database.
+const savePathToMovie = async ({ imdbCode }, magnet, serverLocation, size) => {
+	console.log('In save path to movie.');
+  const movie = await movieUtils.updateMovie(imdbCode, magnet, serverLocation, size);
+  //if (!movie) {
+    
+  //}
+};
 
 const startFileStream = (req, res) => {
 	let loaded = true
@@ -50,10 +57,14 @@ const startFileStream = (req, res) => {
 	}
 };
 
-const downloadMovie = async (movie, downloadCache) => new Promise((resolve) => {
+const downloadMovie = async (movie, magnet, downloadCache) => new Promise((resolve) => {
+	console.log('In torrent.downloadmovie.');
+	console.log(magnet);
+	console.log(movie);
+	console.log(downloadCache);
 	let path;
 	let size = 0;
-	const engine = torrentStream(movie.magnet, {
+	const engine = torrentStream(magnet, {
 		trackers: [
 			'udp://oipen.demonii.com:1337/announce',
 			'udp://tracker.openbittorrent.com:80',
@@ -63,26 +74,27 @@ const downloadMovie = async (movie, downloadCache) => new Promise((resolve) => {
 			'udp://p4p.arenabg.com:1337',
 			'udp://tracker.leechers-paradise.org:6969',
 		],
-		path: `./movies/${movie.imdbID}`,
+		path: `./movies/${movie.imdbCode}`,
 	});
 	engine.on('torrent', () => {
 		engine.files.forEach((file) => {
 			if (file.name.endsWith('.mp4') || file.name.endsWith('.mkv')) {
 				file.select();
-				path = file.path;
+				path = `${movie.imdbCode}/${file.path}`;
 				size = file.length;
 			} else {
 				file.deselect();
 			}
 		});
-		if (path && movie.serverLocation !== path) saveFilePath(movie, path, size);
+		console.log(path);
+		savePathToMovie(movie, magnet, path, size);
 	});
 
 	engine.on('download', () => {
-		const pathToMovie = `./movies/${movie.imdbID}/${path}`;
+		const pathToMovie = `./movies/${movie.imdbCode}/${path}`;
 		if (fs.existsSync(pathToMovie) && !downloadCache.has(movie.imdbID)) {
 			if (fs.statSync(pathToMovie).size / (1024 * 1024) > 20) {
-				//downloadCache.setMovieAsDownloading(movie.imdbID);
+				downloadCache.setMovieAsDownloading(movie.imdbID);
 				resolve;
 			}
 		}
@@ -96,13 +108,22 @@ const downloadMovie = async (movie, downloadCache) => new Promise((resolve) => {
 });
 
 const getMagnetLink = async (imdbID) => {
-	const torrentData = movieUtils.getTorrentData(imdbID).movies[0];
-	const { hash } = torrentData.torrents.reduce((current, previous) => previous.size_bytes < current.size_bytes ? previous : current);
-	return `magnet:?xt=urn:btih:${hash}&dn=${torrentData.title_long.split(' ').join('+')}`;
+	console.log('In get magnet link.');
+	console.log('ImbdID: ');
+	console.log(imdbID);
+	try {
+		const torrentData = await movieUtils.getTorrentData(imdbID);
+		//console.log('TorrentData:');
+		//console.log(torrentData)
+		return torrentData;
+	} catch (e) {
+		console.log('getMagnetLink Error!');
+		console.log(e);
+	}
 }
 
 export default {
 	startFileStream,
 	downloadMovie,
-	getMagnetLink
+	getMagnetLink,
 };

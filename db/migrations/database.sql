@@ -23,13 +23,14 @@ CREATE TABLE users (
 -- Create the movies table
 CREATE TABLE movies (
 	id uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
-	imbd_code VARCHAR(50) NOT NULL,
+	imdb_code VARCHAR(50) NOT NULL,
 	title VARCHAR(255) NOT NULL,
 	last_watched timestamp DEFAULT NULL,
 	size INT DEFAULT 0,
 	server_location VARCHAR(255) DEFAULT NULL,
 	downloaded SMALLINT NOT NULL DEFAULT 0,
 	subtitle_paths VARCHAR(255)[] DEFAULT '{}',
+	comments  DEFAULT '{}',
 	magnet VARCHAR(255) NOT NULL
 );
 
@@ -46,5 +47,5 @@ CREATE TABLE comments (
 INSERT INTO users (first_name, last_name, user_name, email, verified, password)
 VALUES 
 ('admin', 'user', 'admin', 'admin@gmail.com', '1', '$2a$10$PAM0GqbRGkOS2bVupYY0he23LiSv2THGyfvtULZpcdRTzSM7BQ01u'),
-('demo', 'user', 'demo', 'demo@gmail.com', '1', '$2a$10$PAM0GqbRGkOS2bVupYY0he23LiSv2THGyfvtULZpcdRTzSM7BQ01u')
+('demo', 'user', 'demo', 'demo@gmail.com', '1', '$2a$10$PAM0GqbRGkOS2bVupYY0he23LiSv2THGyfvtULZpcdRTzSM7BQ01u');
 
