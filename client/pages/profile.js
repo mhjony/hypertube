@@ -1,12 +1,13 @@
-import React, { useState, useMemo, useEffect } from 'react'
-import Pagination from '../components/Pagination'
-import Player from '../components/videoPlayer/Player'
+import React from 'react'
+// import Player from '../components/videoPlayer/Player'
+import MovieInfo from '../components/videoPlayer/MovieInfo'
 
 const profile = () => {
   return (
-    <div>
-      <Player />
-    </div>
+    <>
+      {/* <Player /> */}
+      <MovieInfo />
+    </>
   )
 }
 

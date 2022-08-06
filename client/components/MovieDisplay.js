@@ -32,17 +32,17 @@ const MovieDisplay = ({ filteredMovies }) => {
                   </div>
                 </div>
 
-                <div className="text-sm">
+                <div className="text-sm font-bold text-gray-200">
                   {' '}
                   {video.title} ({video.year})
                 </div>
-                <div className="text-xs">IMBD rating: {video.rating}</div>
+                <div className="text-xs text-gray-200 font-light">IMBD rating: {video.rating}</div>
               </div>
-              // </div>
             ))
           : null}
       </div>
 
+      {/* Pagination Part */}
       <div className="flex justify-center items-center mt-16">
         <Button
           onClick={() => {

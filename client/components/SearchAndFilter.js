@@ -7,12 +7,9 @@ import Modal from './Modal'
 import DateRange from './DateRange'
 import MovieDisplay from './MovieDisplay'
 import FormInput from './FormInput'
-import Pagination from './Pagination'
 
 dayjs.extend(isToday)
 dayjs.extend(relativeTime)
-
-let PageSize = 10
 
 const SearchAndFilter = ({ movies, session }) => {
   const oldestVid = movies?.movies?.sort(
@@ -24,7 +21,6 @@ const SearchAndFilter = ({ movies, session }) => {
   const [endDate, setEndDate] = useState(new Date())
   const [search, setSearch] = useState('')
   const [searchByGenre, setSearchByGenre] = useState('')
-  const [currentPage, setCurrentPage] = useState(1)
 
   const formatDate = date => {
     if (dayjs(date).isToday()) {
@@ -64,14 +60,6 @@ const SearchAndFilter = ({ movies, session }) => {
   const formattedStart = formatDate(startDate)
   const formattedEnd = formatDate(endDate)
 
-  const currentPageData = useMemo(() => {
-    const firstPageIndex = (currentPage - 1) * PageSize
-    const lastPageIndex = firstPageIndex + PageSize
-    return movies?.movies?.slice(firstPageIndex, lastPageIndex)
-  }, [currentPage])
-
-  console.log('currentPageData', currentPageData)
-
   return (
     <>
       <div>
@@ -101,7 +89,7 @@ const SearchAndFilter = ({ movies, session }) => {
             <button
               type="button"
               onClick={() => setDateModalOpen(true)}
-              className="inline-block px-6 py-2 border-2 border-gray-500 text-green-600 font-medium text-xs leading-tight uppercase rounded hover:bg-black hover:bg-opacity-5 focus:outline-none focus:ring-0 transition duration-150 ease-in-out"
+              className="inline-block px-6 py-2 border-2 border-gray-500 text-gray-200 font-medium text-xs leading-tight uppercase rounded hover:bg-black hover:bg-opacity-5 focus:outline-none focus:ring-0 transition duration-150 ease-in-out"
             >
               {formattedStart === formattedEnd
                 ? formattedStart
@@ -120,14 +108,6 @@ const SearchAndFilter = ({ movies, session }) => {
         </div>
 
         <MovieDisplay filteredMovies={filteredMovies} />
-
-        <Pagination
-          className="pagination-bar"
-          currentPage={currentPage}
-          totalCount={movies?.length}
-          pageSize={PageSize}
-          onPageChange={page => setCurrentPage(page)}
-        />
       </div>
     </>
   )
