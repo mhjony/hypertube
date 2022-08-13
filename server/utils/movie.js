@@ -1,6 +1,3 @@
-/*
-* Place movie stuff here.
-*/
 import dotenv from "dotenv";
 import pool from "../config/database.js";
 import axios from 'axios';
@@ -65,22 +62,21 @@ const buildMovieList = async (filters) => {
   const params = {
     limit: 20,
     page: filters.page || 1,
-    /*minimum_rating: filters.rating || 0,
-    genre: filters.genre,
-    sort_by: filters.sort_by,
-    order_by: filters.order_by,
-    query_term: filters.search || '',*/
   };
-  //onsole.log('In buildMovieList.');
   try {
-    let res = await axios.get(`${process.env.TORRENT_API}`, { params });
+    const TORRENT_API = "https://yts.mx/api/v2/list_movies.json";
+    const OMDB_KEY = "bba736e8";
+    // let res = await axios.get(`${process.env.TORRENT_API}`, { params });
+    let res = await axios.get(`${TORRENT_API}`, {
+      params,
+    });
     const moviesData = res.data.data;
     const movieList = res.data.data.movies;
-    console.log('Movie list: ');
+    console.log("Movie list: ");
     console.log(movieList);
 
     if (moviesData.movie_count === 0) {
-      console.log('Error, no movies found!');//throw notFoundError();
+      console.log("Error, no movies found!"); //throw notFoundError();
     }
     if (moviesData.movie_count <= params.limit * params.page) {
       hasMore = false;

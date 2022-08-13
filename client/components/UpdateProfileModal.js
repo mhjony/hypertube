@@ -18,15 +18,24 @@ const UpdateProfileModal = () => {
   const [lastname, setLastname] = useState(userInfo?.last_name)
   const [username, setUsername] = useState(userInfo?.user_name)
   const [email, setEmail] = useState(userInfo?.email)
-  const [avatar, setAvatar] = useState(userInfo?.avatar)
 
-  const user_id = session?.user.user_id
+  const {
+    accessToken,
+    user: { user_id }
+  } = session
 
   const handleProfileUpdate = async () => {
     try {
       setLoading(true)
 
-      await apiUpdateProfile.updateProfile(user_id, email, username, firstname, lastname, email)
+      await apiUpdateProfile.updateProfile(
+        user_id,
+        email,
+        username,
+        firstname,
+        lastname,
+        accessToken
+      )
 
       setIsModalOpen(false)
       setLoading(false)
@@ -97,7 +106,7 @@ const UpdateProfileModal = () => {
             </button>
 
             <div className="mt-8">
-              <ImageUpload user_id={user_id} />
+              <ImageUpload user_id={user_id} accessToken={accessToken} />
             </div>
           </Modal>
         )}

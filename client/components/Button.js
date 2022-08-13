@@ -4,16 +4,11 @@ import Loader from './Loader'
 
 const Button = ({
   className = '',
-  size = null,
   children,
   onClick = () => {},
   onClickWithLoading = null,
   loading = false,
-  loadingNew = false,
-  negative = false,
-  negativeLight = false,
   disabled = false,
-  noHover = false,
   style
 }) => {
   const [internalLoading, setInternalLoading] = useState(false)
@@ -39,11 +34,16 @@ const Button = ({
     <>
       <button
         type="button"
-        className={`button ${loadingNew ? 'button--loading' : ''} ${
-          negative ? 'button--negative' : ''
-        } ${negativeLight ? 'button--negative-light' : ''} ${className} ${
-          noHover ? 'no-hover' : ''
-        } ${size ? `button--${size}` : ''}`}
+        className={
+          `inline-flex items-center px-4 py-2 bg-gray-900 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest active:bg-gray-900 transition ease-in-out duration-150 ${
+            loading && 'opacity-25'
+          } ` + className
+        }
+        // className={`button ${loadingNew ? 'button--loading' : ''} ${
+        //   negative ? 'button--negative' : ''
+        // } ${negativeLight ? 'button--negative-light' : ''} ${className} ${
+        //   noHover ? 'no-hover' : ''
+        // } ${size ? `button--${size}` : ''}`}
         onClick={usedOnClick}
         disabled={disabled || loading}
         style={style}

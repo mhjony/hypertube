@@ -20,7 +20,7 @@ CREATE TABLE users (
 	avatar varchar(255) DEFAULT NULL
 );
 
--- Create the movies table
+-- Create movie table
 CREATE TABLE movies (
 	id uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
 	imdb_code VARCHAR(50) NOT NULL UNIQUE,
@@ -32,6 +32,7 @@ CREATE TABLE movies (
 	subtitle_paths VARCHAR(255)[] DEFAULT '{}',
 	magnet VARCHAR(255) NOT NULL
 );
+
 
 -- Create the comments table
 CREATE TABLE comments (
@@ -49,4 +50,15 @@ INSERT INTO users (first_name, last_name, user_name, email, verified, password)
 VALUES 
 ('admin', 'user', 'admin', 'admin@gmail.com', '1', '$2a$10$PAM0GqbRGkOS2bVupYY0he23LiSv2THGyfvtULZpcdRTzSM7BQ01u'),
 ('demo', 'user', 'demo', 'demo@gmail.com', '1', '$2a$10$PAM0GqbRGkOS2bVupYY0he23LiSv2THGyfvtULZpcdRTzSM7BQ01u');
+
+-- Insert a test movie
+INSERT INTO movies (imdb_code, title, magnet)
+VALUES
+('234324', 'Tiger', 'test')
+
+-- Insert a test comment
+INSERT INTO comments (user_id, imdb_code, comment_body)
+VALUES
+('b3e6c2dc-8d21-4f9c-9149-d89d2495afe8', '234324', 'this is a test comment')
+
 

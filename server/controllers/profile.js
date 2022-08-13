@@ -78,11 +78,10 @@ const profileUpdate = async (req, res) => {
 // @desc    Update/Upload Profile Picture
 // @access  Private
 const profilePictureUpdate = async (req, res) => {
-  console.log("profilPicture end-point Hit", req.body);
+  console.log("asd profilePicture end-point Hit");
 
   try {
     const { user_id } = req.body;
-    // const user_id = "b3e6c2dc-8d21-4f9c-9149-d89d2495afe8";
 
     // get the uploaded picture data
     let avatar = null;

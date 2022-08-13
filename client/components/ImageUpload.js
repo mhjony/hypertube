@@ -1,19 +1,23 @@
 import { useState } from 'react'
 import { useMutate } from 'restful-react'
 
-const UploadProfilePicture = ({ user_id }) => {
+const UploadProfilePicture = ({ user_id, accessToken }) => {
   const [selectedImage, setSelectedImage] = useState()
 
   const { mutate: uploadImage } = useMutate({
     verb: 'POST',
     path: 'http://localhost:8000/profile/updateProfilePicture'
+    // TODO: For some reason passing token with header
+    // is not working, so passing it as a parameter instead
+    // I need to fix this
+    // headers: {
+    //   Authorization: `Bearer ${accessToken}`
+    // }
   })
 
   const handleChange = event => {
     setSelectedImage(event.target.files[0])
   }
-
-  console.log('user_id', user_id)
 
   const handleImageUpload = () => {
     if (!selectedImage) {
@@ -25,7 +29,7 @@ const UploadProfilePicture = ({ user_id }) => {
 
     uploadImage(formData)
       .then(uploadedImage => {
-        console.log('uploadedImage', uploadedImage)
+        console.log('Image Uploaded successfully', uploadedImage)
       })
       .catch(console.log('Oooops, something went wrong!'))
   }
