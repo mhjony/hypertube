@@ -26,20 +26,25 @@ const providers = [
         provider: 'credentials'
       }
       try {
-        const backendJWT = await fetch('http://localhost:8000/auth/login', {
+				console.log('1');
+        const backendJWT = await fetch('http://server:8000/auth/login', {
           method: 'post',
           headers: {
             'Content-Type': 'application/json'
           },
           body: JSON.stringify(body)
         })
+				console.log('2');
         const backendJWTJson = await backendJWT.json()
+				console.log('3');
         return {
           provider: 'credentials',
           error: false,
           ...backendJWTJson
         }
       } catch (e) {
+				console.log('error');
+				console.log(e);
         return {
           provider: 'credentials',
           error: true
