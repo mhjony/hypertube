@@ -1,8 +1,8 @@
 import pool from "../config/database.js";
-import NodeCache from 'node-cache';
+import NodeCache from "node-cache";
 import axios from "axios";
-import movieUtils from '../utils/movie.js';
-import torrentUtils from '../utils/torrent.js';
+import movieUtils from "../utils/movie.js";
+import torrentUtils from "../utils/torrent.js";
 
 const downloadCache = new NodeCache({ checkPeriod: 0 });
 
@@ -75,13 +75,15 @@ const getMovieComments = async (req, res) => {
     [imdb_code]
   );
   return res.status(200).json(comments.rows);
+};
+
 // @route   GET /get-single-movie
 // @desc    return movie list
 // @access  Public
 const getSingleMovie = async (req, res) => {
-	console.log("get-single-movie end-point Hit");
+  console.log("get-single-movie end-point Hit");
   const { id } = req.query;
-	console.log(id);
+  console.log(id);
   const movieInfo = await movieUtils.getMovieInfo(id);
   //const user = await User.findById(userId);
 
@@ -90,15 +92,14 @@ const getSingleMovie = async (req, res) => {
     tempMovie.watched = user.watched.some((elem) => elem.movieId === movie.imdbCode);
     return tempMovie;
   });*/
-	let comments = [];
-	let subtitles = [];
-	//console.log(movieInfo);
-	const ret = movieUtils.formatSingleMovieEntry(movieInfo, comments, subtitles);
+  let comments = [];
+  let subtitles = [];
+  //console.log(movieInfo);
+  const ret = movieUtils.formatSingleMovieEntry(movieInfo, comments, subtitles);
   res.json(ret);
 };
 
 const playMovie = async (req, res, next) => {
-  
   const { imdbCode } = req.params;
   /*let movie = await Movie.findOne({ imdbCode });
   if ((!movie || !movie.downloadComplete) && !downloadCache.has(imdbCode)) {
@@ -115,28 +116,25 @@ const playMovie = async (req, res, next) => {
 };
 
 const downloadMovie = async (req, res, next) => {
-	console.log("movie-download end-point Hit");
-	//const { string } = req.query;
+  console.log("movie-download end-point Hit");
+  //const { string } = req.query;
   const { imdbCode } = req.query;
-	try {
-		// Get movie data here, if available in database. Put into let movie, if it exists.
-		let movie = { imdbCode };
-		const magnet = await torrentUtils.getMagnetLink(imdbCode);
-		console.log('magnet:');
-		console.log(magnet);
+  try {
+    // Get movie data here, if available in database. Put into let movie, if it exists.
+    let movie = { imdbCode };
+    const magnet = await torrentUtils.getMagnetLink(imdbCode);
+    console.log("magnet:");
+    console.log(magnet);
     await torrentUtils.downloadMovie(movie, magnet, downloadCache);
-		//await torrentUtils.downloadMovie(movie, downloadCache);
-		// Get movie data here again, because it might be updated, and now we can get the server location and size.
-		//req.serverLocation = movie.serverLocation;
-		//req.movieSize = movie.size;
-		//torrentUtils.startFileStream(req, res, next);
-		return res
-					.status(200)
-					.send(magnet)
-					.end();
-	} catch (e) {
-		// Error.
-	}
+    //await torrentUtils.downloadMovie(movie, downloadCache);
+    // Get movie data here again, because it might be updated, and now we can get the server location and size.
+    //req.serverLocation = movie.serverLocation;
+    //req.movieSize = movie.size;
+    //torrentUtils.startFileStream(req, res, next);
+    return res.status(200).send(magnet).end();
+  } catch (e) {
+    // Error.
+  }
 };
 
 export default {
@@ -144,7 +142,7 @@ export default {
   movieSearch,
   addComment,
   getMovieComments,
-	getSingleMovie,
-	playMovie,
-	downloadMovie,
+  getSingleMovie,
+  playMovie,
+  downloadMovie,
 };

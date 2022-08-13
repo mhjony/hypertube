@@ -30,7 +30,7 @@ CREATE TABLE movies (
 	server_location VARCHAR(255) DEFAULT NULL,
 	downloaded SMALLINT NOT NULL DEFAULT 0,
 	subtitle_paths VARCHAR(255)[] DEFAULT '{}',
-	magnet VARCHAR(255) NOT NULL
+	magnet VARCHAR(255) DEFAULT NULL
 );
 
 
@@ -45,6 +45,7 @@ CREATE TABLE comments (
 	created_at timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
+/*
 -- Insert predifined users for admin to use
 INSERT INTO users (first_name, last_name, user_name, email, verified, password)
 VALUES 
@@ -52,13 +53,8 @@ VALUES
 ('demo', 'user', 'demo', 'demo@gmail.com', '1', '$2a$10$PAM0GqbRGkOS2bVupYY0he23LiSv2THGyfvtULZpcdRTzSM7BQ01u');
 
 -- Insert a test movie
-INSERT INTO movies (imdb_code, title, magnet)
-VALUES
-('234324', 'Tiger', 'test')
+INSERT INTO movies (imdb_code, title) VALUES ('234324', 'Tiger')
 
 -- Insert a test comment
-INSERT INTO comments (user_id, imdb_code, comment_body)
-VALUES
-('b3e6c2dc-8d21-4f9c-9149-d89d2495afe8', '234324', 'this is a test comment')
-
-
+INSERT INTO comments (user_id, imdb_code, comment_body) VALUES ('b3e6c2dc-8d21-4f9c-9149-d89d2495afe8', '234324', 'this is a test comment')
+*/
