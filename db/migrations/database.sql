@@ -16,7 +16,7 @@ CREATE TABLE users (
 	token varchar(255) DEFAULT NULL,
 	movies_watched VARCHAR(255)[] DEFAULT '{}',
 	language VARCHAR(255),
-	verified SMALLINT NOT NULL DEFAULT 0
+	verified SMALLINT NOT NULL DEFAULT 0,
 	avatar varchar(255) DEFAULT NULL
 );
 
@@ -40,7 +40,7 @@ CREATE TABLE comments (
 	user_id uuid NOT NULL,
 	imdb_code VARCHAR(50) NOT NULL,
 	CONSTRAINT fk_user_id FOREIGN KEY(user_id) REFERENCES users(user_id),
-	CONSTRAINT fk_imdd_code FOREIGN KEY(imdb_code) REFERENCES movies(imdb_code),
+	CONSTRAINT fk_imdb_code FOREIGN KEY(imdb_code) REFERENCES movies(imdb_code),
 	comment_body VARCHAR(255) NOT NULL,
 	created_at timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
@@ -49,7 +49,7 @@ CREATE TABLE comments (
 INSERT INTO users (first_name, last_name, user_name, email, verified, password)
 VALUES 
 ('admin', 'user', 'admin', 'admin@gmail.com', '1', '$2a$10$PAM0GqbRGkOS2bVupYY0he23LiSv2THGyfvtULZpcdRTzSM7BQ01u'),
-('demo', 'user', 'demo', 'demo@gmail.com', '1', '$2a$10$PAM0GqbRGkOS2bVupYY0he23LiSv2THGyfvtULZpcdRTzSM7BQ01u')
+('demo', 'user', 'demo', 'demo@gmail.com', '1', '$2a$10$PAM0GqbRGkOS2bVupYY0he23LiSv2THGyfvtULZpcdRTzSM7BQ01u');
 
 -- Insert a test movie
 INSERT INTO movies (imdb_code, title, magnet)
