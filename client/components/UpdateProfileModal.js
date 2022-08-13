@@ -106,7 +106,7 @@ const UpdateProfileModal = () => {
             </button>
 
             <div className="mt-8">
-              <ImageUpload user_id={user_id} />
+              <ImageUpload user_id={user_id} accessToken={accessToken} />
             </div>
           </Modal>
         )}

@@ -5,7 +5,7 @@ const auth = (req, res, next) => {
   const authHeader = req.headers["authorization"];
 
   const token = authHeader && authHeader.split(" ")[1];
-  console.log("------Middleware TOKEN-------", req);
+  console.log("------Middleware TOKEN-------", token);
 
   if (!token) {
     return res.status(401).json({ error: "Missing token!" });
