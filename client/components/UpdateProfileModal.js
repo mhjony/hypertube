@@ -18,10 +18,11 @@ const UpdateProfileModal = () => {
   const [lastname, setLastname] = useState(userInfo?.last_name)
   const [username, setUsername] = useState(userInfo?.user_name)
   const [email, setEmail] = useState(userInfo?.email)
-  const [avatar, setAvatar] = useState(userInfo?.avatar)
 
-  // const user_id = session?.user.user_id
-  const { accessToken, user_id } = session
+  const {
+    accessToken,
+    user: { user_id }
+  } = session
 
   const handleProfileUpdate = async () => {
     try {
