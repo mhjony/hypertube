@@ -13,17 +13,26 @@ const MovieDisplay = ({ filteredMovies }) => {
 
   const totalPages = Math.ceil(filteredMovies?.length / PER_PAGE)
 
+  const handleMovieDetails = movie => {
+    // get the movie id from the movie object
+    // const movieId = movie?.imdb_code
+    const movieId = 1
+
+    console.log('asd in handleMovieDetails movieId', movieId)
+    window.location.href = `/movie/${movieId}`
+  }
+
   return (
     <div>
+      {/* Map movie data */}
       <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-4">
         {filteredMovies
           ? filteredMovies?.slice(limitStart, limitEnd)?.map(video => (
-              <div className="video" key={video.id}>
+              <div className="video" key={video.id} onClick={() => handleMovieDetails(video)}>
                 <div className="video--img">
                   <img src={video.thumbnail} alt={video.title}></img>
                 </div>
 
-                {/* Video Info */}
                 <div className="video-overlay">
                   <div className="video--info">
                     <div className="flex items-center mb-1 md:mb-2">
