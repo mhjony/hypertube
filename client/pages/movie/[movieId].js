@@ -10,12 +10,36 @@ import api from '../../services/backend/movies'
 import { PlusIcon, XIcon, PlayIcon, UserGroupIcon } from '@heroicons/react/solid'
 import ReactPlayer from 'react-player/lazy'
 import Navbar from '../../components/Navbar'
+import MoviePlayerModal from '../../components/moviePlayerModal'
 
 const movieId = ({ movie }) => {
   const { data: session } = useSession()
 
   // const router = useRouter()
   const [showPlayer, setShowPlayer] = useState(false)
+
+  const imgClass = {
+    // limit height to to screen height
+    height: '100vh',
+    // limit width to to screen width
+    width: '100vw',
+    // calculate the ratio of the image
+
+    // if the image is wider than the screen, then make it fit the screen
+    objectFit: 'cover',
+    objectPosition: 'center'
+  }
+
+  const handleMoviePlay = movie => {
+    // setShowPlayer(true)
+
+    console.log('asd handleMoviePlay', movie)
+
+    // redirect to profile page
+    // window.location.href = `/profile`
+
+    // Open a modal onClick
+  }
 
   return (
     <div>
@@ -24,20 +48,20 @@ const movieId = ({ movie }) => {
           <Navbar />
           <section className="relative z-50">
             <div className="relative min-h-[calc(100vh-72px)]">
-              {/* <img src={movie.image.original} alt={movie.image.original} /> */}
-              {/* <Image src={movie.image.original} layout="fill" objectFit="cover" /> */}
+              <img src={movie?.thumbnail} alt={movie?.thumbnail} style={imgClass} />
             </div>
 
             <div className="absolute inset-y-28 md:inset-y-auto md:bottom-10 inset-x-4 md:inset-x-12 space-y-6 z-50">
               <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold">{movie?.title}</h1>
               <div className="flex items-center space-x-3 md:space-x-5">
-                <button
+                {/* <button
                   className="text-xs md:text-base bg-[#f9f9f9] text-black flex items-center justify-center py-2.5 px-6 rounded hover:bg-[#c6c6c6]"
-                  onClick={() => setShowPlayer(true)}
+                  onClick={() => handleMoviePlay(movie)}
                 >
                   <PlayIcon className="h-6 md:h-8" />
                   <span className="uppercase font-medium tracking-wide">Play</span>
-                </button>
+                </button> */}
+                <MoviePlayerModal movie={movie} />
 
                 <button
                   className="text-xs md:text-base bg-black/30 text-[#f9f9f9] border border-[#f9f9f9] flex items-center justify-center py-2.5 px-6 rounded hover:bg-[#c6c6c6]"

@@ -2,14 +2,15 @@ import React from 'react'
 import Player from './Player'
 import Comments from './Comments'
 
-const MovieInfo = ({ session }) => {
+const MovieInfo = ({ session, movie }) => {
+  console.log('asd movie in modal', movie)
   return (
     <div>
       <div className="min-h-screen bg-gray-800 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
         <div className="max-w-screen-xl w-full lg:w-full">
           <div className="relative overflow-hidden shadow rounded-lg border-solid border-2 border-gray-500">
             <div className="text-white text-xl pt-4 mx-8">
-              <h1 className="font-bold text-3xl my-2">Movie Title</h1>
+              <h1 className="font-bold text-3xl my-2">{movie?.title}</h1>
               <div className="flex gap-4 mb-4">
                 <p className="text-red-400 text-sm">IMDB Rating: 8.5</p>
                 <p className="text-gray-200 text-sm">
