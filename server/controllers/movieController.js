@@ -77,14 +77,14 @@ const getMovieComments = async (req, res) => {
   return res.status(200).json(comments.rows);
 };
 
-// @route   GET /get-single-movie
+// @route   GET /get-single-movie/:imdb_code
 // @desc    return movie list
 // @access  Public
 const getSingleMovie = async (req, res) => {
-  console.log("get-single-movie end-point Hit");
-  const { id } = req.query;
-  console.log(id);
-  const movieInfo = await movieUtils.getMovieInfo(id);
+  const { imdb_code } = req.params;
+  console.log("get-single-movie end-point Hit", imdb_code);
+
+  const movieInfo = await movieUtils.getMovieInfo(imdb_code);
   //const user = await User.findById(userId);
 
   /*movies.movies = movies.movies.map((movie) => {
@@ -94,9 +94,8 @@ const getSingleMovie = async (req, res) => {
   });*/
   let comments = [];
   let subtitles = [];
-  //console.log(movieInfo);
   const ret = movieUtils.formatSingleMovieEntry(movieInfo, comments, subtitles);
-  res.json(ret);
+  res.status(200).json(ret);
 };
 
 const playMovie = async (req, res, next) => {

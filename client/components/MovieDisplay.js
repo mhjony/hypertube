@@ -1,9 +1,10 @@
-import React, { useState, useMemo } from 'react'
+import React, { useState } from 'react'
 import Button from './Button'
 
 const MovieDisplay = ({ filteredMovies }) => {
   const [page, setPage] = useState(0)
 
+  // TODO: remove console.log
   console.log('Filtered Movies', filteredMovies)
 
   let PER_PAGE = 10
@@ -14,11 +15,8 @@ const MovieDisplay = ({ filteredMovies }) => {
   const totalPages = Math.ceil(filteredMovies?.length / PER_PAGE)
 
   const handleMovieDetails = movie => {
-    // get the movie id from the movie object
-    // const movieId = movie?.imdb_code
-    const movieId = 1
+    const movieId = movie?.imdb_code
 
-    console.log('asd in handleMovieDetails movieId', movieId)
     window.location.href = `/movie/${movieId}`
   }
 

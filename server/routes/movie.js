@@ -13,9 +13,10 @@ router.post("/comment/add/:imdb_code", [auth], movieController.addComment);
 // Routes for getting movies
 //router.get("/get-movie-list", [auth], movieController.getMovieList);
 router.get("/get-movie-list", movieController.getMovieList);
-router.get("/get-single-movie", movieController.getSingleMovie);
-
 // Routes for downloading/playing movies
+// router.get("/get-single-movie", movieController.getSingleMovie);
+router.get("/get-single-movie/:imdb_code", movieController.getSingleMovie);
+
 //router.get('/:imdbCode/player/:token', inputValidator.validateToken, movieController.playMovie);
 router.get("/player/:imdbCode", movieController.playMovie);
 router.get("/download", movieController.downloadMovie);

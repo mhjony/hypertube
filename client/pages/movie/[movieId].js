@@ -1,12 +1,12 @@
 import { useEffect, useState } from 'react'
 import { useSession, getSession } from 'next-auth/react'
 
-import Head from 'next/head'
-import Image from 'next/image'
-import { useRouter } from 'next/router'
+import api from '../../services/backend/movies'
 
-// import Header from '../../components/Header'
-// import Hero from '../../components/Hero'
+// import Head from 'next/head'
+// import Image from 'next/image'
+// import { useRouter } from 'next/router'
+
 import { PlusIcon, XIcon, PlayIcon, UserGroupIcon } from '@heroicons/react/solid'
 import ReactPlayer from 'react-player/lazy'
 import Navbar from '../../components/Navbar'
@@ -14,26 +14,13 @@ import Navbar from '../../components/Navbar'
 const movieId = ({ movie }) => {
   const { data: session } = useSession()
 
-  const router = useRouter()
+  // const router = useRouter()
   const [showPlayer, setShowPlayer] = useState(false)
-
-  console.log('session in single Movie Page ', session)
-  console.log('movie', movie)
-
-  // useEffect(() => {
-  //   if (!session) {
-  //     router.push('/')
-  //   }
-  // }, [session])
 
   return (
     <div>
-      {/* <Head>
-        <title>{movie.name}</title>
-      </Head> */}
       {session ? (
         <>
-          {/* TODO: Add the NavBar here */}
           <Navbar />
           <section className="relative z-50">
             <div className="relative min-h-[calc(100vh-72px)]">
@@ -42,7 +29,7 @@ const movieId = ({ movie }) => {
             </div>
 
             <div className="absolute inset-y-28 md:inset-y-auto md:bottom-10 inset-x-4 md:inset-x-12 space-y-6 z-50">
-              <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold">{movie.name}</h1>
+              <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold">{movie?.title}</h1>
               <div className="flex items-center space-x-3 md:space-x-5">
                 <button
                   className="text-xs md:text-base bg-[#f9f9f9] text-black flex items-center justify-center py-2.5 px-6 rounded hover:bg-[#c6c6c6]"
@@ -72,7 +59,7 @@ const movieId = ({ movie }) => {
 
               <p className="text-xs md:text-sm">
                 {movie.release_date || movie.first_air_date} • {Math.floor(movie.runtime / 60)}h{' '}
-                {movie.runtime % 60}m • {movie.genres.map(genre => genre + ' ')}{' '}
+                {movie?.runtime % 60}m • {movie?.genre}{' '}
               </p>
               <h4 className="text-sm md:text-lg max-w-4xl">{movie.summary}</h4>
             </div>
@@ -114,6 +101,7 @@ const movieId = ({ movie }) => {
         </>
       ) : (
         <div>Redirect to login page</div>
+        // window.location('/login')
       )}
     </div>
   )
@@ -123,21 +111,17 @@ export default movieId
 
 export async function getServerSideProps(context) {
   const {
-    params: { movieId }
-    // req
+    params: { movieId },
+    req
   } = context
 
-  //   const session = await getSession({ req })
+  const session = await getSession({ req })
 
-  // TODO: Replace this with a real API call what we have from the server
-  // TODO: we have a api called getSingleMovie that returns the movie details, so use it here
-  const movieDetails = await fetch(`https://api.tvmaze.com/shows/${movieId}`).then(response =>
-    response.json()
-  )
+  // Call the API to get the movie details and return them as props to the page component
+  const movieDetails = await api.getMovieDetails(session?.accessToken, movieId)
 
   return {
     props: {
-      //   session,
       movie: movieDetails
     }
   }
