@@ -17,7 +17,7 @@ router.get("/get-single-movie", movieController.getSingleMovie);
 
 // Routes for downloading/playing movies
 //router.get('/:imdbCode/player/:token', inputValidator.validateToken, movieController.playMovie);
-router.get("/player", movieController.playMovie);
+router.get("/player/:imdbCode", movieController.playMovie);
 router.get("/download", movieController.downloadMovie);
 
 export default router;
