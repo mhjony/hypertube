@@ -101,18 +101,19 @@ const getSingleMovie = async (req, res) => {
 
 const playMovie = async (req, res, next) => {
   const { imdbCode } = req.params;
-  /*let movie = await Movie.findOne({ imdbCode });
+  let movie = await movieUtils.fetchSingleMovie({ imdbCode });
   if ((!movie || !movie.downloadComplete) && !downloadCache.has(imdbCode)) {
     if (!movie) {
       movie = { imdbCode };
     }
-    if (!movie.magnet) movie.magnet = await movieTorrentUtils.getMagnet(imdbCode);
-    await movieTorrentUtils.downloadMovie(movie, downloadCache);
-    movie = await Movie.findOne({ imdbCode });
+		let magnetLink = '';
+    if (!movie.magnetLink) magnetLink = await torrentUtils.getMagnetLink(imdbCode);
+    await torrentUtils.downloadMovie(movie, magnetLink, downloadCache);
+    movie = await movieUtils.fetchSingleMovie({ imdbCode });
   }
   req.serverLocation = movie.serverLocation;
   req.movieSize = movie.size;
-  movieTorrentUtils.startFileStream(req, res, next);*/
+  torrentUtils.startFileStream(req, res, next);
 };
 
 const downloadMovie = async (req, res, next) => {

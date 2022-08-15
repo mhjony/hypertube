@@ -48,21 +48,16 @@ const buildMovieList = async (filters) => {
 
 const updateMovie = async (imdbCode, magnetLink, serverLocation, size) => {
   try {
-    //const { first_name, last_name, user_name, email, password, token } =
-    //  req.body;
-
-    //2. check if movie exists in the db, update it.
-    const user = await pool.query("SELECT * FROM movies WHERE imdb_code = $1", [
+    //1. check if movie exists in the db.
+    const movie = await pool.query("SELECT * FROM movies WHERE imdb_code = $1", [
       imdbCode,
     ]);
 
-    // if user exists, then throw error
-    if (user.rows.length === 0) {
+    // if movie does not exist, then throw error
+    if (movie.rows.length === 0) {
       return res.status(401).send("Movie doesn't exit.");
     }
 
-
-    //5. create & enter the new user info with generated token inside my database
     const updatedMovie = await pool.query(
       "UPDATE movies SET magnet = $1, server_location = $2, size = $3 WHERE imdb_code = $4 RETURNING *",
       [magnetLink, serverLocation, size, imdbCode]
@@ -97,10 +92,15 @@ const getTorrentData = async (imdbID) => {
 		}
 		const { hash } = data.movies[0].torrents.reduce((current, previous) => previous.size_bytes < current.size_bytes ? previous : current);
 		const magnet = `magnet:?xt=urn:btih:${hash}&dn=${data.movies[0].title_long.split(' ').join('+')}`;
-		const ret = await pool.query(
-       "INSERT INTO movies (imdb_code, magnet, title) VALUES ($1, $2, $3)",
-       [imdbID, magnet, data.movies[0].title_long]
-     );
+		const movie = await pool.query("SELECT * FROM movies WHERE imdb_code = $1", [
+      imdbID,
+    ]);
+			if (!movie) {
+			const ret = await pool.query(
+				"INSERT INTO movies (imdb_code, magnet, title) VALUES ($1, $2, $3)",
+				[imdbID, magnet, data.movies[0].title_long]
+			);
+		}
 		return magnet;
 	} catch (e) {
 		console.log(e);
@@ -141,19 +141,39 @@ const getMovieInfo = async (imdbID) => {
 
 const formatSingleMovieEntry = (movieInfo, comments, subtitles) => ({
 	title: movieInfo.Title,
-			imdbRating: movieInfo.imdbRating,
-			year: movieInfo.Year,
-			genre: movieInfo.Genre,
-			description: movieInfo.Plot,
-			runtime: parseInt(movieInfo.Runtime, 10),
-			director: movieInfo.Director,
-			actors: movieInfo.Actors,
-			comments,
-			subtitles
+	imdbRating: movieInfo.imdbRating,
+	year: movieInfo.Year,
+	genre: movieInfo.Genre,
+	description: movieInfo.Plot,
+	runtime: parseInt(movieInfo.Runtime, 10),
+	director: movieInfo.Director,
+	actors: movieInfo.Actors,
+	comments,
+	subtitles
 });
 
+const fetchSingleMovie = async (imdbCode) => {
+  try {
+  
+
+    //2. check if movie exists in the db.
+    const movie = await pool.query("SELECT * FROM movies WHERE imdb_code = $1", [
+      imdbCode,
+    ]);
+
+    // if movie does not exist, then throw error
+    if (movie.rows.length === 0) {
+      return res.status(401).send("Movie doesn't exit.");
+    }
+
+    return movie;
+  } catch (err) {
+    console.error(err.message);
+  }
+};
 
 export default {
+	fetchSingleMovie,
 	updateMovie,
   buildMovieList,
 	getMovieInfo,
