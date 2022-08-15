@@ -172,6 +172,7 @@ const formatSingleMovieEntry = (movieInfo, comments, subtitles) => ({
   actors: movieInfo.Actors,
   comments,
   subtitles,
+  thumbnail: movieInfo.Poster,
 });
 
 export default {
