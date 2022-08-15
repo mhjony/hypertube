@@ -157,16 +157,17 @@ const getMovieInfo = async (imdbID) => {
 };
 
 const formatSingleMovieEntry = (movieInfo, comments, subtitles) => ({
-	title: movieInfo.Title,
-	imdbRating: movieInfo.imdbRating,
-	year: movieInfo.Year,
-	genre: movieInfo.Genre,
-	description: movieInfo.Plot,
-	runtime: parseInt(movieInfo.Runtime, 10),
-	director: movieInfo.Director,
-	actors: movieInfo.Actors,
-	comments,
-	subtitles
+  title: movieInfo.Title,
+  imdbRating: movieInfo.imdbRating,
+  year: movieInfo.Year,
+  genre: movieInfo.Genre,
+  description: movieInfo.Plot,
+  runtime: parseInt(movieInfo.Runtime, 10),
+  director: movieInfo.Director,
+  actors: movieInfo.Actors,
+  comments,
+  subtitles,
+  thumbnail: movieInfo.Poster,
 });
 
 const fetchSingleMovie = async (imdbCode) => {
