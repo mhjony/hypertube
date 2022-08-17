@@ -75,6 +75,28 @@ const options = {
   },
   callbacks: {
     signIn: async ({ user, account }) => {
+      console.log('♥️ Accoutn Type: ', account)
+      if (account.provider === 'google') {
+        const google = {
+          provider: 'google',
+          account
+        }
+        try {
+          const backendJWT = await fetch('http://localhost:8000/auth/login', {
+            method: 'post',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(google)
+          })
+          const backendJWTJson = await backendJWT.json()
+          user.accessToken = backendJWTJson.token
+          return true
+        } catch (error) {
+          console.log('Error from nextAuth callback for Google:', error)
+        }
+      }
+
       if (account.type === 'credentials' && user.accessToken) {
         return true
       }
