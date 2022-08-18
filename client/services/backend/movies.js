@@ -26,7 +26,6 @@ const getMoviesList = async accessToken => {
 // Get single movie details
 const getMovieDetails = async (accessToken, imdb_code) => {
   try {
-    console.log('asd getMovieDetails in service HIT', accessToken, imdb_code)
     const url = `${API}/movie/get-single-movie/${imdb_code}`
 
     if (!accessToken) {
@@ -42,7 +41,6 @@ const getMovieDetails = async (accessToken, imdb_code) => {
     })
 
     const data = await res.json()
-    console.log('I am the movie details data', data)
     return data
   } catch (error) {
     return error
@@ -74,7 +72,6 @@ const getMovieComments = async (accessToken, imdb_code) => {
 
 const addComment = async (accessToken, imdb_code, user_id, comment_body) => {
   try {
-    console.log('asd addComment in service', accessToken, imdb_code, user_id, comment_body)
     const url = `${API}/movie/comment/add/${imdb_code}`
 
     if (!accessToken) {

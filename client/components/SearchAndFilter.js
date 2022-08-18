@@ -11,7 +11,7 @@ import FormInput from './FormInput'
 dayjs.extend(isToday)
 dayjs.extend(relativeTime)
 
-const SearchAndFilter = ({ movies, session }) => {
+const SearchAndFilter = ({ movies, session, loading }) => {
   const oldestVid = movies?.movies?.sort(
     (a, b) => new Date(a.date_uploaded) - new Date(b.date_uploaded)
   )[0]
@@ -110,7 +110,7 @@ const SearchAndFilter = ({ movies, session }) => {
         </div>
       )}
 
-      <MovieDisplay filteredMovies={filteredMovies} />
+      <MovieDisplay filteredMovies={filteredMovies} loading={loading} />
     </div>
   )
 }
