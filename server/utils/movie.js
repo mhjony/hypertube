@@ -55,13 +55,15 @@ const updateMovie = async (imdbCode, magnetLink, serverLocation, size) => {
 
     // if movie does not exist, then throw error
     if (movie.rows.length === 0) {
-      return res.status(401).send("Movie doesn't exit.");
+      console.log("Movie doesn't exit.");
     }
 
     const updatedMovie = await pool.query(
       "UPDATE movies SET magnet = $1, server_location = $2, size = $3 WHERE imdb_code = $4 RETURNING *",
       [magnetLink, serverLocation, size, imdbCode]
     );
+		console.log('Tried to update movie.');
+		console.log(updatedMovie);
     return updatedMovie;
     // res.json(newUser.rows[0]);
 
@@ -95,11 +97,15 @@ const getTorrentData = async (imdbID) => {
 		const movie = await pool.query("SELECT * FROM movies WHERE imdb_code = $1", [
       imdbID,
     ]);
-			if (!movie) {
+		console.log('Is movie in database?');
+		console.log(movie);
+			if (movie.rowCount === 0) {
 			const ret = await pool.query(
 				"INSERT INTO movies (imdb_code, magnet, title) VALUES ($1, $2, $3)",
 				[imdbID, magnet, data.movies[0].title_long]
 			);
+			console.log('Added movie to database.');
+			console.log(ret);
 		}
 		return magnet;
 	} catch (e) {
@@ -172,6 +178,35 @@ const fetchSingleMovie = async (imdbCode) => {
   }
 };
 
+const setMovieAsDownloaded = async (imdbCode) => {
+  try {
+    //1. check if movie exists in the db.
+    const movie = await pool.query("SELECT * FROM movies WHERE imdb_code = $1", [
+      imdbCode,
+    ]);
+
+    // if movie does not exist, then throw error
+    if (movie.rows.length === 0) {
+      console.log("Movie doesn't exit.");
+    }
+
+    const updatedMovie = await pool.query(
+      "UPDATE movies SET downloaded = 1 WHERE imdb_code = $1 RETURNING *",
+      [imdbCode]
+    );
+		console.log('Tried set movie as downloaded.');
+		console.log(updatedMovie);
+    return updatedMovie;
+    // res.json(newUser.rows[0]);
+
+    // TODO: Need to Fix the sendEmail import issue
+    // If that's not working i will move the sendEmail method in this file
+    //6. Finally send the email to verify the registration
+  } catch (err) {
+    console.error(err.message);
+  }
+};
+
 export default {
 	fetchSingleMovie,
 	updateMovie,
@@ -179,4 +214,5 @@ export default {
 	getMovieInfo,
 	formatSingleMovieEntry,
 	getTorrentData,
+	setMovieAsDownloaded,
 };
