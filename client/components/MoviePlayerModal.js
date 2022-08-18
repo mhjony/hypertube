@@ -9,9 +9,9 @@ import MovieInfo from './videoPlayer/MovieInfo'
 const MoviePlayerModal = ({ movie }) => {
   const { data: session } = useSession()
 
-  console.log('asd MoviePlayerModal', movie)
-
   const userInfo = session?.user
+
+  console.log('asd userInfo', userInfo)
 
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [loading, setLoading] = useState(false)
@@ -49,7 +49,7 @@ const MoviePlayerModal = ({ movie }) => {
 
         {isModalOpen && (
           <Modal center isOpen={isModalOpen} close={() => setIsModalOpen(false)} minWidth={450}>
-            <MovieInfo session={session} movie={movie} />
+            <MovieInfo session={session} movie={movie} user_id={user_id} />
 
             {/* <h2 className="font-bold text-xl md:text-2xl">Play Movie tile</h2>
             
