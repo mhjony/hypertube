@@ -65,7 +65,7 @@ const SearchAndFilter = ({ movies, session }) => {
   return (
     <div>
       {session && isMovieDataPresent && (
-        <div className="bg-black w-full pb-4 flex items-center justify-around mb-0.5 rounded gap-4">
+        <div className="bg-slate-800 w-full pb-4 flex items-center justify-around mb-0.5 rounded gap-4">
           <div className="mr-4 w-full md:w-1/6">
             <p className="text-white uppercase text-md pt-2">Search By name</p>
             <FormInput
