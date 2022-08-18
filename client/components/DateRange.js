@@ -5,10 +5,7 @@ import 'react-date-range/dist/styles.css'
 import 'react-date-range/dist/theme/default.css'
 
 const DateRange = ({ startDate, setStartDate, setEndDate, endDate, minDate = undefined }) => {
-  // const DateRange = ({}) => {
   const handleSelect = val => {
-    console.log('onselect', val)
-
     setStartDate(val.selection.startDate)
     setEndDate(val.selection.endDate)
   }
@@ -20,7 +17,6 @@ const DateRange = ({ startDate, setStartDate, setEndDate, endDate, minDate = und
     endDate: new Date(),
     key: 'selection'
   }
-  console.log('onselect')
 
   return (
     <DateRangePicker

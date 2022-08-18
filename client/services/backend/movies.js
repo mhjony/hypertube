@@ -17,7 +17,6 @@ const getMoviesList = async accessToken => {
     })
 
     const data = await res.json()
-    console.log('I am the movie data', data)
     return data
   } catch (error) {
     return error

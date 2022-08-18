@@ -4,9 +4,6 @@ import Button from './Button'
 const MovieDisplay = ({ filteredMovies }) => {
   const [page, setPage] = useState(0)
 
-  // TODO: remove console.log
-  console.log('Filtered Movies', filteredMovies)
-
   let PER_PAGE = 10
 
   const limitStart = page * PER_PAGE
