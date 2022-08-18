@@ -165,14 +165,16 @@ const formatSingleMovieEntry = (movieInfo, comments, subtitles) => ({
   title: movieInfo.Title,
   imdbRating: movieInfo.imdbRating,
   year: movieInfo.Year,
+  releasedDate: movieInfo.Released,
   genre: movieInfo.Genre,
   description: movieInfo.Plot,
   runtime: parseInt(movieInfo.Runtime, 10),
   director: movieInfo.Director,
   actors: movieInfo.Actors,
-  comments,
+  // comments,
   subtitles,
   thumbnail: movieInfo.Poster,
+  imdb_code: movieInfo.imdbID,
 });
 
 export default {

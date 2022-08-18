@@ -1,11 +1,7 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { useSession, getSession } from 'next-auth/react'
 
 import api from '../../services/backend/movies'
-
-// import Head from 'next/head'
-// import Image from 'next/image'
-// import { useRouter } from 'next/router'
 
 import { PlusIcon, XIcon, PlayIcon, UserGroupIcon } from '@heroicons/react/solid'
 import ReactPlayer from 'react-player/lazy'
@@ -15,7 +11,6 @@ import MoviePlayerModal from '../../components/moviePlayerModal'
 const movieId = ({ movie }) => {
   const { data: session } = useSession()
 
-  // const router = useRouter()
   const [showPlayer, setShowPlayer] = useState(false)
 
   const imgClass = {
