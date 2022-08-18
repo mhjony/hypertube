@@ -1,7 +1,8 @@
 import React, { useState } from 'react'
 import Button from './Button'
+import Loader from './Loader'
 
-const MovieDisplay = ({ filteredMovies }) => {
+const MovieDisplay = ({ filteredMovies, loading }) => {
   const [page, setPage] = useState(0)
 
   let PER_PAGE = 10
@@ -21,23 +22,25 @@ const MovieDisplay = ({ filteredMovies }) => {
     <div>
       {/* Map movie data */}
       <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-4">
-        {filteredMovies
-          ? filteredMovies?.slice(limitStart, limitEnd)?.map(video => (
-              <div className="mt-8 video" key={video.id} onClick={() => handleMovieDetails(video)}>
-                <div className="video--img">
-                  <img src={video.thumbnail} alt={video.title}></img>
-                </div>
-
-                <div className="video-overlay"></div>
-
-                <div className="text-sm font-bold text-gray-200">
-                  {' '}
-                  {video.title} ({video.year})
-                </div>
-                <div className="text-xs text-gray-200 font-light">IMBD rating: {video.rating}</div>
+        {filteredMovies && !loading ? (
+          filteredMovies?.slice(limitStart, limitEnd)?.map(video => (
+            <div className="mt-8 video" key={video.id} onClick={() => handleMovieDetails(video)}>
+              <div className="video--img">
+                <img src={video.thumbnail} alt={video.title}></img>
               </div>
-            ))
-          : null}
+
+              <div className="video-overlay"></div>
+
+              <div className="text-sm font-bold text-gray-200">
+                {' '}
+                {video.title} ({video.year})
+              </div>
+              <div className="text-xs text-gray-200 font-light">IMBD rating: {video.rating}</div>
+            </div>
+          ))
+        ) : (
+          <Loader />
+        )}
       </div>
 
       {/* Pagination Part */}
