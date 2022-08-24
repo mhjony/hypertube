@@ -141,6 +141,7 @@ export async function getServerSideProps(context) {
 
   return {
     props: {
+      // movie: JSON.parse(JSON.stringify(movieDetails))
       movie: movieDetails
     }
   }
