@@ -75,11 +75,10 @@ const options = {
   },
   callbacks: {
     signIn: async ({ user, account }) => {
-      console.log('♥️ Accoutn Type: ', account)
       if (account.provider === 'google') {
         const google = {
           provider: 'google',
-          account
+          id_token: account.id_token
         }
         try {
           const backendJWT = await fetch('http://localhost:8000/auth/login', {
