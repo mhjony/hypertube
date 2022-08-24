@@ -1,7 +1,6 @@
 /*
  * Place movie stuff here.
  */
-import pool from "../config/database.js";
 import axios from "axios";
 
 const buildMovieList = async (filters) => {
@@ -61,7 +60,6 @@ const updateMovie = async (imdbCode, magnetLink, serverLocation, size) => {
       return res.status(401).send("Movie doesn't exit.");
     }
 
-
     //5. create & enter the new user info with generated token inside my database
     const updatedMovie = await pool.query(
       "UPDATE movies SET magnet = $1, server_location = $2, size = $3 WHERE imdb_code = $4 RETURNING *",
@@ -79,84 +77,110 @@ const updateMovie = async (imdbCode, magnetLink, serverLocation, size) => {
 };
 
 const filterMovieData = (movie) => ({
-	title: movie.title,
-	imbdID: movie.imdb_code,
-	year: movie.year,
-	thumbnail: movie.thumbnail,
-	seeds: movie.torrents.reduce((a, b) => (b.size_bytes < a.size_bytes ? b : a)).seeds,
+  title: movie.title,
+  imbdID: movie.imdb_code,
+  year: movie.year,
+  thumbnail: movie.thumbnail,
+  seeds: movie.torrents.reduce((a, b) => (b.size_bytes < a.size_bytes ? b : a))
+    .seeds,
 });
 
 const getTorrentData = async (imdbID) => {
-	try {
-		console.log('In getTorrentData.');
-		const res = await axios.get(`${process.env.TORRENT_API}?query_term=${imdbID}`);
-		const data = res.data.data;
+  try {
+    console.log("In getTorrentData.");
+    const res = await axios.get(
+      `${process.env.TORRENT_API}?query_term=${imdbID}`
+    );
+    const data = res.data.data;
 
-		if (res.status !== 200 || data.movie_count === 0 ) {
-			console.log('Get torrentData error.');
-		}
-		const { hash } = data.movies[0].torrents.reduce((current, previous) => previous.size_bytes < current.size_bytes ? previous : current);
-		const magnet = `magnet:?xt=urn:btih:${hash}&dn=${data.movies[0].title_long.split(' ').join('+')}`;
-		const ret = await pool.query(
-       "INSERT INTO movies (imdb_code, magnet, title) VALUES ($1, $2, $3)",
-       [imdbID, magnet, data.movies[0].title_long]
-     );
-		return magnet;
-	} catch (e) {
-		console.log(e);
-	}
+    if (res.status !== 200 || data.movie_count === 0) {
+      console.log("Get torrentData error.");
+      console.log("Error");
+    }
+
+    const { hash } = data.movies[0].torrents.reduce((current, previous) =>
+      previous.size_bytes < current.size_bytes ? previous : current
+    );
+    const magnet = `magnet:?xt=urn:btih:${hash}&dn=${data.movies[0].title_long
+      .split(" ")
+      .join("+")}`;
+    const ret = await pool.query(
+      "INSERT INTO movies (imdb_code, magnet, title) VALUES ($1, $2, $3)",
+      [imdbID, magnet, data.movies[0].title_long]
+    );
+    console.log("Ret:");
+    console.log(ret);
+    return magnet;
+  } catch (e) {
+    // Error.
+  }
 };
 
-
-
-const parseTorrentInfo = res => {
-	if (res && res.data && res.data.data && res.data.data.movies && res.data.data.movies[0]) {
-		return {
-			Title: res.data.data.movies[0].title || '',
-			imdbRating: res.data.data.movies[0].rating || '',
-			Year: res.data.data.movies[0].year || '',
-			Genre: res.data.data.movies[0].genres && res.data.data.movies[0].genres.join(', ') || '',
-			Plot: res.data.data.movies[0].description_full || '',
-			Runtime: '',
-			Director: '',
-			Actors: '',
-		}
-	}
-	console.log('Error!');
+const parseTorrentInfo = (res) => {
+  if (
+    res &&
+    res.data &&
+    res.data.data &&
+    res.data.data.movies &&
+    res.data.data.movies[0]
+  ) {
+    return {
+      Title: res.data.data.movies[0].title || "",
+      imdbRating: res.data.data.movies[0].rating || "",
+      Year: res.data.data.movies[0].year || "",
+      Genre:
+        (res.data.data.movies[0].genres &&
+          res.data.data.movies[0].genres.join(", ")) ||
+        "",
+      Plot: res.data.data.movies[0].description_full || "",
+      Runtime: "",
+      Director: "",
+      Actors: "",
+    };
+  }
+  console.log("Error!");
 };
 
 const getMovieInfo = async (imdbID) => {
-	let res;
-	let movieInfoData;
-	try {
-		const res = await axios.get(`http://www.omdbapi.com/?i=${imdbID}&apikey=${process.env.OMDB_KEY}`);
-		movieInfoData = res.data;
-		return movieInfoData;
-	} catch (e) {
-		res = await axios.get(`${process.env.TORRENT_API}?query_term=${imbdID}`);
-		const data = parseTorrentInfo(res);
-		return data;
-	}
+  let res;
+  let movieInfoData;
+  try {
+    const TORRENT_API = "https://yts.mx/api/v2/list_movies.json";
+    const OMDB_KEY = "bba736e8";
+
+    const res = await axios.get(
+      `http://www.omdbapi.com/?i=${imdbID}&apikey=${OMDB_KEY}`
+    );
+    movieInfoData = res.data;
+    return movieInfoData;
+  } catch (e) {
+    // res = await axios.get(`${process.env.TORRENT_API}?query_term=${imbdID}`);
+    res = await axios.get(`${TORRENT_API}?query_term=${imdbID}`);
+    const data = parseTorrentInfo(res);
+    return data;
+  }
 };
 
 const formatSingleMovieEntry = (movieInfo, comments, subtitles) => ({
-	title: movieInfo.Title,
-			imdbRating: movieInfo.imdbRating,
-			year: movieInfo.Year,
-			genre: movieInfo.Genre,
-			description: movieInfo.Plot,
-			runtime: parseInt(movieInfo.Runtime, 10),
-			director: movieInfo.Director,
-			actors: movieInfo.Actors,
-			comments,
-			subtitles
+  title: movieInfo.Title,
+  imdbRating: movieInfo.imdbRating,
+  year: movieInfo.Year,
+  releasedDate: movieInfo.Released,
+  genre: movieInfo.Genre,
+  description: movieInfo.Plot,
+  runtime: parseInt(movieInfo.Runtime, 10),
+  director: movieInfo.Director,
+  actors: movieInfo.Actors,
+  // comments,
+  subtitles,
+  thumbnail: movieInfo.Poster,
+  imdb_code: movieInfo.imdbID,
 });
 
-
 export default {
-	updateMovie,
+  updateMovie,
   buildMovieList,
-	getMovieInfo,
-	formatSingleMovieEntry,
-	getTorrentData,
+  getMovieInfo,
+  formatSingleMovieEntry,
+  getTorrentData,
 };

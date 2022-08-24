@@ -1,4 +1,5 @@
 import dotenv from "dotenv";
+import fetch from "isomorphic-unfetch";
 import pool from "../config/database.js";
 // import generateToken from "../utils/generateToken";
 import jwt from "jsonwebtoken";
@@ -72,7 +73,6 @@ const login = async (req, res) => {
         username.toLowerCase()
       );
 
-      console.log("user from DB:----", user);
       //3. Check if user found or not
       if (!user) {
         return res
@@ -114,6 +114,61 @@ const login = async (req, res) => {
       res
         .status(500)
         .send({ error: "Server Error From Credential Login controller" })
+        .end();
+    }
+  }
+
+  if (provider === "google") {
+    try {
+      const { id_token } = body;
+
+      //1.  Check if the id_token is not empty
+      if (!id_token) {
+        res.status(422).send({ error: "Missing Token" }).end();
+        return;
+      }
+
+      // Link: https://developers.google.com/identity/sign-in/web/backend-auth
+      const googleVerificationUrl = `https://oauth2.googleapis.com/tokeninfo?id_token=${id_token}`;
+      const googleReq = await fetch(googleVerificationUrl);
+      const googleReqJson = await googleReq.json();
+
+      const { email, given_name, family_name, picture } = googleReqJson;
+
+      //2. check if user exists in the db (if not exists, then throw error)
+      let user = await pool.query("SELECT * FROM users WHERE email = $1", [
+        email,
+      ]);
+
+      if (user.rows.length === 0) {
+        try {
+          const verified = "1";
+          const createdUser = await pool.query(
+            "INSERT INTO users (first_name, last_name, user_name, email, verified, avatar) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *",
+            [given_name, family_name, given_name, email, verified, picture]
+          );
+
+          user = createdUser;
+          console.log("createdUser", createdUser.rows[0]);
+        } catch (error) {
+          console.log(e);
+          res.status(500).send({ error: "google authentication error" }).end();
+        }
+      }
+
+      const userWithToken = generateToken(user.rows[0]);
+
+      return res.status(200).send({
+        ...userWithToken,
+        accessToken: userWithToken.token,
+        user: userWithToken.user,
+        provider: "google",
+      });
+    } catch (e) {
+      console.log("Server Error From Google Login controller", e);
+      res
+        .status(500)
+        .send({ error: "Server Error From Google Login controller" })
         .end();
     }
   }

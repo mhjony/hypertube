@@ -17,7 +17,30 @@ const getMoviesList = async accessToken => {
     })
 
     const data = await res.json()
-    console.log('I am the movie data', data)
+    return data
+  } catch (error) {
+    return error
+  }
+}
+
+// Get single movie details
+const getMovieDetails = async (accessToken, imdb_code) => {
+  try {
+    const url = `${API}/movie/get-single-movie/${imdb_code}`
+
+    if (!accessToken) {
+      throw new Error('No access token provided')
+    }
+
+    const res = await fetch(url, {
+      method: 'get',
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        'Content-Type': 'application/json'
+      }
+    })
+
+    const data = await res.json()
     return data
   } catch (error) {
     return error
@@ -49,7 +72,6 @@ const getMovieComments = async (accessToken, imdb_code) => {
 
 const addComment = async (accessToken, imdb_code, user_id, comment_body) => {
   try {
-    console.log('asd addComment in service', accessToken, imdb_code, user_id, comment_body)
     const url = `${API}/movie/comment/add/${imdb_code}`
 
     if (!accessToken) {
@@ -78,6 +100,7 @@ const addComment = async (accessToken, imdb_code, user_id, comment_body) => {
 export default {
   API,
   getMoviesList,
+  getMovieDetails,
   getMovieComments,
   addComment
 }

@@ -1,6 +1,6 @@
-import React from "react";
+import React from 'react'
 
-const Loader = ({ color = "#FF435D", size = "35px" }) => (
+const Loader = ({ color = '#FF435D', size = '65px' }) => (
   <>
     <div className="spinner">
       <div className="double-bounce1" />
@@ -59,6 +59,6 @@ const Loader = ({ color = "#FF435D", size = "35px" }) => (
       }
     `}</style>
   </>
-);
+)
 
-export default Loader;
+export default Loader
