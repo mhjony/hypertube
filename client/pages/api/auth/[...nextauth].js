@@ -90,6 +90,7 @@ const options = {
           })
           const backendJWTJson = await backendJWT.json()
           user.accessToken = backendJWTJson.token
+          user.user_id = backendJWTJson.user.user_id
           return true
         } catch (error) {
           console.log('Error from nextAuth callback for Google:', error)
@@ -112,6 +113,7 @@ const options = {
     },
     session: async ({ session, token }) => {
       session.accessToken = token.accessToken
+      session.user_id = token.user_id
       return { ...session, ...token }
     },
     jwt: async ({ token, user }) => {

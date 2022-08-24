@@ -11,15 +11,12 @@ const MoviePlayerModal = ({ movie }) => {
 
   const userInfo = session?.user
 
-  console.log('asd userInfo', userInfo)
-
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [loading, setLoading] = useState(false)
 
-  const {
-    accessToken,
-    user: { user_id }
-  } = session
+  const { accessToken } = session
+
+  const user_id = session?.user_id || session.user.user_id
 
   const handleProfileUpdate = async () => {
     try {

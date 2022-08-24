@@ -4,10 +4,8 @@ import auth from "../middleware/auth.js";
 
 const router = express.Router();
 
-
-
 // Router for movie comments
-router.get("/comments/:imdb_code" , [auth] , movieController.getMovieComments);
+router.get("/comments/:imdb_code", [auth], movieController.getMovieComments);
 router.post("/comment/add/:imdb_code", [auth], movieController.addComment);
 
 // Routes for getting movies
