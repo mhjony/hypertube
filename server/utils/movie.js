@@ -1,7 +1,6 @@
 /*
  * Place movie stuff here.
  */
-import pool from "../config/database.js";
 import axios from "axios";
 
 const buildMovieList = async (filters) => {
@@ -87,25 +86,12 @@ const filterMovieData = (movie) => ({
 });
 
 const getTorrentData = async (imdbID) => {
-	try {
-		console.log('In getTorrentData.');
-		const res = await axios.get(`${process.env.TORRENT_API}?query_term=${imdbID}`);
-		const data = res.data.data;
-
-		if (res.status !== 200 || data.movie_count === 0 ) {
-			console.log('Get torrentData error.');
-		}
-		const { hash } = data.movies[0].torrents.reduce((current, previous) => previous.size_bytes < current.size_bytes ? previous : current);
-		const magnet = `magnet:?xt=urn:btih:${hash}&dn=${data.movies[0].title_long.split(' ').join('+')}`;
-		const ret = await pool.query(
-       "INSERT INTO movies (imdb_code, magnet, title) VALUES ($1, $2, $3)",
-       [imdbID, magnet, data.movies[0].title_long]
-     );
-		return magnet;
-	} catch (e) {
-		console.log(e);
-	}
-};
+  try {
+    console.log("In getTorrentData.");
+    const res = await axios.get(
+      `${process.env.TORRENT_API}?query_term=${imdbID}`
+    );
+    const data = res.data.data;
 
     if (res.status !== 200 || data.movie_count === 0) {
       console.log("Get torrentData error.");
