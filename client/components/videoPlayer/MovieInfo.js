@@ -3,17 +3,19 @@ import Player from './Player'
 import Comments from './Comments'
 
 const MovieInfo = ({ session, movie, user_id }) => {
-  const {
-    title,
-    description,
-    director,
-    actors,
-    imdbRating,
-    genre,
-    releasedDate,
-    runtime,
-    imdb_code
-  } = movie
+	if (movie) {
+		let {
+			title,
+			description,
+			director,
+			actors,
+			imdbRating,
+			genre,
+			releasedDate,
+			runtime,
+			imdb_code
+		} = movie
+	}
 
   return (
     <>
