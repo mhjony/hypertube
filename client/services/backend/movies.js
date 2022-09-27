@@ -26,7 +26,8 @@ const getMoviesList = async accessToken => {
 // Get single movie details
 const getMovieDetails = async (accessToken, imdb_code) => {
   try {
-    const url = `${API}/movie/get-single-movie/${imdb_code}`
+		// For docker, some requests (get?) from frontend to backend have to use 'server' and not 'localhost'.
+    const url = `http://server:8000/movie/get-single-movie/${imdb_code}`
 
     if (!accessToken) {
       throw new Error('No access token provided')
