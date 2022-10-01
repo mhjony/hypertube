@@ -1,8 +1,13 @@
 const API = 'http://localhost:8000'
 
-const getMoviesList = async accessToken => {
+export const GET_MOVIE_LIST = params => {
+  const query = new URLSearchParams(params).toString()
+  return `${API}/movie/get-movie-list?${query}`
+}
+
+const getMoviesList = async (accessToken, params) => {
   try {
-    const url = `${API}/movie/get-movie-list`
+    const url = GET_MOVIE_LIST(params)
 
     if (!accessToken) {
       throw new Error('No access token provided')
