@@ -28,8 +28,10 @@ const getMovieList = async (req, res) => {
   console.log("getMovieList end-point Hit");
   //const userId = req.user;
   //const filters = req.query;
+  const { page } = req.query;
+
   const filters = {
-    page: req.query.page || 1,
+    page: page || 1,
     minimum_rating: 0,
     /*genre: filters.genre,
     sort_by: filters.sort_by,

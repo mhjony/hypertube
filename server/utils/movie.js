@@ -11,8 +11,10 @@ const buildMovieList = async (filters) => {
     limit: 20,
     page: filters.page || 1,
   };
+
 	const previousPage = parseInt(params.page) - 1;
 	const nextPage = parseInt(params.page) + 1;
+  
   try {
     const TORRENT_API = "https://yts.mx/api/v2/list_movies.json";    // let res = await axios.get(`${process.env.TORRENT_API}`, { params });
     let res = await axios.get(`${TORRENT_API}`, {
@@ -41,7 +43,8 @@ const buildMovieList = async (filters) => {
   } catch (e) {
     return { movies: [], hasMore: false, e };
   }
-  return { movies, hasMore, nextPage, previousPage };
+
+  return { movies, hasMore, previousPage, nextPage };
 };
 
 const updateMovie = async (imdbCode, magnetLink, serverLocation, size) => {
