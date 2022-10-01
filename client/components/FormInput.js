@@ -38,7 +38,7 @@ const FormInput = ({
 
       <input
         autoComplete={autocomplete}
-        className={`input rounded-md transition-input focus:outline-0 border-2 border-solid bg-white focus:border-gray-300 placeholder-gray-400 ${
+        className={`input rounded-md transition-input focus:outline-0 border border-solid bg-white focus:border-gray-300 placeholder-gray-500 ${
           small ? 'py-1 px-2' : 'py-2 px-4'
         } block w-full appearance-none leading-normal ${border}`}
         style={{ position: 'relative', verticalAlign: 'top' }}
