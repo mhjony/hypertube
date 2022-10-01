@@ -12,7 +12,7 @@ CREATE TABLE users (
 	last_name VARCHAR(50) NOT NULL,
 	user_name VARCHAR(50) NOT NULL UNIQUE,
 	email VARCHAR(255) NOT NULL UNIQUE,
-	password VARCHAR(255) NOT NULL,
+	password VARCHAR(255),
 	token varchar(255) DEFAULT NULL,
 	movies_watched VARCHAR(255)[] DEFAULT '{}',
 	language VARCHAR(255),

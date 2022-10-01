@@ -6,9 +6,11 @@ import SearchAndFilter from './SearchAndFilter'
 
 const MovieSearch = ({ session }) => {
   const [movies, setMovies] = useState([])
+  const [loading, setLoading] = useState(false)
 
   const getMovies = async session => {
     try {
+      setLoading(true)
       const { accessToken } = session
 
       const res = await api.getMoviesList(accessToken)
@@ -17,6 +19,7 @@ const MovieSearch = ({ session }) => {
         throw new Error(res.error)
       } else {
         setMovies(res)
+        setLoading(false)
       }
     } catch (err) {
       console.log(err)
@@ -29,7 +32,7 @@ const MovieSearch = ({ session }) => {
 
   return (
     <>
-      <SearchAndFilter movies={movies} session={session} />
+      <SearchAndFilter movies={movies} session={session} loading={loading} />
     </>
   )
 }

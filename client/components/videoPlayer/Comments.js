@@ -18,13 +18,10 @@ const Comment = ({ comment, onClick = null }) => (
   </div>
 )
 
-const Comments = ({ session }) => {
+const Comments = ({ session, user_id, imdb_code }) => {
   const [loading, setLoading] = useState(false)
   const [newComment, setNewComment] = useState('')
   const [comments, setComments] = useState([])
-
-  const imdb_code = '234324'
-  const user_id = 'b3e6c2dc-8d21-4f9c-9149-d89d2495afe8'
 
   const getMovieComments = async (session, imdb_code) => {
     try {
