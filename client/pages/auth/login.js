@@ -72,6 +72,7 @@ const login = ({ providers, csrfToken }) => {
           <p className="text-center font-semibold mx-4 mb-0">Or</p>
         </div>
 
+        {/* Login with OAuth */}
         <div className="items-center justify-center flex-wrap">
           {Object?.values(providers)
             .filter(provider => provider.id !== 'credentials')
@@ -102,13 +103,6 @@ const login = ({ providers, csrfToken }) => {
             </Link>
           </div>
         </div>
-
-        {/* <button className="bg-gradient-to-r from-red-400 to-red-800 hover:bg-red-600 text-white font-bold py-2 px-4 rounded w-full">
-          Don't have an account?
-          <Link href="/auth/register">
-            <a className="font-bold border-b-2 border-solid border-gray-300"> Sign up</a>
-          </Link>
-        </button> */}
 
         <div className="py-2 px-4 rounded w-full">
           Don't have an account?

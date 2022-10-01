@@ -4,12 +4,12 @@ import Router from 'next/router'
 import Link from 'next/link'
 import { getSession, signIn, getCsrfToken, getProviders } from 'next-auth/react'
 
-import Button from '../../components/Button'
 import FormInput from '../../components/FormInput'
+import AuthProviderButtons from '../../components/AuthProviderButton'
 
 import api from '../../services/backend/user'
 
-export default function Register({ enabledProviders, csrfToken }) {
+export default function Register({ providers, csrfToken }) {
   const [firstName, setFirstName] = useState('')
   const [lastName, setLastName] = useState('')
   const [username, setUsername] = useState('')
@@ -42,7 +42,6 @@ export default function Register({ enabledProviders, csrfToken }) {
       const signupResponse = await api.signup(firstName, lastName, username, email, password)
 
       if (signupResponse.message === 'User account created successfully') {
-        
       }
 
       Router.push('/auth/login')
@@ -58,17 +57,17 @@ export default function Register({ enabledProviders, csrfToken }) {
     password.length === 0 || passwordConfirmation.length === 0 || email.length === 0 || !isChecked
 
   return (
-    <div className="flex flex-col items-center justify-center  min-h-screen w-full">
-      <div className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4 flex flex-col">
+    <div className="flex flex-col items-center justify-center min-h-screen w-full  bg-gradient-to-r from-red-400 to-red-800">
+      <div className="shadow-lg rounded-lg bg-white border-0 px-14 pt-6 pb-8 mb-4 flex flex-col">
         <h2 className="font-bold text-xl md:text-2xl mb-4">Register</h2>
 
-        <form className="mb-6 md:mb-8" onSubmit={onSubmit}>
+        <form onSubmit={onSubmit} className="mb-2 md:mb-4 pt-6">
           <input name="csrfToken" type="hidden" defaultValue={csrfToken} />
 
           <div className="mb-4">
             <FormInput
               label="FIRST NAME"
-              placeholder="firstName"
+              placeholder="Firstname"
               autocomplete="firstName"
               onChange={value => setFirstName(value)}
               value={firstName}
@@ -79,7 +78,7 @@ export default function Register({ enabledProviders, csrfToken }) {
           <div className="mb-4">
             <FormInput
               label="LAST NAME"
-              placeholder="lastName"
+              placeholder="Lastname"
               autocomplete="lastName"
               onChange={value => setLastName(value)}
               value={lastName}
@@ -134,10 +133,19 @@ export default function Register({ enabledProviders, csrfToken }) {
             />
           </div>
 
-          <Button loading={loading} onClick={onSubmit} className="w-full">
-            Submit
-          </Button>
+          <button
+            className="bg-gradient-to-r from-red-400 to-red-800 hover:bg-red-600 text-white font-bold py-2 px-4 rounded w-full"
+            onClick={onSubmit}
+          >
+            Create My Account
+          </button>
         </form>
+
+        <div className="flex items-center my-4 before:flex-1 before:border-t before:border-gray-300 before:mt-0.5 after:flex-1 after:border-t after:border-gray-300 after:mt-0.5">
+          <p className="text-center font-semibold mx-4 mb-0">Or</p>
+        </div>
+
+        <AuthProviderButtons providers={providers} type="register" />
 
         <div className="flex items-center justify-center">
           <div className="text-xs sm:text-sm">
@@ -149,42 +157,26 @@ export default function Register({ enabledProviders, csrfToken }) {
         </div>
 
         <hr />
-
-        {/* <AuthProviderButtons providers={enabledProviders} type="register" /> */}
       </div>
 
-      <div>
-        {/* <button onClick={notify}>Notify!</button> */}
-      </div>
+      <style jsx>{`
+        .auth-logo {
+          display: inline-block;
+          margin-right: 10px;
+          margin-left: 10px;
+          max-height: 18px;
+          max-width: 18px;
+        }
+      `}</style>
     </div>
   )
 }
 
 // This is the recommended way for Next.js 9.3 or newer
-// export async function getServerSideProps(context) {
-//   const enabledProviders = await getProviders()
-
-//   const { locale } = context
-
-//   const { default: lngDict = {} } = await import(`locales/${locale}.json`)
-
-//   const { req, res, query } = context
-//   const session = await getSession({ req })
-
-//   if (session && res && session.accessToken) {
-//     res.writeHead(302, {
-//       Location: query?.callbackUrl || '/'
-//     })
-//     res.end()
-//     return { props: {} }
-//   }
-
-//   return {
-//     props: {
-//       enabledProviders,
-//       lng: locale,
-//       lngDict,
-//       csrfToken: await getCsrfToken(context)
-//     }
-//   }
-// }
+export async function getServerSideProps() {
+  const providers = await getProviders()
+  const csrfToken = await getCsrfToken()
+  return {
+    props: { providers, csrfToken }
+  }
+}
