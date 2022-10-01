@@ -26,20 +26,25 @@ const providers = [
         provider: 'credentials'
       }
       try {
-        const backendJWT = await fetch('http://localhost:8000/auth/login', {
+				// When using localhost instead of docker: const backendJWT = await fetch('http://localhost:8000/auth/login', {
+        const backendJWT = await fetch('http://server:8000/auth/login', {
           method: 'post',
           headers: {
             'Content-Type': 'application/json'
           },
           body: JSON.stringify(body)
         })
+				console.log('2');
         const backendJWTJson = await backendJWT.json()
+				console.log('3');
         return {
           provider: 'credentials',
           error: false,
           ...backendJWTJson
         }
       } catch (e) {
+				console.log('error');
+				console.log(e);
         return {
           provider: 'credentials',
           error: true
@@ -76,7 +81,7 @@ const options = {
           id_token: account.id_token
         }
         try {
-          const backendJWT = await fetch('http://localhost:8000/auth/login', {
+          const backendJWT = await fetch('http://server:8000/auth/login', {
             method: 'post',
             headers: {
               'Content-Type': 'application/json'
@@ -85,6 +90,7 @@ const options = {
           })
           const backendJWTJson = await backendJWT.json()
           user.accessToken = backendJWTJson.token
+          user.user_id = backendJWTJson.user.user_id
           return true
         } catch (error) {
           console.log('Error from nextAuth callback for Google:', error)
@@ -107,6 +113,7 @@ const options = {
     },
     session: async ({ session, token }) => {
       session.accessToken = token.accessToken
+      session.user_id = token.user_id
       return { ...session, ...token }
     },
     jwt: async ({ token, user }) => {
