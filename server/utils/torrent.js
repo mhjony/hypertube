@@ -11,6 +11,8 @@ import movieUtils from './movie.js';
 const savePathToMovie = async ({ imdbCode }, magnet, serverLocation, size) => {
 	console.log('In save path to movie.');
   const movie = await movieUtils.updateMovie(imdbCode, magnet, serverLocation, size);
+	console.log('Return from update movie: ');
+	console.log(movie);
   //if (!movie) {
     
   //}
@@ -61,7 +63,7 @@ const downloadMovie = async (movie, magnet, downloadCache) => new Promise((resol
 	console.log('In torrent.downloadmovie.');
 	console.log(magnet);
 	console.log(movie);
-	console.log(downloadCache);
+	//console.log(downloadCache);
 	let path;
 	let size = 0;
 	const engine = torrentStream(magnet, {
@@ -92,17 +94,22 @@ const downloadMovie = async (movie, magnet, downloadCache) => new Promise((resol
 
 	engine.on('download', () => {
 		const pathToMovie = `./movies/${movie.imdbCode}/${path}`;
-		if (fs.existsSync(pathToMovie) && !downloadCache.has(movie.imdbID)) {
+		if (fs.existsSync(pathToMovie) && !downloadCache.has(movie.imdbCode)) {
 			if (fs.statSync(pathToMovie).size / (1024 * 1024) > 20) {
-				downloadCache.setMovieAsDownloading(movie.imdbID);
+				obj = { downloading: true };
+				downloadCache.set(movie.imdbCode, obj);
+				console.log(`Download cache has movie? Answer: ${downloadCache.has(movie.imdbCode)}`);
 				resolve;
 			}
 		}
 	});
 
 	engine.on('idle', () => {
-		setMovieAsCompleted(movie.imdbID);
-		downloadCache.del(movie.imdbID);
+		console.log('Finished downnloading movie ', movie.imdbCode);
+		//setMovieAsCompleted(movie.imdbID); // Add this.
+		movieUtils.setMovieAsDownloaded(movie.imdbCode);
+		downloadCache.del(movie.imdbCode);
+		//console.log(downloadCache);
 		engine.destroy();
 	});
 });
@@ -113,8 +120,6 @@ const getMagnetLink = async (imdbID) => {
 	console.log(imdbID);
 	try {
 		const torrentData = await movieUtils.getTorrentData(imdbID);
-		//console.log('TorrentData:');
-		//console.log(torrentData)
 		return torrentData;
 	} catch (e) {
 		console.log('getMagnetLink Error!');
