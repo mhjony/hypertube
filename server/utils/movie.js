@@ -10,6 +10,8 @@ const buildMovieList = async (filters) => {
     limit: 20,
     page: filters.page || 1,
   };
+  const nextPage = parseInt(params.page) + 1;
+  const previousPage = parseInt(params.page) - 1;
   try {
     const TORRENT_API = "https://yts.mx/api/v2/list_movies.json";
     const OMDB_KEY = "bba736e8";
@@ -42,7 +44,7 @@ const buildMovieList = async (filters) => {
   } catch (e) {
     return { movies: [], hasMore: false, e };
   }
-  return { movies, hasMore };
+  return { movies, hasMore, previousPage, nextPage };
 };
 
 const updateMovie = async (imdbCode, magnetLink, serverLocation, size) => {

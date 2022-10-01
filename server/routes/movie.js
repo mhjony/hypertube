@@ -4,7 +4,7 @@ import auth from "../middleware/auth.js";
 
 const router = express.Router();
 
-router.get("/get-movie-list", [auth], movieController.getMovieList);
+// router.get("/get-movie-list", [auth], movieController.getMovieList);
 
 // Router for movie comments
 router.get("/comments/:imdb_code", [auth], movieController.getMovieComments);

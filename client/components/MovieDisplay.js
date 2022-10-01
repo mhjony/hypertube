@@ -1,17 +1,7 @@
 import React, { useState } from 'react'
-import Button from './Button'
 import Loader from './Loader'
 
 const MovieDisplay = ({ filteredMovies, loading }) => {
-  const [page, setPage] = useState(0)
-
-  let PER_PAGE = 10
-
-  const limitStart = page * PER_PAGE
-  const limitEnd = (page + 1) * PER_PAGE
-
-  const totalPages = Math.ceil(filteredMovies?.length / PER_PAGE)
-
   const handleMovieDetails = movie => {
     const movieId = movie?.imdb_code
 
@@ -22,8 +12,9 @@ const MovieDisplay = ({ filteredMovies, loading }) => {
     <div>
       {/* Map movie data */}
       <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-4">
-        {filteredMovies && !loading ? (
-          filteredMovies?.slice(limitStart, limitEnd)?.map(video => (
+        {filteredMovies &&
+          !loading &&
+          filteredMovies?.map(video => (
             <div className="mt-8 video" key={video.id} onClick={() => handleMovieDetails(video)}>
               <div className="video--img">
                 <img src={video.thumbnail} alt={video.title}></img>
@@ -37,36 +28,8 @@ const MovieDisplay = ({ filteredMovies, loading }) => {
               </div>
               <div className="text-xs text-gray-200 font-light">IMBD rating: {video.rating}</div>
             </div>
-          ))
-        ) : (
-          <Loader />
-        )}
+          ))}
       </div>
-
-      {/* Pagination Part */}
-      {filteredMovies?.length > 0 && (
-        <div className="flex justify-center items-center mt-16">
-          <Button
-            onClick={() => {
-              setPage(page - 1)
-            }}
-            className="bg-red-500 font-bold"
-            disabled={page === 0}
-          >
-            {'<'}
-          </Button>
-          <div className="px-3 text-gray-200 text-md">{`Page ${page + 1} / ${totalPages}`}</div>
-          <Button
-            onClick={() => {
-              setPage(page + 1)
-            }}
-            className="bg-red-500 font-bold"
-            disabled={filteredMovies?.length < limitEnd ? true : false}
-          >
-            {'>'}
-          </Button>
-        </div>
-      )}
 
       <style jsx>{`
         .video,
