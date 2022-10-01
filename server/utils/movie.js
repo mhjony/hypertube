@@ -10,6 +10,8 @@ const buildMovieList = async (filters) => {
     limit: 20,
     page: filters.page || 1,
   };
+	const previousPage = parseInt(params.page) - 1;
+	const nextPage = parseInt(params.page) + 1;
   try {
     const TORRENT_API = "https://yts.mx/api/v2/list_movies.json";
     const OMDB_KEY = "bba736e8";
@@ -42,7 +44,7 @@ const buildMovieList = async (filters) => {
   } catch (e) {
     return { movies: [], hasMore: false, e };
   }
-  return { movies, hasMore };
+  return { movies, hasMore, nextPage, previousPage };
 };
 
 const updateMovie = async (imdbCode, magnetLink, serverLocation, size) => {
@@ -110,29 +112,6 @@ const getTorrentData = async (imdbID) => {
 	} catch (e) {
 		console.log(e);
 	}
-};
-
-    if (res.status !== 200 || data.movie_count === 0) {
-      console.log("Get torrentData error.");
-      console.log("Error");
-    }
-
-    const { hash } = data.movies[0].torrents.reduce((current, previous) =>
-      previous.size_bytes < current.size_bytes ? previous : current
-    );
-    const magnet = `magnet:?xt=urn:btih:${hash}&dn=${data.movies[0].title_long
-      .split(" ")
-      .join("+")}`;
-    const ret = await pool.query(
-      "INSERT INTO movies (imdb_code, magnet, title) VALUES ($1, $2, $3)",
-      [imdbID, magnet, data.movies[0].title_long]
-    );
-    console.log("Ret:");
-    console.log(ret);
-    return magnet;
-  } catch (e) {
-    // Error.
-  }
 };
 
 const parseTorrentInfo = (res) => {

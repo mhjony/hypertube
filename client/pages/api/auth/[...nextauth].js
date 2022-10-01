@@ -26,7 +26,6 @@ const providers = [
         provider: 'credentials'
       }
       try {
-				console.log('1');
 				// When using localhost instead of docker: const backendJWT = await fetch('http://localhost:8000/auth/login', {
         const backendJWT = await fetch('http://server:8000/auth/login', {
           method: 'post',

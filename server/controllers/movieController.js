@@ -29,7 +29,7 @@ const getMovieList = async (req, res) => {
   //const userId = req.user;
   //const filters = req.query;
   const filters = {
-    page: 1,
+    page: req.query.page || 1,
     minimum_rating: 0,
     /*genre: filters.genre,
     sort_by: filters.sort_by,
