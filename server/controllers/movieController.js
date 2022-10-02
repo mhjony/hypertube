@@ -108,14 +108,8 @@ const playMovie = async (req, res, next) => {
   let movie = await movieUtils.fetchSingleMovie({ imdbCode });
 	//console.log('Fetch single return 1:');
 	//console.log(movie);
-	console.log('Fetch single return 2:');
-	console.log(movie);
-	req.imdb_code = imdbCode;
-  req.serverLocation = movie.server_location;
-  req.movieSize = movie.size;
-	//console.log(req, res, next);
-  torrentUtils.startFileStream(req, res, next);
-  if ((!movie || !movie.downloadComplete) && !downloadCache.has(imdbCode)) {
+	
+  if ((!movie || !movie.downloaded) && !downloadCache.has(imdbCode)) {
     if (!movie) {
       movie = { imdbCode };
     }
@@ -126,7 +120,13 @@ const playMovie = async (req, res, next) => {
 		console.log('Movie downloaded, going to fetch updated data.');
     movie = await movieUtils.fetchSingleMovie({ imdbCode });
   }
-	
+	console.log('Fetch single return 2:');
+	console.log(movie);
+	req.imdb_code = imdbCode;
+	req.serverLocation = movie.server_location;
+	req.movieSize = movie.size;
+	//console.log(req, res, next);
+	torrentUtils.startFileStream(req, res, next);
 };
 
 const downloadMovie = async (req, res, next) => {
