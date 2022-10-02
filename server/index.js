@@ -7,6 +7,7 @@ import authRoutes from "./routes/auth.js";
 import forgotPasswordRoute from "./routes/forgotPassword.js";
 import movieRoutes from "./routes/movie.js";
 import profileRoute from "./routes/profile.js";
+import job from "./utils/cron.js";
 
 const port = process.env.APP_BACKEND_PORT || 8000;
 
@@ -31,6 +32,7 @@ app.use("/auth", authRoutes);
 app.use("/auth", forgotPasswordRoute);
 app.use("/movie", movieRoutes);
 app.use("/profile", profileRoute);
+job.start();
 
 app.listen(port, () => {
   console.info(
