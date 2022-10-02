@@ -3,6 +3,7 @@ import NodeCache from "node-cache";
 import axios from "axios";
 import movieUtils from "../utils/movie.js";
 import torrentUtils from "../utils/torrent.js";
+import subtitlesUtils from "../utils/subtitlesAPI.js";
 
 const downloadCache = new NodeCache({ checkPeriod: 0 });
 
@@ -107,8 +108,9 @@ const playMovie = async (req, res, next) => {
     if (!movie) {
       movie = { imdbCode };
     }
-		let magnetLink = '';
-    if (!movie.magnetLink) magnetLink = await torrentUtils.getMagnetLink(imdbCode);
+    let magnetLink = "";
+    if (!movie.magnetLink)
+      magnetLink = await torrentUtils.getMagnetLink(imdbCode);
     await torrentUtils.downloadMovie(movie, magnetLink, downloadCache);
     movie = await movieUtils.fetchSingleMovie({ imdbCode });
   }
@@ -139,6 +141,42 @@ const downloadMovie = async (req, res, next) => {
   }
 };
 
+// Get movie Entry
+const getMovieEntry = async (req, res) => {
+  const { imdb_code } = req.params;
+
+  const movieInfo = await movieUtils.getMovieInfo(imdb_code);
+  // const subtitles = await subtitlesUtils.getSubtitles(imdb_code);
+  // const comments = await fetchComments(imdb_code);
+  // res.json(movieUtils.formatSingleMovieEntry(movieInfo, comments, subtitles));
+  res.json(movieUtils.formatSingleMovieEntry(movieInfo));
+};
+
+// Set Movie Watched
+const setMovieWatched = async (req, res) => {
+  try {
+    const { imdb_code } = req.params;
+
+    const movie = await pool.query(
+      "SELECT * FROM movies WHERE imdb_code = $1",
+      [imdb_code]
+    );
+
+    if (movie.rows.length === 0) {
+      console.log("Movie doesn't exit.");
+    }
+
+    const updatedMovie = await pool.query(
+      "UPDATE movies SET last_watched = $1 WHERE imdb_code = $2 RETURNING *",
+      [new Date(), imdb_code]
+    );
+
+    res.status(200).json({ data: updatedMovie.rows[0] });
+  } catch (err) {
+    console.error(err.message);
+  }
+};
+
 export default {
   getMovieList,
   movieSearch,
@@ -147,4 +185,6 @@ export default {
   getSingleMovie,
   playMovie,
   downloadMovie,
+  getMovieEntry,
+  setMovieWatched,
 };
