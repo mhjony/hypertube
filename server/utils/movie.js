@@ -12,9 +12,9 @@ const buildMovieList = async (filters) => {
     page: filters.page || 1,
   };
 
-	const previousPage = parseInt(params.page) - 1;
-	const nextPage = parseInt(params.page) + 1;
-  
+  const previousPage = parseInt(params.page) - 1;
+  const nextPage = parseInt(params.page) + 1;
+
   try {
     const TORRENT_API = "https://yts.mx/api/v2/list_movies.json";    // let res = await axios.get(`${process.env.TORRENT_API}`, { params });
     let res = await axios.get(`${TORRENT_API}`, {
@@ -169,8 +169,7 @@ const formatSingleMovieEntry = (movieInfo, comments, subtitles) => ({
 
 const fetchSingleMovie = async (imdbCode) => {
   try {
-		
-  
+
     //2. check if movie exists in the db.
   const movie = await pool.query("SELECT * FROM movies WHERE imdb_code = $1", [
       imdbCode.imdbCode
@@ -190,9 +189,10 @@ const fetchSingleMovie = async (imdbCode) => {
 const setMovieAsDownloaded = async (imdbCode) => {
   try {
     //1. check if movie exists in the db.
-    const movie = await pool.query("SELECT * FROM movies WHERE imdb_code = $1", [
-      imdbCode,
-    ]);
+    const movie = await pool.query(
+      "SELECT * FROM movies WHERE imdb_code = $1",
+      [imdbCode]
+    );
 
     // if movie does not exist, then throw error
     if (movie.rows.length === 0) {
@@ -203,20 +203,18 @@ const setMovieAsDownloaded = async (imdbCode) => {
       "UPDATE movies SET downloaded = 1 WHERE imdb_code = $1 RETURNING *",
       [imdbCode]
     );
-		
     return updatedMovie.rows[0];
-    
   } catch (err) {
     console.error(err.message);
   }
 };
 
 export default {
-	fetchSingleMovie,
-	updateMovie,
+  fetchSingleMovie,
+  updateMovie,
   buildMovieList,
-	getMovieInfo,
-	formatSingleMovieEntry,
-	getTorrentData,
-	setMovieAsDownloaded,
+  getMovieInfo,
+  formatSingleMovieEntry,
+  getTorrentData,
+  setMovieAsDownloaded,
 };
