@@ -132,5 +132,5 @@ export default {
   getMovieDetails,
   getMovieComments,
   addComment,
-	getFileStream
+	setMovieWatched
 }

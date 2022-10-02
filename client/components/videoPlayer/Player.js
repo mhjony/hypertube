@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react'
 import ReactPlayer from 'react-player/lazy'
 import movieService from '../../services/backend/movies'
 
-const Player = ({ subsTracks, imdbCode, movie }) => {
+const Player = ({ subsTracks, imdbCode, movie, accessToken }) => {
   const playerRef = useRef(null)
 	const streamUrl =
     // eslint-disable-next-line no-undef
@@ -13,7 +13,7 @@ const Player = ({ subsTracks, imdbCode, movie }) => {
   const buffering = useRef(false);
 
   const onClickPreview = () => {
-		// To-do: Add setWatched here.
+		movieService.setMovieWatched(accessToken, imdbCode)
     setStatusPlayer('buffering')
     buffering.current = true
   }
