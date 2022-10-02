@@ -1,51 +1,21 @@
 import React, { useState, useEffect, useRef } from 'react'
 import ReactPlayer from 'react-player/lazy'
-// import { useTranslation } from 'react-i18next'
-
-import img from '../../public/video-banner.png'
 import movieService from '../../services/backend/movies'
 
-const Player = ({ subsTracks, imdbCode }) => {
-  //   const token = localStorage.getItem('token')
-
-  // const { t } = useTranslation()
+const Player = ({ subsTracks, imdbCode, movie }) => {
   const playerRef = useRef(null)
+	const streamUrl =
+    // eslint-disable-next-line no-undef
+		`http://localhost:8000/movie/player/${imdbCode}`;	// Add a token here at the end.
 
-  const [statusPlayer, setStatusPlayer] = useState('')
-  const [error, setError] = useState(false)
-  const buffering = useRef(false)
+  const [statusPlayer, setStatusPlayer] = useState('');
+  const [error, setError] = useState(false);
+  const buffering = useRef(false);
 
   const onClickPreview = () => {
-    // setStatusPlayer(t('movie.buffering'))
+		// To-do: Add setWatched here.
     setStatusPlayer('buffering')
     buffering.current = true
-  }
-
-  const onReady = () => {
-    buffering.current = false
-  }
-
-  const onPlay = () => {
-    // setStatusPlayer(t('movie.playing'))
-    setStatusPlayer('playing')
-    movieService.setWatched(imdbCode)
-  }
-
-  const onBuffer = () => {
-    // setStatusPlayer(t('movie.buffering'))
-    setStatusPlayer('buffering')
-    buffering.current = true
-  }
-
-  const onBufferEnd = () => {
-    // setStatusPlayer(t('movie.playing'))
-    setStatusPlayer('playing')
-    buffering.current = false
-  }
-
-  const onPause = () => {
-    // setStatusPlayer(t('movie.paused'))
-    setStatusPlayer('paused')
   }
 
   const onError = err => {
@@ -55,60 +25,54 @@ const Player = ({ subsTracks, imdbCode }) => {
       err.target.error &&
       (err.target.error.code === 3 || err.target.error.code === 4 || err.target.error.code === 1)
     ) {
-      // setStatusPlayer(t('movie.sourceFileError'))
       setStatusPlayer('sourceFileError')
       setError(true)
       playerRef.current.showPreview()
     }
   }
 
-  const onProgress = ({ playedSeconds, loadedSeconds }) => {
-    if (playedSeconds > loadedSeconds && !error) {
-      // setStatusPlayer(t('movie.notLoadedError'))
-      setStatusPlayer('notLoadedError')
-      playerRef.current.showPreview()
-    }
-  }
-
   useEffect(() => {
     return () => {
-      if (buffering.current === true) window.location.reload()
+      if (buffering.current === false) window.location.reload()
     }
   }, [])
 
+	const [isVideoLoaded, setIsVideoLoaded] = useState(false);
+  const onLoadedData = () => {
+    setIsVideoLoaded(true);
+  };
+
   return (
     <div>
+			
       <div className="flex items-center justify-center">
+			
         <ReactPlayer
           className="react-player"
           ref={playerRef}
-          controls={buffering.current === false}
+          controls={true}
           pip={false}
-          // url={streamUrl}
-          url="https://www.youtube.com/watch?v=oUFJJNQGwhk"
-          onPlay={onPlay}
+					light={movie.thumbnail}
+					playing={true}
+					playsinline={true}
+					url={[
+						{ src: streamUrl, type: 'video/mp4' }
+					]}
           width="100%"
-          // width="50%"
-          light={img}
-          // playIcon={<PlayCircleFilledWhiteOutlined fontSize="large" />}
-          onBuffer={onBuffer}
-          onProgress={onProgress}
           onError={onError}
-          onPause={onPause}
-          onReady={onReady}
-          onBufferEnd={onBufferEnd}
+          onReady={onLoadedData}
           onClickPreview={onClickPreview}
-          config={{
-            file: {
-              attributes: {
-                crossOrigin: 'true'
-              },
-              tracks: subsTracks
-            }
-          }}
+					/* config={{
+						file: {
+							attributes: {
+								crossOrigin: 'true',
+							},
+							tracks: subsTracks,
+						},
+					}} */
         />
+				</div> 
       </div>
-    </div>
   )
 }
 

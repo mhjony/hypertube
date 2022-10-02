@@ -33,7 +33,7 @@ const MovieInfo = ({ session, movie, user_id }) => {
                 </div>
               </div>
 
-              <Player />
+              <Player imdbCode={movie.imdb_code} movie={movie}/>
 
               <div className="text-white text-xl pt-4 mx-8">
                 <p className="text-gray-200 text-sm mt-2">{description}</p>

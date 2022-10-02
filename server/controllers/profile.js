@@ -24,7 +24,8 @@ const profileUpdate = async (req, res) => {
   console.log("profileUpdate end-point Hit", req.body);
 
   try {
-    const { user_id, email, user_name, first_name, last_name } = req.body;
+    const { user_id, email, user_name, first_name, last_name, language } =
+      req.body;
 
     if (!validator.isEmail(email)) {
       return res.status(400).json("Invalid Email");
@@ -57,7 +58,7 @@ const profileUpdate = async (req, res) => {
       user_name,
       first_name,
       last_name,
-      // avatar,
+      language,
     });
 
     //5. New updated user info now, then return it with data !!!

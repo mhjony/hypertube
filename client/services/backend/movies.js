@@ -131,5 +131,6 @@ export default {
   getMoviesList,
   getMovieDetails,
   getMovieComments,
-  addComment
+  addComment,
+	getFileStream
 }
