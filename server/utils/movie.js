@@ -11,8 +11,10 @@ const buildMovieList = async (filters) => {
     limit: 20,
     page: filters.page || 1,
   };
+
 	const previousPage = parseInt(params.page) - 1;
 	const nextPage = parseInt(params.page) + 1;
+  
   try {
     const TORRENT_API = "https://yts.mx/api/v2/list_movies.json";    // let res = await axios.get(`${process.env.TORRENT_API}`, { params });
     let res = await axios.get(`${TORRENT_API}`, {
@@ -41,14 +43,15 @@ const buildMovieList = async (filters) => {
   } catch (e) {
     return { movies: [], hasMore: false, e };
   }
-  return { movies, hasMore, nextPage, previousPage };
+
+  return { movies, hasMore, previousPage, nextPage };
 };
 
 const updateMovie = async (imdbCode, magnetLink, serverLocation, size) => {
   try {
     //1. check if movie exists in the db.
     const movie = await pool.query("SELECT * FROM movies WHERE imdb_code = $1", [
-      imdbCode.imdb_code,
+      imdbCode,
     ]);
 
     // if movie does not exist, then throw error
@@ -136,13 +139,13 @@ const getMovieInfo = async (imdbID) => {
     const OMDB_KEY = "bba736e8";
 
     const res = await axios.get(
-      `http://www.omdbapi.com/?i=${imdbID}&apikey=${OMDB_KEY}`
+      `http://www.omdbapi.com/?i=${imdbID}&apikey=${process.env.OMDB_KEY}`
     );
     movieInfoData = res.data;
     return movieInfoData;
   } catch (e) {
     // res = await axios.get(`${process.env.TORRENT_API}?query_term=${imbdID}`);
-    res = await axios.get(`${TORRENT_API}?query_term=${imdbID}`);
+    res = await axios.get(`${process.env.TORRENT_API}?query_term=${imdbID}`);
     const data = parseTorrentInfo(res);
     return data;
   }

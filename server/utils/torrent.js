@@ -8,18 +8,27 @@ import ffmpeg from 'fluent-ffmpeg';
 import movieUtils from './movie.js';
 
 // Save path to database.
-const savePathToMovie = async ( imdbCode , magnet, serverLocation, size) => {
-	console.log('In save path to movie.');
-  const movie = await movieUtils.updateMovie(imdbCode, magnet, serverLocation, size);
-	//console.log('Return from update movie: ');
-	//console.log(movie);
+const savePathToMovie = async ( movie , magnet, serverLocation, size) => {
+	//console.log('In save path to movie.');
+	//console.log('imdb_code.');
+	//console.log(movie.imdb_code);
+	//console.log('magnet.');
+	//console.log(magnet);
+	//console.log('serverLocation.');
+	//console.log(serverLocation);
+	//console.log('size.');
+	//console.log(size);
+
+  const updatedMovie = await movieUtils.updateMovie(movie.imdb_code, magnet, serverLocation, size);
+	console.log('Return from update movie: ');
+	console.log(updatedMovie);
   //if (!movie) {
     
   //}
 };
 
 const startFileStream = (req, res) => {
-	let loaded = false
+	let loaded = true;
 	const {imdb_code, serverLocation, movieSize} = req;
 	const path = `./movies/${serverLocation}`;
 	const isMp4 = path.endsWith('mp4');
@@ -27,7 +36,7 @@ const startFileStream = (req, res) => {
 	const { range } = req.headers;
 	console.log(range);
 	const CHUNK = 20e+6;
-	let start = range ? Number(range.rplace(/\D/g, '')) : 0;
+	let start = range ? Number(range.replace(/\D/g, '')) : 0;
 	if (start < size - 1) {
 		loaded = false;
 		start = 0;
@@ -72,6 +81,8 @@ const startFileStream = (req, res) => {
 };
 
 const downloadMovie = async (movie, magnet, downloadCache) => new Promise((resolve) => {
+	console.log('Movie in downloadMovie');
+	console.log(movie);
 	let path;
 	let size = 0;
 	const engine = torrentStream(magnet, {
@@ -116,7 +127,7 @@ const downloadMovie = async (movie, magnet, downloadCache) => new Promise((resol
 	});
 
 	engine.on('idle', () => {
-		console.log('Finished downnloading movie ', movie.imdb_code);
+		console.log('Finished downloading movie ', movie.imdb_code);
 		//setMovieAsCompleted(movie.imdbID); // Add this.
 		movieUtils.setMovieAsDownloaded(movie.imdb_code);
 		downloadCache.del(movie.imdb_code);
