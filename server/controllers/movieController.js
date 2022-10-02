@@ -156,6 +156,7 @@ const getMovieEntry = async (req, res) => {
 const setMovieWatched = async (req, res) => {
   try {
     const { imdb_code } = req.params;
+    const { user_id } = req.user;
 
     const movie = await pool.query(
       "SELECT * FROM movies WHERE imdb_code = $1",
@@ -171,7 +172,29 @@ const setMovieWatched = async (req, res) => {
       [new Date(), imdb_code]
     );
 
-    res.status(200).json({ data: updatedMovie.rows[0] });
+    // Add imb_code to user's movie_watched column
+    const user = await pool.query("SELECT * FROM users WHERE user_id = $1", [
+      user_id,
+    ]);
+
+    if (user.rows.length === 0) {
+      console.log("User doesn't exit.");
+    }
+
+    let updatedUser;
+
+    // Check if ibd_code is already in user's movies_watched column then ignore it otherwise add it
+    if (!user.rows[0].movies_watched.includes(imdb_code)) {
+      updatedUser = await pool.query(
+        "UPDATE users SET movies_watched = array_append(movies_watched, $1) WHERE user_id = $2 RETURNING *",
+        [imdb_code, user_id]
+      );
+    }
+
+    res.status(200).json({
+      updatedMovie: updatedMovie.rows[0],
+      message: "Movie is set to watched successfully",
+    });
   } catch (err) {
     console.error(err.message);
   }
