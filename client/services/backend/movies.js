@@ -103,10 +103,37 @@ const addComment = async (accessToken, imdb_code, user_id, comment_body) => {
   }
 }
 
+
+const getFileStream = async (/*accessToken, */imdb_code) => {
+  try {
+    const url = `${API}/movie/player/tt0111161`//${imdb_code}
+
+    /*if (!accessToken) {
+      throw new Error('No access token provided')
+    }*/
+
+    const res = await fetch(url, {
+      method: 'get',
+      headers: {
+        /*Authorization: `Bearer ${accessToken}`,
+        'Content-Type': 'application/json'*/
+      }
+    })
+		console.log('Arbitrary stuff:');
+		console.log(res);
+    const data = await res.json()
+		
+    return res
+  } catch (error) {
+    return error
+  }
+}
+
 export default {
   API,
   getMoviesList,
   getMovieDetails,
   getMovieComments,
-  addComment
+  addComment,
+	getFileStream
 }
