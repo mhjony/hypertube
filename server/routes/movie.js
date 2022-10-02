@@ -1,5 +1,6 @@
 import express from "express";
 import movieController from "../controllers/movieController.js";
+import subtitlesController from "../controllers/subtitleController.js";
 import auth from "../middleware/auth.js";
 
 const router = express.Router();
@@ -18,5 +19,18 @@ router.get("/get-single-movie/:imdb_code", [auth], movieController.getSingleMovi
 //router.get('/:imdbCode/player/:token', inputValidator.validateToken, movieController.playMovie);
 router.get("/player/:imdbCode", movieController.playMovie);
 //router.get("/download", [auth], movieController.downloadMovie);
+
+// Get movie entry
+router.get("/:imdb_code", [auth], movieController.getMovieEntry);
+
+// Set Movie as Watched
+router.post("/watched/:imdb_code", [auth], movieController.setMovieWatched);
+
+// Route for getting subtitles
+router.get(
+  "/:imdb_code/subtitles/:lang",
+  [auth],
+  subtitlesController.getSubtitles
+);
 
 export default router;
