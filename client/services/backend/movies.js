@@ -31,7 +31,8 @@ const getMoviesList = async (accessToken, params) => {
 // Get single movie details
 const getMovieDetails = async (accessToken, imdb_code) => {
   try {
-		// For docker, some requests (get?) from frontend to backend have to use 'server' and not 'localhost'.
+    // For docker, some requests (get?) from frontend to backend have to use 'server' and not 'localhost'.
+    // TODO: back-to server before pull request
     const url = `http://server:8000/movie/get-single-movie/${imdb_code}`
 
     if (!accessToken) {
@@ -94,6 +95,28 @@ const addComment = async (accessToken, imdb_code, user_id, comment_body) => {
         user_id,
         comment_body
       })
+    })
+
+    const data = await res.json()
+    return data
+  } catch (error) {
+    return error
+  }
+}
+
+const setMovieWatched = async (accessToken, imdb_code) => {
+  try {
+    const url = `${API}/movie/watched/${imdb_code}`
+    if (!accessToken) {
+      throw new Error('No access token provided')
+    }
+
+    const res = await fetch(url, {
+      method: 'post',
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        'Content-Type': 'application/json'
+      }
     })
 
     const data = await res.json()
