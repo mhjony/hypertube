@@ -26,7 +26,7 @@ const providers = [
         provider: 'credentials'
       }
       try {
-				// When using localhost instead of docker: const backendJWT = await fetch('http://localhost:8000/auth/login', {
+        // When using localhost instead of docker: const backendJWT = await fetch('http://localhost:8000/auth/login', {
         const backendJWT = await fetch('http://server:8000/auth/login', {
           method: 'post',
           headers: {
@@ -34,17 +34,14 @@ const providers = [
           },
           body: JSON.stringify(body)
         })
-				console.log('2');
         const backendJWTJson = await backendJWT.json()
-				console.log('3');
         return {
           provider: 'credentials',
           error: false,
           ...backendJWTJson
         }
       } catch (e) {
-				console.log('error');
-				console.log(e);
+        console.log(e)
         return {
           provider: 'credentials',
           error: true
@@ -94,6 +91,30 @@ const options = {
           return true
         } catch (error) {
           console.log('Error from nextAuth callback for Google:', error)
+        }
+      }
+
+      // For account.provider === '42-school'
+      if (account.provider === '42-school') {
+        const fortyTwo = {
+          provider: '42-school',
+          access_token: account.access_token
+        }
+        try {
+          const backendJWT = await fetch('http://server:8000/auth/login', {
+            method: 'post',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(fortyTwo)
+          })
+
+          const backendJWTJson = await backendJWT.json()
+          user.accessToken = backendJWTJson.token
+          user.user_id = backendJWTJson.user.user_id
+          return true
+        } catch (error) {
+          console.log('Error from nextAuth callback for 42:', error)
         }
       }
 

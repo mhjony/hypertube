@@ -173,6 +173,71 @@ const login = async (req, res) => {
     }
   }
 
+  // FOR 42-school provider
+  if (provider === "42-school") {
+    try {
+      const { access_token } = body;
+
+      if (!access_token) {
+        res.status(422).send({ error: "Missing 42 access Code" }).end();
+        return;
+      }
+
+      // Authoization with 42 api
+      const fortyTwoUserUrl = `https://api.intra.42.fr/v2/me?access_token=${access_token}`;
+      const fortyTwoUserReq = await fetch(fortyTwoUserUrl);
+      const fortyTwoUserReqJson = await fortyTwoUserReq.json();
+
+      const { first_name, last_name, login, email, image_url } =
+        fortyTwoUserReqJson;
+
+      // Check if user exists in the db (if not exists, then throw error)
+      let user = await pool.query("SELECT * FROM users WHERE email = $1", [
+        email,
+      ]);
+
+      // If user does not exist, then create a new user
+      if (user.rows.length === 0) {
+        try {
+          // Create a new user in the db if not exists
+          const verified = "1";
+          const createdUser = await pool.query(
+            "INSERT INTO users (first_name, last_name, user_name, email, verified, avatar, token) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *",
+            [
+              first_name,
+              last_name,
+              login,
+              email,
+              verified,
+              image_url,
+              access_token,
+            ]
+          );
+
+          user = createdUser;
+        } catch (error) {
+          console.log(e);
+          res.status(500).send({ error: "42 authentication error" }).end();
+        }
+      }
+
+      const userWithToken = generateToken(user.rows[0]);
+      console.log("fire fire userWithToken", userWithToken);
+
+      return res.status(200).send({
+        ...userWithToken,
+        accessToken: userWithToken.token,
+        user: userWithToken.user,
+        provider: "42-school",
+      });
+    } catch (e) {
+      res
+        .status(500)
+        .send({ error: "Server Error From 42-school Login controller" })
+        .end();
+    }
+  }
+
   res.status(401).send({ error: "Server Error from Login controller" }).end();
 };
 
