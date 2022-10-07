@@ -149,7 +149,7 @@ export default function Register({ providers, csrfToken }) {
 
         <div className="flex items-center justify-center">
           <div className="text-xs sm:text-sm">
-            Do you already have an account?
+            Do you already have an account? &nbsp;
             <Link href="/auth/login">
               <a className="font-bold border-b-2 border-solid border-gray-300">Login</a>
             </Link>

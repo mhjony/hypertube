@@ -2,12 +2,17 @@ import React from 'react'
 import { signIn } from 'next-auth/react'
 
 const AuthProviderButtons = ({ type = 'login', providers }) => {
-  console.log('enabledProviders', providers)
+  const handleSignUp = provider => {
+    const { id, name } = provider
 
-  const signUp = providerId => {
     // Forward all Google logins to / since user can technically register also
-    // by clicking "Log in with Google" even if they have not registered before
-    signIn(providerId, { callbackUrl: '/' })
+    if ((name = 'Google')) {
+      signIn('google', { callbackUrl: '/' })
+    }
+
+    if (id === '42-school') {
+      signIn(provider.id, { callbackUrl: '/42-school' })
+    }
   }
 
   return (
@@ -20,8 +25,7 @@ const AuthProviderButtons = ({ type = 'login', providers }) => {
               <div
                 key={provider.id}
                 className="flex items-center justify-center border-2 border-red-500 m-2 rounded-md"
-                onClick={() => signUp(provider.id)}
-                full
+                onClick={() => handleSignUp(provider)}
               >
                 <img src={`/logo-${provider.id}.png`} alt={provider.name} className="auth-logo" />
 

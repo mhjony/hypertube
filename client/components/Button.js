@@ -39,11 +39,6 @@ const Button = ({
             loading && 'opacity-25'
           } ` + className
         }
-        // className={`button ${loadingNew ? 'button--loading' : ''} ${
-        //   negative ? 'button--negative' : ''
-        // } ${negativeLight ? 'button--negative-light' : ''} ${className} ${
-        //   noHover ? 'no-hover' : ''
-        // } ${size ? `button--${size}` : ''}`}
         onClick={usedOnClick}
         disabled={disabled || loading}
         style={style}

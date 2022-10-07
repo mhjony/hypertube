@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { signIn, useSession, getProviders, getCsrfToken } from 'next-auth/react'
+import { signIn, getProviders, getCsrfToken } from 'next-auth/react'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 
@@ -7,7 +7,6 @@ import FormInput from '../../components/FormInput'
 
 const login = ({ providers, csrfToken }) => {
   const { query } = useRouter()
-  const { data: session } = useSession()
 
   const { error, success } = query
 
@@ -45,6 +44,7 @@ const login = ({ providers, csrfToken }) => {
               onChange={setUsername}
               value={username}
               autocomplete="username"
+              errorMsg={showError ? errorMessage : null}
             />
           </div>
 
@@ -56,6 +56,7 @@ const login = ({ providers, csrfToken }) => {
               value={password}
               type="password"
               autocomplete="password"
+              errorMsg={showError ? errorMessage : null}
             />
             {showSuccess && <p className="text-green-600 text-sm mt-2 mb-2">{t(success)}</p>}
           </div>
@@ -105,7 +106,7 @@ const login = ({ providers, csrfToken }) => {
         </div>
 
         <div className="py-2 px-4 rounded w-full">
-          Don't have an account?
+          Don't have an account?{' '}
           <Link href="/auth/register">
             <a className=""> Sign up</a>
           </Link>
