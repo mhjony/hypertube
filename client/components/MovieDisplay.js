@@ -1,5 +1,4 @@
 import React, { useState } from 'react'
-import Loader from './Loader'
 
 const MovieDisplay = ({ filteredMovies, loading }) => {
   const handleMovieDetails = movie => {
@@ -10,10 +9,8 @@ const MovieDisplay = ({ filteredMovies, loading }) => {
 
   return (
     <div>
-      {/* Map movie data */}
       <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-4">
         {filteredMovies &&
-          !loading &&
           filteredMovies?.map(video => (
             <div className="mt-8 video" key={video.id} onClick={() => handleMovieDetails(video)}>
               <div className="video--img">

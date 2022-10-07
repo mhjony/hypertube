@@ -29,7 +29,7 @@ const MovieSearch = ({ session }) => {
         page
       }
 
-      const res = await api.getMoviesList(accessToken, params)
+      const res = (await api.getMoviesList(accessToken, params)) || []
 
       if (res?.error) {
         throw new Error(res.error)
@@ -165,9 +165,12 @@ const MovieSearch = ({ session }) => {
           </Modal>
         </div>
       )}
-
       <MovieDisplay filteredMovies={filteredMovies} loading={loading} />
-      {hasMore && <Loader className="flex justify-center items-center" />}
+      {hasMore && (
+        <div className="flex justify-center items-center pt-12">
+          <Loader className="" />
+        </div>
+      )}
     </div>
   )
 }
