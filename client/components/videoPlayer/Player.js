@@ -3,6 +3,7 @@ import ReactPlayer from 'react-player/lazy'
 import movieService from '../../services/backend/movies'
 
 const Player = ({ subsTracks, imdbCode, movie, accessToken }) => {
+	console.log(subsTracks);
   const playerRef = useRef(null)
 	const streamUrl =
     // eslint-disable-next-line no-undef
@@ -62,14 +63,14 @@ const Player = ({ subsTracks, imdbCode, movie, accessToken }) => {
           onError={onError}
           onReady={onLoadedData}
           onClickPreview={onClickPreview}
-					/* config={{
+					config={{
 						file: {
 							attributes: {
-								crossOrigin: 'true',
+								crossOrigin: 'anonymous',
 							},
 							tracks: subsTracks,
 						},
-					}} */
+					}}
         />
 				</div> 
       </div>
