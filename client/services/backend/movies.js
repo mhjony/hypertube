@@ -124,7 +124,32 @@ const setMovieWatched = async (accessToken, imdb_code) => {
   } catch (error) {
     return error
   }
+	
 }
+
+ //const getMovieSubtitles = async (accessToken, imdb_code, lang) => {
+	const getMovieSubtitles = async (imdb_code, lang) => {
+		try {
+			const url = `http://localhost:8000/movie/${imdb_code}/subtitles/${lang}`
+	
+			/* if (!accessToken) {
+			   throw new Error('No access token provided')
+			} */
+	
+			const res = await fetch(url, {
+				method: 'get',
+				headers: {
+				//	Authorization: `Bearer ${accessToken}`,
+					'Content-Type': 'application/json'
+				}
+			})
+			console.log('Response in service', res);
+			const data = res;
+			return data
+		} catch (error) {
+			return error
+		}
+	}
 
 export default {
   API,
@@ -132,5 +157,6 @@ export default {
   getMovieDetails,
   getMovieComments,
   addComment,
-	setMovieWatched
+	setMovieWatched,
+	getMovieSubtitles
 }

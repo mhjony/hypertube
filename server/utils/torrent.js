@@ -9,22 +9,7 @@ import movieUtils from './movie.js';
 
 // Save path to database.
 const savePathToMovie = async ( movie , magnet, serverLocation, size) => {
-	//console.log('In save path to movie.');
-	//console.log('imdb_code.');
-	//console.log(movie.imdb_code);
-	//console.log('magnet.');
-	//console.log(magnet);
-	//console.log('serverLocation.');
-	//console.log(serverLocation);
-	//console.log('size.');
-	//console.log(size);
-
   const updatedMovie = await movieUtils.updateMovie(movie.imdb_code, magnet, serverLocation, size);
-	console.log('Return from update movie: ');
-	console.log(updatedMovie);
-  //if (!movie) {
-    
-  //}
 };
 
 const startFileStream = (req, res) => {
@@ -34,18 +19,13 @@ const startFileStream = (req, res) => {
 	const isMp4 = path.endsWith('mp4');
 	const size = fs.statSync(path).movieSize;
 	const { range } = req.headers;
-	console.log(range);
 	const CHUNK = 20e+6;
 	let start = range ? Number(range.replace(/\D/g, '')) : 0;
 	if (start < size - 1) {
 		loaded = false;
 		start = 0;
 	}
-	console.log('start');
-	console.log(start);
 	const end = isMp4 ? Math.min(start + CHUNK, movieSize - 1) : movieSize - 1;
-	console.log('end = ');
-	console.log(end);
 	const movieLength = end - start + 1;
 	const headers = isMp4
 	? {
@@ -59,17 +39,11 @@ const startFileStream = (req, res) => {
 		'Accept-Ranges': 'bytes',
 		'Content-Type': 'video/webm',
 	};
-	console.log(headers);
-	console.log(`loaded: ${loaded}`);
 	const readStream = fs.createReadStream(path, {start, end});
-	//console.log('Readstream: ');
-	//console.log(readStream);
 	if (loaded === false) {
 		res.writeHead(416, headers);
 	} else {
 		res.writeHead(206, headers);
-		//console.log('Headers:');
-		//console.log()
 	}
 	if (isMp4) readStream.pipe(res);
 	else {
@@ -81,8 +55,6 @@ const startFileStream = (req, res) => {
 };
 
 const downloadMovie = async (movie, magnet, downloadCache) => new Promise((resolve) => {
-	console.log('Movie in downloadMovie');
-	console.log(movie);
 	let path;
 	let size = 0;
 	const engine = torrentStream(magnet, {
@@ -107,10 +79,6 @@ const downloadMovie = async (movie, magnet, downloadCache) => new Promise((resol
 				file.deselect();
 			}
 		});
-		console.log('Path in download:');
-		console.log(path);
-		console.log(magnet);
-		console.log(size);
 		savePathToMovie(movie, magnet, path, size);
 	});
 
@@ -127,25 +95,18 @@ const downloadMovie = async (movie, magnet, downloadCache) => new Promise((resol
 	});
 
 	engine.on('idle', () => {
-		console.log('Finished downloading movie ', movie.imdb_code);
-		//setMovieAsCompleted(movie.imdbID); // Add this.
 		movieUtils.setMovieAsDownloaded(movie.imdb_code);
 		downloadCache.del(movie.imdb_code);
-		//console.log(downloadCache);
 		engine.destroy();
 	});
 });
 
 const getMagnetLink = async (imdbID) => {
-	console.log('In get magnet link.');
-	console.log('ImbdID: ');
-	console.log(imdbID);
 	try {
 		const torrentData = await movieUtils.getTorrentData(imdbID);
 		return torrentData;
 	} catch (e) {
-		console.log('getMagnetLink Error!');
-		console.log(e);
+		//console.log(e);
 	}
 }
 
