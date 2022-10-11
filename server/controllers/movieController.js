@@ -91,6 +91,9 @@ const getSingleMovie = async (req, res) => {
 	//console.log(language);
 
   const movieInfo = await movieUtils.getMovieInfo(imdb_code);
+	console.log(movieInfo);
+	const newMovie = await movieUtils.insertMovie(imdb_code);
+	console.log('New movie: ', newMovie);
   //const user = await User.findById(userId);
 
   /*movies.movies = movies.movies.map((movie) => {
@@ -109,8 +112,10 @@ const playMovie = async (req, res, next) => {
 	console.log('Endpoint hit: play movie');
   const { imdbCode } = req.params;
   let movie = await movieUtils.fetchSingleMovie({ imdbCode });
-	
-  if ((!movie || !movie.downloaded) && !downloadCache.has(imdbCode)) {
+	console.log('Movie', movie);
+
+  if (!movie.downloaded && !downloadCache.has(imdbCode)) {
+		console.log('Here.');
     if (!movie) {
       movie = { imdbCode };
     }
@@ -165,6 +170,9 @@ const setMovieWatched = async (req, res) => {
   try {
     const { imdb_code } = req.params;
     const { user_id } = req.user;
+		console.log('Set movie watched.');
+		console.log('imdb', imdb_code);
+		
 
     const movie = await pool.query(
       "SELECT * FROM movies WHERE imdb_code = $1",

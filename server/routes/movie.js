@@ -25,5 +25,5 @@ router.get("/:imdb_code", [auth], movieController.getMovieEntry);
 
 // Set Movie as Watched
 router.post("/watched/:imdb_code", [auth], movieController.setMovieWatched);
-
+router.get('/:imdb_code/subtitles/:lang', subtitlesController.getSubtitles)
 export default router;

@@ -13,6 +13,7 @@ const savePathToMovie = async ( movie , magnet, serverLocation, size) => {
 };
 
 const startFileStream = (req, res) => {
+	console.log('req', req);
 	let loaded = true;
 	const {imdb_code, serverLocation, movieSize} = req;
 	const path = `./movies/${serverLocation}`;
@@ -55,6 +56,8 @@ const startFileStream = (req, res) => {
 };
 
 const downloadMovie = async (movie, magnet, downloadCache) => new Promise((resolve) => {
+	console.log('In downloadMovie');
+	console.log(movie);
 	let path;
 	let size = 0;
 	const engine = torrentStream(magnet, {

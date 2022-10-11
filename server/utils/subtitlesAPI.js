@@ -6,7 +6,6 @@ import {promisify} from 'node:util'
 import fetch from 'node-fetch';
 
 const downloadSubtitles = async ({language, file_id}, imb_code ) => {
-	let subtitles_results = [];
 	let downloadLink;
 	let url = 'https://api.opensubtitles.com/api/v1/download';
 	let options = {
@@ -18,7 +17,7 @@ const downloadSubtitles = async ({language, file_id}, imb_code ) => {
 		body: `{
 			"file_id":${file_id},
 		"sub_format": "webvtt"
-	}`//4499311
+	}`
 	};
 
 	
@@ -29,7 +28,7 @@ const downloadSubtitles = async ({language, file_id}, imb_code ) => {
 			.then(json => {
 				
 				downloadLink = json.link;
-				console.log('Link:', downloadLink);
+				//console.log('Link:', downloadLink);
 				return json.link;
 			}) 
 	.catch(err => console.error('error:' + err));

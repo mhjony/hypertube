@@ -30,6 +30,8 @@ const MovieInfo = ({ session, movie, user_id }) => {
 		console.log(subtitles)
 
     const tracks = subtitles.reduce((acc, lang) => {
+			console.log('lang ', lang);
+			console.log('subsLabels[lang] ', subsLabels[lang]);
       acc.push({
         label: subsLabels[lang],
         kind: 'subtitles',
