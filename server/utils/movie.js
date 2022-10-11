@@ -150,7 +150,7 @@ const getMovieInfo = async (imdbID) => {
   }
 };
 
-const formatSingleMovieEntry = (movieInfo, comments, subtitles) => ({
+const formatSingleMovieEntry = (movieInfo, subtitles) => ({
   title: movieInfo.Title,
   imdbRating: movieInfo.imdbRating,
   year: movieInfo.Year,
@@ -160,10 +160,9 @@ const formatSingleMovieEntry = (movieInfo, comments, subtitles) => ({
   runtime: parseInt(movieInfo.Runtime, 10),
   director: movieInfo.Director,
   actors: movieInfo.Actors,
-  // comments,
-  subtitles,
   thumbnail: movieInfo.Poster,
   imdb_code: movieInfo.imdbID,
+	subtitles,
 });
 
 const fetchSingleMovie = async (imdbCode) => {

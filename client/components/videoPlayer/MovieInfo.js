@@ -1,19 +1,47 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import Player from './Player'
 import Comments from './Comments'
+import movieService from '../../services/backend/movies.js'
 
 const MovieInfo = ({ session, movie, user_id }) => {
-	const {
-		title,
-		description,
-		director,
-		actors,
-		imdbRating,
-		genre,
-		releasedDate,
-		runtime,
-		imdb_code
-	} = movie
+	const [subsTracks, setSubsTracks] = useState([])
+  const {
+    title,
+    description,
+    director,
+    actors,
+    imdbRating,
+    genre,
+    releasedDate,
+    runtime,
+    imdb_code,
+		subtitles
+  } = movie
+	console.log('Here is our movie; ', movie);
+
+  useEffect(() => {
+    setSubsTracks(buildTracks(imdb_code, subtitles))
+  }, [imdb_code])
+ 
+  const buildTracks = (imdb_code, subtitles) => {
+    const subsLabels = { en: 'en', sv: 'sv', fi: 'fi', bn: 'bn' }
+    // eslint-disable-next-line no-undef
+    const baseUrl = 'http://localhost:8000'
+		console.log(subtitles)
+
+    const tracks = subtitles.reduce((acc, lang) => {
+      acc.push({
+        label: subsLabels[lang],
+        kind: 'subtitles',
+				src: `${baseUrl}/movie/${imdb_code}/subtitles/${lang}`,
+        srcLang: lang,
+				default: false,//default: true,
+				mode: "showing"
+      })
+      return acc
+    }, [])
+    return tracks
+  }
 
   return (
     <>
@@ -33,7 +61,7 @@ const MovieInfo = ({ session, movie, user_id }) => {
                 </div>
               </div>
 
-              <Player imdbCode={movie.imdb_code} movie={movie} accessToken={session.accessToken}/>
+              <Player subsTracks={subsTracks} imdbCode={movie.imdb_code} movie={movie} accessToken={session.accessToken}/>
 
               <div className="text-white text-xl pt-4 mx-8">
                 <p className="text-gray-200 text-sm mt-2">{description}</p>
