@@ -35,12 +35,12 @@ const movieId = ({ movie }) => {
               <img src={movie?.thumbnail} alt={movie?.thumbnail} style={imgClass} />
             </div>
 
-            <div className="absolute inset-y-28 md:inset-y-auto md:bottom-10 inset-x-4 md:inset-x-12 space-y-6 z-50">
+            <div className="absolute inset-y-28 md:inset-y-auto md:bottom-10 inset-x-4 md:inset-x-12 space-y-6 z-50 text-gray-300 pb-24">
               <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold">{movie?.title}</h1>
               <div className="flex items-center space-x-3 md:space-x-5">
                 <MoviePlayerModal movie={movie} />
 
-                <div className="rounded-full border-2 border-white flex items-center justify-center w-11 h-11 cursor-pointer bg-black/60">
+                <div className="rounded-full border-2 border-white flex items-center justify-center w-11 h-10 cursor-pointer bg-black/60">
                   <PlusIcon className="h-6" />
                 </div>
 
@@ -49,11 +49,13 @@ const movieId = ({ movie }) => {
                 </div>
               </div>
 
-              <p className="text-xs md:text-sm">
+              <p className="font-bold text-lg md:text-sm">
                 {movie.release_date || movie.first_air_date} • {Math.floor(movie.runtime / 60)}h{' '}
                 {movie?.runtime % 60}m • {movie?.genre}{' '}
               </p>
-              <h4 className="text-sm md:text-lg max-w-4xl">{movie.summary}</h4>
+              {!movie?.description == 'N/A' && movie?.description == 'N/A' && (
+                <h4 className="text-sm md:text-lg max-w-4xl">{movie.description}</h4>
+              )}
             </div>
 
             {/* Bg Overlay */}
@@ -67,7 +69,6 @@ const movieId = ({ movie }) => {
               }`}
             >
               <div className="flex items-center justify-between bg-black text-[#f9f9f9] p-3.5">
-                <span className="font-semibold">Play Trailer</span>
                 <div
                   className="cursor-pointer w-8 h-8 flex justify-center items-center rounded-lg opacity-50 hover:opacity-75 hover:bg-[#0F0F0F]"
                   onClick={() => setShowPlayer(false)}
