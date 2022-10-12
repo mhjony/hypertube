@@ -5,6 +5,14 @@ import movieUtils from "../utils/movie.js";
 import torrentUtils from "../utils/torrent.js";
 import subtitlesUtils from "../utils/subtitlesAPI.js";
 
+const findUserInfoFromDB = async (key, value, ...args) => {
+  const info = args.length == 0 ? "*" : args.join(", ");
+  const res = await pool.query(`SELECT ${info} FROM users WHERE ${key} = $1`, [
+    value,
+  ]);
+  return res.rows[0];
+};
+
 const downloadCache = new NodeCache({ checkPeriod: 0 });
 
 // @route   GET /movie-search
@@ -27,26 +35,28 @@ const movieSearch = async (req, res) => {
 // @access  Public
 const getMovieList = async (req, res) => {
   console.log("getMovieList end-point Hit");
-  //const userId = req.user;
-  //const filters = req.query;
   const { page } = req.query;
+  const user_id = req?.user?.user_id;
+
+  console.log("user_id:", user_id);
 
   const filters = {
     page: page || 1,
     minimum_rating: 0,
-    /*genre: filters.genre,
-    sort_by: filters.sort_by,
-    order_by: filters.order_by,
-    query_term: filters.search || '',*/
   };
   const movies = await movieUtils.buildMovieList(filters);
-  //const user = await User.findById(userId);
 
-  /*movies.movies = movies.movies.map((movie) => {
+  //2. Find the user
+  const user = await findUserInfoFromDB("user_id", user_id);
+
+  movies.movies = movies.movies.map((movie) => {
     const tempMovie = { ...movie };
-    tempMovie.watched = user.watched.some((elem) => elem.imdb_code  === movie.imdbCode);
+    tempMovie.movies_watched = user.movies_watched.some(
+      (elem) => elem.imdb_code === movie.imdb_code
+    );
     return tempMovie;
-  });*/
+  });
+
   res.json(movies);
 };
 
@@ -88,16 +98,21 @@ const getSingleMovie = async (req, res) => {
   console.log("get-single-movie end-point Hit", imdb_code);
 
   const movieInfo = await movieUtils.getMovieInfo(imdb_code);
-  //const user = await User.findById(userId);
+  const subtitles = await subtitlesUtils.getSubtitles(imdb_code);
+
+  // Get user details by userId ans pass the watched array to the movieInfo
+  // const user = await pool.query("SELECT * FROM users WHERE user_id = $1", [
+  //   req.user,
+  // ]);
 
   /*movies.movies = movies.movies.map((movie) => {
     const tempMovie = { ...movie };
     tempMovie.watched = user.watched.some((elem) => elem.movieId === movie.imdbCode);
     return tempMovie;
   });*/
-  let comments = [];
-  let subtitles = [];
-  const ret = movieUtils.formatSingleMovieEntry(movieInfo, comments, subtitles);
+
+  // let comments = [];
+  const ret = movieUtils.formatSingleMovieEntry(movieInfo, subtitles);
   res.status(200).json(ret);
 };
 
@@ -146,10 +161,10 @@ const getMovieEntry = async (req, res) => {
   const { imdb_code } = req.params;
 
   const movieInfo = await movieUtils.getMovieInfo(imdb_code);
-  // const subtitles = await subtitlesUtils.getSubtitles(imdb_code);
-  // const comments = await fetchComments(imdb_code);
+  const subtitles = await subtitlesUtils.getSubtitles(imdb_code);
+  // const comments = await getMovieComments(imdb_code);
   // res.json(movieUtils.formatSingleMovieEntry(movieInfo, comments, subtitles));
-  res.json(movieUtils.formatSingleMovieEntry(movieInfo));
+  res.json(movieUtils.formatSingleMovieEntry(movieInfo, subtitles));
 };
 
 // Set Movie Watched

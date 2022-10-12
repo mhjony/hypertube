@@ -3,7 +3,6 @@ import { useSession } from 'next-auth/react'
 
 import Modal from './Modal'
 
-import apiUpdateProfile from '../services/backend/updateProfile'
 import MovieInfo from './videoPlayer/MovieInfo'
 
 const MoviePlayerModal = ({ movie }) => {
@@ -17,22 +16,6 @@ const MoviePlayerModal = ({ movie }) => {
   const { accessToken } = session
 
   const user_id = session?.user_id || session.user.user_id
-
-  const handleProfileUpdate = async () => {
-    try {
-      setLoading(true)
-
-      // await apiUpdateProfile.updateProfile(
-      //   user_id,
-      //   accessToken
-      // )
-
-      setIsModalOpen(false)
-      setLoading(false)
-    } catch (err) {
-      console.error(err)
-    }
-  }
 
   return (
     <div className="flex flex-wrap items-start mb-4">
