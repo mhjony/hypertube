@@ -47,18 +47,6 @@ const MoviePlayerModal = ({ movie }) => {
         {isModalOpen && (
           <Modal center isOpen={isModalOpen} close={() => setIsModalOpen(false)} minWidth={450}>
             <MovieInfo session={session} movie={movie} user_id={user_id} />
-
-            {/* <h2 className="font-bold text-xl md:text-2xl">Play Movie tile</h2>
-            
-
-            <p className="leading-normal text-gray-600 pb-4">You can update your profile here!</p> */}
-
-            <button
-              className="bg-red-400 hover:bg-red-600 text-white font-bold py-2 px-4 rounded w-full"
-              onClick={handleProfileUpdate}
-            >
-              Play Movie
-            </button>
           </Modal>
         )}
       </div>
