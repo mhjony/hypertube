@@ -13,17 +13,19 @@ const savePathToMovie = async ( movie , magnet, serverLocation, size) => {
 };
 
 const startFileStream = (req, res) => {
-	console.log('req', req);
-	let loaded = true;
+	//console.log('req', req);
+	let loaded = false;
 	const {imdb_code, serverLocation, movieSize} = req;
 	const path = `./movies/${serverLocation}`;
+	console.log('path ', path);
+	console.log('imdb ', imdb_code);
 	const isMp4 = path.endsWith('mp4');
 	const size = fs.statSync(path).movieSize;
 	const { range } = req.headers;
 	const CHUNK = 20e+6;
 	let start = range ? Number(range.replace(/\D/g, '')) : 0;
 	if (start < size - 1) {
-		loaded = false;
+		loaded = true;
 		start = 0;
 	}
 	const end = isMp4 ? Math.min(start + CHUNK, movieSize - 1) : movieSize - 1;
@@ -40,8 +42,10 @@ const startFileStream = (req, res) => {
 		'Accept-Ranges': 'bytes',
 		'Content-Type': 'video/webm',
 	};
+	console.log('headers', headers);
+	console.log('movieSize = ', movieSize);//890203389
 	const readStream = fs.createReadStream(path, {start, end});
-	if (loaded === false) {
+	if (loaded) {
 		res.writeHead(416, headers);
 	} else {
 		res.writeHead(206, headers);
@@ -55,7 +59,7 @@ const startFileStream = (req, res) => {
 	}
 };
 
-const downloadMovie = async (movie, magnet, downloadCache) => new Promise((resolve) => {
+const downloadMovie = async (movie, magnet, downloadCache, req, res, next) => new Promise((resolve) => {
 	console.log('In downloadMovie');
 	console.log(movie);
 	let path;
@@ -82,17 +86,23 @@ const downloadMovie = async (movie, magnet, downloadCache) => new Promise((resol
 				file.deselect();
 			}
 		});
-		savePathToMovie(movie, magnet, path, size);
+		//savePathToMovie(movie, magnet, path, size);
+		if (path && movie.server_location !== path) {
+			movieUtils.updateMovie(movie.imdb_code, magnet, path, size);
+		}
 	});
 
 	engine.on('download', () => {
-		const pathToMovie = `./movies/${movie.imdb_code}/${path}`;
+		console.log('Engine download triggered.');
+		const pathToMovie = `./movies/${path}`;
+		console.log(pathToMovie);
+		//console.log(pathToMovie);
 		if (fs.existsSync(pathToMovie) && !downloadCache.has(movie.imdb_code)) {
 			if (fs.statSync(pathToMovie).size / (1024 * 1024) > 20) {
-				obj = { downloading: true };
-				downloadCache.set(movie.imdb_code, obj);
+				//obj = { downloading: true };
+				downloadCache.set(movie.imdb_code, 'downloading');
 				console.log(`Download cache has movie? Answer: ${downloadCache.has(movie.imdb_code)}`);
-				resolve;
+				resolve();
 			}
 		}
 	});

@@ -7,17 +7,43 @@ const Player = ({ subsTracks, imdbCode, movie, accessToken }) => {
   const playerRef = useRef(null)
 	const streamUrl =
     // eslint-disable-next-line no-undef
-		`http://localhost:8000/movie/player/${imdbCode}`;	// Add a token here at the end.
+		`http://localhost:8000/movie/player/${imdbCode}/${accessToken}`;	// Add a token here at the end.
 
   const [statusPlayer, setStatusPlayer] = useState('');
   const [error, setError] = useState(false);
   const buffering = useRef(false);
 
   const onClickPreview = () => {
+		console.log('Clicked on preview.');
 		movieService.setMovieWatched(accessToken, imdbCode)
     setStatusPlayer('buffering')
     buffering.current = true
   }
+
+	const onReady = () => {
+    buffering.current = false;
+  };
+
+  const onPlay = () => {
+		console.log('Clicked on play.');
+		// Send request to serve the damn stream.
+    setStatusPlayer('movie.playing');
+    //movieService.setWatched(imdbCode);
+  };
+
+  const onBuffer = () => {
+    setStatusPlayer('movie.buffering');
+    buffering.current = true;
+  };
+
+  const onBufferEnd = () => {
+    setStatusPlayer('movie.playing');
+    buffering.current = false;
+  };
+
+  const onPause = () => {
+    setStatusPlayer('movie.paused');
+  };
 
   const onError = err => {
     if (
@@ -31,6 +57,13 @@ const Player = ({ subsTracks, imdbCode, movie, accessToken }) => {
       playerRef.current.showPreview()
     }
   }
+
+	const onProgress = ({ playedSeconds, loadedSeconds }) => {
+    if (playedSeconds > loadedSeconds && !error) {
+      setStatusPlayer('movie.notLoadedError');
+      playerRef.current.showPreview();
+    }
+  };
 
   useEffect(() => {
     return () => {
@@ -63,6 +96,14 @@ const Player = ({ subsTracks, imdbCode, movie, accessToken }) => {
           onError={onError}
           onReady={onLoadedData}
           onClickPreview={onClickPreview}
+					/* onBuffer={onBuffer}
+					onProgress={onProgress}
+					onError={onError}
+					onPause={onPause}
+					onReady={onReady}
+					onPlay={onPlay}
+					onBufferEnd={onBufferEnd}
+					onClickPreview={onClickPreview} */
 					config={{
 						file: {
 							attributes: {

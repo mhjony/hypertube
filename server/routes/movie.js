@@ -18,7 +18,7 @@ router.get(
 );
 
 // Routes for Video Player
-router.get("/player/:imdbCode", [auth], movieController.playMovie);
+router.get("/player/:imdbCode/:token"/* , [auth] */, movieController.playMovie);
 
 // router.get("/:imdb_code", [auth], movieController.getMovieEntry); // NOTE: This route is not used
 
@@ -28,7 +28,6 @@ router.post("/watched/:imdb_code", [auth], movieController.setMovieWatched);
 // Routes for Video Subtitles
 router.get(
   "/:imdb_code/subtitles/:lang",
-  [auth],
   subtitlesController.getSubtitles
 );
 
