@@ -4,12 +4,8 @@ import relativeTime from 'dayjs/plugin/relativeTime'
 import isToday from 'dayjs/plugin/isToday'
 
 import api from '../services/backend/movies'
+import galleryApi from '../services/backend/gallery'
 
-import Modal from './Modal'
-import DateRange from './DateRange'
-import MovieDisplay from './MovieDisplay'
-import FormInput from './FormInput'
-import Loader from './Loader'
 
 dayjs.extend(isToday)
 dayjs.extend(relativeTime)
@@ -19,6 +15,12 @@ const MovieSearch = ({ session }) => {
   const [loading, setLoading] = useState(false)
   const [page, setPage] = useState(1)
   const [hasMore, setHasMore] = useState(true)
+  const [pageState, setPageState] = useState({ page: 0, hasMore: true, loading: true });
+  const [search, setSearch] = useState('');
+  const [filter, setFilter] = useState({});
+
+  const mountedRef = React.useRef(true);
+  const filterRef = React.useRef(false);
 
   const getMovies = async session => {
     try {
@@ -30,6 +32,7 @@ const MovieSearch = ({ session }) => {
       }
 
       const res = (await api.getMoviesList(accessToken, params)) || []
+	  const galleryResponse = await galleryApi.getAllMovies()
 
       if (res?.error) {
         throw new Error(res.error)
@@ -45,6 +48,35 @@ const MovieSearch = ({ session }) => {
       console.log(err)
     }
   }
+
+
+const getAllMovies = async () => {
+  try {
+    const pageToLoad = filterRef.current ? 1 : pageState.page + 1;
+    const moviesData = await galleryService.getMovies(pageToLoad, filter, search);
+    if (!mountedRef.current) return null;
+    if (!filterRef.current) {
+      setMovies(movies.concat(moviesData.movies));
+    } else {
+      setMovies(moviesData.movies);
+      filterRef.current = false;
+    }
+    setPageState({
+      page: moviesData.movies.length === 0 ? t('gallery.noMovies') : pageToLoad,
+      loading: false,
+      hasMore: moviesData.hasMore,
+    });
+  } catch (e) {
+	console.log(err)
+  }
+};
+}
+
+useEffect(() => {
+    filterRef.current = true;
+    setPageState({ ...pageState, loading: true });
+    getMovies();
+  }, [filter]);
 
   const handleScroll = async () => {
     if (loading || !hasMore) {

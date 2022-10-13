@@ -10,6 +10,11 @@ const buildMovieList = async (filters) => {
   const params = {
     limit: 20,
     page: filters.page || 1,
+    minimum_rating: filters.imdb || 0,
+    genre: filters.genre,
+    sort_by: filters.sort_by,
+    order_by: filters.order_by,
+    query_term: filters.search || '',
   };
 
   const previousPage = parseInt(params.page) - 1;

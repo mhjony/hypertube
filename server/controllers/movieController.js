@@ -5,6 +5,14 @@ import movieUtils from "../utils/movie.js";
 import torrentUtils from "../utils/torrent.js";
 import subtitlesUtils from "../utils/subtitlesAPI.js";
 
+const findUserInfoFromDB = async (key, value, ...args) => {
+  const info = args.length == 0 ? "*" : args.join(", ");
+  const res = await pool.query(`SELECT ${info} FROM users WHERE ${key} = $1`, [
+    value,
+  ]);
+  return res.rows[0];
+};
+
 const downloadCache = new NodeCache({ checkPeriod: 0 });
 
 // @route   GET /movie-search
@@ -17,8 +25,6 @@ const movieSearch = async (req, res) => {
   const ret = await axios.get(
     `http://www.omdbapi.com/?t=${string}&apikey=${process.env.OMDB_KEY}`
   );
-  console.log("Ret:");
-  console.log(ret);
   return res.send(ret.data);
 };
 
@@ -27,27 +33,26 @@ const movieSearch = async (req, res) => {
 // @access  Public
 const getMovieList = async (req, res) => {
   console.log("getMovieList end-point Hit");
-  //const userId = req.user;
-  //const filters = req.query;
   const { page } = req.query;
+  const user_id = req?.user?.user_id;
 
   const filters = {
     page: page || 1,
     minimum_rating: 0,
-    /*genre: filters.genre,
-    sort_by: filters.sort_by,
-    order_by: filters.order_by,
-    query_term: filters.search || '',*/
   };
   const movies = await movieUtils.buildMovieList(filters);
-	//console.log(movies)
-  //const user = await User.findById(userId);
 
-  /*movies.movies = movies.movies.map((movie) => {
+  //2. Find the user
+  const user = await findUserInfoFromDB("user_id", user_id);
+
+  movies.movies = movies.movies.map((movie) => {
     const tempMovie = { ...movie };
-    tempMovie.watched = user.watched.some((elem) => elem.imdb_code  === movie.imdbCode);
+    tempMovie.movies_watched = user.movies_watched.some(
+      (elem) => elem.imdb_code === movie.imdb_code
+    );
     return tempMovie;
-  });*/
+  });
+
   res.json(movies);
 };
 
@@ -89,16 +94,9 @@ const getSingleMovie = async (req, res) => {
   console.log("get-single-movie end-point Hit", imdb_code);
 
   const movieInfo = await movieUtils.getMovieInfo(imdb_code);
-  //const user = await User.findById(userId);
+  const subtitles = await subtitlesUtils.getSubtitles(imdb_code);
 
-  /*movies.movies = movies.movies.map((movie) => {
-    const tempMovie = { ...movie };
-    tempMovie.watched = user.watched.some((elem) => elem.movieId === movie.imdbCode);
-    return tempMovie;
-  });*/
-  let comments = [];
-  let subtitles = [];
-  const ret = movieUtils.formatSingleMovieEntry(movieInfo, comments, subtitles);
+  const ret = movieUtils.formatSingleMovieEntry(movieInfo, subtitles);
   res.status(200).json(ret);
 };
 
@@ -106,10 +104,10 @@ const playMovie = async (req, res, next) => {
 	console.log('Endpoint hit: play movie');
   const { imdbCode } = req.params;
   let movie = await movieUtils.fetchSingleMovie({ imdbCode });
-	//console.log('Fetch single return 1:');
-	//console.log(movie);
-	
-  if ((!movie || !movie.downloaded) && !downloadCache.has(imdbCode)) {
+	console.log('Movie', movie);
+
+  if (!movie.downloaded && !downloadCache.has(imdbCode)) {
+		console.log('Here.');
     if (!movie) {
       movie = { imdbCode };
     }
@@ -117,56 +115,34 @@ const playMovie = async (req, res, next) => {
     if (!movie.magnetLink)
       magnetLink = await torrentUtils.getMagnetLink(imdbCode);
     await torrentUtils.downloadMovie(movie, magnetLink, downloadCache);
-		console.log('Movie downloaded, going to fetch updated data.');
     movie = await movieUtils.fetchSingleMovie({ imdbCode });
   }
-	console.log('Fetch single return 2:');
-	console.log(movie);
 	req.imdb_code = imdbCode;
 	req.serverLocation = movie.server_location;
 	req.movieSize = movie.size;
-	//console.log(req, res, next);
 	torrentUtils.startFileStream(req, res, next);
 };
 
-const downloadMovie = async (req, res, next) => {
-  console.log("movie-download end-point Hit");
-  //const { string } = req.query;
-  const { imdbCode } = req.query;
-  try {
-    // Get movie data here, if available in database. Put into let movie, if it exists.
-    let movie = { imdbCode };
-    const magnet = await torrentUtils.getMagnetLink(imdbCode);
-    console.log("magnet:");
-    console.log(magnet);
-    await torrentUtils.downloadMovie(movie, magnet, downloadCache);
-    //await torrentUtils.downloadMovie(movie, downloadCache);
-    // Get movie data here again, because it might be updated, and now we can get the server location and size.
-    //req.serverLocation = movie.serverLocation;
-    //req.movieSize = movie.size;
-    //torrentUtils.startFileStream(req, res, next);
-    return res.status(200).send(magnet).end();
-  } catch (e) {
-    // Error.
-  }
-};
-
-// Get movie Entry
+/*
+// Get movie Entry - This is now used for the moment!
+// We save same return with get-single-movie & get-comments to serve single the movie page
 const getMovieEntry = async (req, res) => {
   const { imdb_code } = req.params;
 
   const movieInfo = await movieUtils.getMovieInfo(imdb_code);
-  // const subtitles = await subtitlesUtils.getSubtitles(imdb_code);
-  // const comments = await fetchComments(imdb_code);
-  // res.json(movieUtils.formatSingleMovieEntry(movieInfo, comments, subtitles));
-  res.json(movieUtils.formatSingleMovieEntry(movieInfo));
+  const subtitles = await subtitlesUtils.getSubtitles(imdb_code);
+  res.json(movieUtils.formatSingleMovieEntry(movieInfo, subtitles));
 };
+*/
 
 // Set Movie Watched
 const setMovieWatched = async (req, res) => {
   try {
     const { imdb_code } = req.params;
     const { user_id } = req.user;
+		console.log('Set movie watched.');
+		console.log('imdb', imdb_code);
+		
 
     const movie = await pool.query(
       "SELECT * FROM movies WHERE imdb_code = $1",
@@ -210,6 +186,32 @@ const setMovieWatched = async (req, res) => {
   }
 };
 
+// @route   GET /get-movie-list
+// @desc    return movie list
+// @access  Public
+const getAllMovies = async (req, res) => {
+	console.log("getMovieList end-point Hit");
+	const { page } = req.query;
+	const user_id = req?.user?.user_id;
+
+	const filters = req.query;
+  
+	const movies = await movieUtils.buildMovieList(filters);
+  
+	//2. Find the user
+	const user = await findUserInfoFromDB("user_id", user_id);
+  
+	movies.movies = movies.movies.map((movie) => {
+	  const tempMovie = { ...movie };
+	  tempMovie.movies_watched = user.movies_watched.some(
+		(elem) => elem.imdb_code === movie.imdb_code
+	  );
+	  return tempMovie;
+	});
+  
+	res.json(movies);
+  };
+
 export default {
   getMovieList,
   movieSearch,
@@ -217,7 +219,7 @@ export default {
   getMovieComments,
   getSingleMovie,
   playMovie,
-  downloadMovie,
-  getMovieEntry,
+  // getMovieEntry,
   setMovieWatched,
+  getAllMovies
 };
