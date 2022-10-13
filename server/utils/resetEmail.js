@@ -1,7 +1,6 @@
 import nodemailer from "nodemailer";
 
 export const resetEmail = (email, token) => {
-  console.log(`Sending email to ${email}`);
   const transporter = nodemailer.createTransport({
     service: "gmail",
     auth: {

@@ -21,13 +21,8 @@ const updateAccount = async (user_id, data) => {
 // @desc    Update Profile Info
 // @access  Private
 const profileUpdate = async (req, res) => {
-  console.log("profileUpdate end-point Hit", req.body);
-
   try {
     const { user_id, email, user_name, first_name, last_name } = req.body;
-
-    console.log("Hellloo test Avatar-", req.body.avatar);
-    console.log("-----Request file ---", req.file); //Here you get file.
 
     if (!validator.isEmail(email)) {
       return res.status(400).json("Invalid Email");

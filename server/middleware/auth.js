@@ -5,6 +5,7 @@ const auth = (req, res, next) => {
   const authHeader = req.headers["authorization"];
 
   const token = authHeader && authHeader.split(" ")[1];
+  // TODO: remove this console.log
   console.log("------Middleware TOKEN-------", token);
 
   if (!token) {
