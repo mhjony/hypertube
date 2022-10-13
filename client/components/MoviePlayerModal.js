@@ -8,14 +8,9 @@ import MovieInfo from './videoPlayer/MovieInfo'
 const MoviePlayerModal = ({ movie }) => {
   const { data: session } = useSession()
 
-  const userInfo = session?.user
-
   const [isModalOpen, setIsModalOpen] = useState(false)
-  const [loading, setLoading] = useState(false)
 
-  const { accessToken } = session
-
-  const user_id = session?.user_id || session.user.user_id
+  const user_id = session?.user_id || session?.user?.user_id
 
   return (
     <div className="flex flex-wrap items-start mb-4">
