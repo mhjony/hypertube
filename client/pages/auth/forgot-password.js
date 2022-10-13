@@ -1,16 +1,12 @@
 import React, { useState } from 'react'
-import { useRouter } from 'next/router'
 import Link from 'next/link'
-import { signIn, useSession } from 'next-auth/react'
 
 import api from '../../services/backend/forgotPassword'
 
 import FormInput from '../../components/FormInput'
 
 const forgotPassword = () => {
-  const { query } = useRouter()
-
-  const [email, setEmail] = useState('tasmiata@gmail.com')
+  const [email, setEmail] = useState('')
   const [successMessage, setSuccessMessage] = useState(false)
 
   const onSubmit = async event => {
@@ -50,6 +46,7 @@ const forgotPassword = () => {
           <button
             className="bg-red-400 hover:bg-red-600 text-white font-bold py-2 px-4 rounded w-full"
             onClick={onSubmit}
+            disabled={hasEmptyField}
           >
             Send Login Link
           </button>
