@@ -1,6 +1,14 @@
 const API = 'http://localhost:8000'
 
-const updateProfile = async (user_id, email, user_name, first_name, last_name, accessToken) => {
+const updateProfile = async (
+  user_id,
+  email,
+  user_name,
+  first_name,
+  last_name,
+  accessToken,
+  language
+) => {
   const url = `${API}/profile/update`
 
   if (!accessToken) {
@@ -18,7 +26,8 @@ const updateProfile = async (user_id, email, user_name, first_name, last_name, a
       email: decodeURIComponent(email),
       user_name,
       first_name,
-      last_name
+      last_name,
+      language
     })
   })
 

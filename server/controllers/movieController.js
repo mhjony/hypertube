@@ -100,26 +100,18 @@ const getSingleMovie = async (req, res) => {
   const movieInfo = await movieUtils.getMovieInfo(imdb_code);
   const subtitles = await subtitlesUtils.getSubtitles(imdb_code);
 
-  // Get user details by userId ans pass the watched array to the movieInfo
-  // const user = await pool.query("SELECT * FROM users WHERE user_id = $1", [
-  //   req.user,
-  // ]);
-
-  /*movies.movies = movies.movies.map((movie) => {
-    const tempMovie = { ...movie };
-    tempMovie.watched = user.watched.some((elem) => elem.movieId === movie.imdbCode);
-    return tempMovie;
-  });*/
-
-  // let comments = [];
   const ret = movieUtils.formatSingleMovieEntry(movieInfo, subtitles);
   res.status(200).json(ret);
 };
 
 const playMovie = async (req, res, next) => {
+	console.log('Endpoint hit: play movie');
   const { imdbCode } = req.params;
   let movie = await movieUtils.fetchSingleMovie({ imdbCode });
-  if ((!movie || !movie.downloadComplete) && !downloadCache.has(imdbCode)) {
+	console.log('Movie', movie);
+
+  if (!movie.downloaded && !downloadCache.has(imdbCode)) {
+		console.log('Here.');
     if (!movie) {
       movie = { imdbCode };
     }
@@ -129,9 +121,10 @@ const playMovie = async (req, res, next) => {
     await torrentUtils.downloadMovie(movie, magnetLink, downloadCache);
     movie = await movieUtils.fetchSingleMovie({ imdbCode });
   }
-  req.serverLocation = movie.serverLocation;
-  req.movieSize = movie.size;
-  torrentUtils.startFileStream(req, res, next);
+	req.imdb_code = imdbCode;
+	req.serverLocation = movie.server_location;
+	req.movieSize = movie.size;
+	torrentUtils.startFileStream(req, res, next);
 };
 
 const downloadMovie = async (req, res, next) => {
@@ -142,8 +135,8 @@ const downloadMovie = async (req, res, next) => {
     // Get movie data here, if available in database. Put into let movie, if it exists.
     let movie = { imdbCode };
     const magnet = await torrentUtils.getMagnetLink(imdbCode);
-    console.log("magnet:");
-    console.log(magnet);
+    //console.log("magnet:");
+    //console.log(magnet);
     await torrentUtils.downloadMovie(movie, magnet, downloadCache);
     //await torrentUtils.downloadMovie(movie, downloadCache);
     // Get movie data here again, because it might be updated, and now we can get the server location and size.
@@ -162,8 +155,6 @@ const getMovieEntry = async (req, res) => {
 
   const movieInfo = await movieUtils.getMovieInfo(imdb_code);
   const subtitles = await subtitlesUtils.getSubtitles(imdb_code);
-  // const comments = await getMovieComments(imdb_code);
-  // res.json(movieUtils.formatSingleMovieEntry(movieInfo, comments, subtitles));
   res.json(movieUtils.formatSingleMovieEntry(movieInfo, subtitles));
 };
 
@@ -172,6 +163,9 @@ const setMovieWatched = async (req, res) => {
   try {
     const { imdb_code } = req.params;
     const { user_id } = req.user;
+		console.log('Set movie watched.');
+		console.log('imdb', imdb_code);
+		
 
     const movie = await pool.query(
       "SELECT * FROM movies WHERE imdb_code = $1",
