@@ -3,7 +3,6 @@ import { useSession } from 'next-auth/react'
 
 import Modal from './Modal'
 
-import apiUpdateProfile from '../services/backend/updateProfile'
 import MovieInfo from './videoPlayer/MovieInfo'
 
 const MoviePlayerModal = ({ movie }) => {
@@ -18,22 +17,6 @@ const MoviePlayerModal = ({ movie }) => {
 
   const user_id = session?.user_id || session.user.user_id
 
-  const handleProfileUpdate = async () => {
-    try {
-      setLoading(true)
-
-      // await apiUpdateProfile.updateProfile(
-      //   user_id,
-      //   accessToken
-      // )
-
-      setIsModalOpen(false)
-      setLoading(false)
-    } catch (err) {
-      console.error(err)
-    }
-  }
-
   return (
     <div className="flex flex-wrap items-start mb-4">
       <div className="mr-5">
@@ -47,18 +30,6 @@ const MoviePlayerModal = ({ movie }) => {
         {isModalOpen && (
           <Modal center isOpen={isModalOpen} close={() => setIsModalOpen(false)} minWidth={450}>
             <MovieInfo session={session} movie={movie} user_id={user_id} />
-
-            {/* <h2 className="font-bold text-xl md:text-2xl">Play Movie tile</h2>
-            
-
-            <p className="leading-normal text-gray-600 pb-4">You can update your profile here!</p> */}
-
-            <button
-              className="bg-red-400 hover:bg-red-600 text-white font-bold py-2 px-4 rounded w-full"
-              onClick={handleProfileUpdate}
-            >
-              Play Movie
-            </button>
           </Modal>
         )}
       </div>

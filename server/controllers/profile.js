@@ -1,4 +1,3 @@
-import dotenv from "dotenv";
 import pool from "../config/database.js";
 import validator from "validator";
 
@@ -79,8 +78,6 @@ const profileUpdate = async (req, res) => {
 // @desc    Update/Upload Profile Picture
 // @access  Private
 const profilePictureUpdate = async (req, res) => {
-  console.log("asd profilePicture end-point Hit");
-
   try {
     const { user_id } = req.body;
 
