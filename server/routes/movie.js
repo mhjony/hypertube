@@ -12,11 +12,14 @@ router.post("/comment/add/:imdb_code", [auth], movieController.addComment);
 // Routes for getting movies
 router.get("/get-movie-list", [auth], movieController.getMovieList);
 
-router.get("/get-single-movie/:imdb_code", movieController.getSingleMovie);
+router.get(
+  "/get-single-movie/:imdb_code",
+  [auth],
+  movieController.getSingleMovie
+);
 
 //router.get('/:imdbCode/player/:token', inputValidator.validateToken, movieController.playMovie);
 router.get("/player/:imdbCode", movieController.playMovie);
-router.get("/download", movieController.downloadMovie);
 
 // Get movie entry (Return, movieDetails, subtitles, comments)
 router.get("/:imdb_code", [auth], movieController.getMovieEntry);
@@ -25,9 +28,10 @@ router.get("/:imdb_code", [auth], movieController.getMovieEntry);
 router.post("/watched/:imdb_code", [auth], movieController.setMovieWatched);
 
 // Route for getting subtitles
+// TODO: add auth middleware
 router.get(
   "/:imdb_code/subtitles/:lang",
-  [auth],
+  // [auth],
   subtitlesController.getSubtitles
 );
 
