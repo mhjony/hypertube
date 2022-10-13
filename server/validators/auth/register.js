@@ -1,6 +1,6 @@
 import { body } from "express-validator";
 
-const rules = (() => {
+const registerRules = (() => {
   return [
     body("first_name").notEmpty().isAlpha().isLength({ min: 3 }),
     body("last_name").notEmpty().isAlpha().isLength({ min: 3 }),
@@ -12,8 +12,10 @@ const rules = (() => {
       .matches("[0-9]")
       .withMessage("Password Must Contain a Number")
       .matches("[A-Z]")
-      .withMessage("Password Must Contain an Uppercase Letter"),
+      .withMessage("Password Must Contain an Uppercase Letter")
+      .matches('[!@#$%^&*(),.?":{}|<>]')
+      .withMessage("Password Must Contain a Special Character"),
   ];
 })();
 
-export default rules;
+export default registerRules;
