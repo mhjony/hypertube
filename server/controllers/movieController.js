@@ -25,8 +25,6 @@ const movieSearch = async (req, res) => {
   const ret = await axios.get(
     `http://www.omdbapi.com/?t=${string}&apikey=${process.env.OMDB_KEY}`
   );
-  console.log("Ret:");
-  console.log(ret);
   return res.send(ret.data);
 };
 
@@ -37,8 +35,6 @@ const getMovieList = async (req, res) => {
   console.log("getMovieList end-point Hit");
   const { page } = req.query;
   const user_id = req?.user?.user_id;
-
-  console.log("user_id:", user_id);
 
   const filters = {
     page: page || 1,
@@ -100,18 +96,6 @@ const getSingleMovie = async (req, res) => {
   const movieInfo = await movieUtils.getMovieInfo(imdb_code);
   const subtitles = await subtitlesUtils.getSubtitles(imdb_code);
 
-  // Get user details by userId ans pass the watched array to the movieInfo
-  // const user = await pool.query("SELECT * FROM users WHERE user_id = $1", [
-  //   req.user,
-  // ]);
-
-  /*movies.movies = movies.movies.map((movie) => {
-    const tempMovie = { ...movie };
-    tempMovie.watched = user.watched.some((elem) => elem.movieId === movie.imdbCode);
-    return tempMovie;
-  });*/
-
-  // let comments = [];
   const ret = movieUtils.formatSingleMovieEntry(movieInfo, subtitles);
   res.status(200).json(ret);
 };
@@ -134,29 +118,9 @@ const playMovie = async (req, res, next) => {
   torrentUtils.startFileStream(req, res, next);
 };
 
-const downloadMovie = async (req, res, next) => {
-  console.log("movie-download end-point Hit");
-  //const { string } = req.query;
-  const { imdbCode } = req.query;
-  try {
-    // Get movie data here, if available in database. Put into let movie, if it exists.
-    let movie = { imdbCode };
-    const magnet = await torrentUtils.getMagnetLink(imdbCode);
-    console.log("magnet:");
-    console.log(magnet);
-    await torrentUtils.downloadMovie(movie, magnet, downloadCache);
-    //await torrentUtils.downloadMovie(movie, downloadCache);
-    // Get movie data here again, because it might be updated, and now we can get the server location and size.
-    //req.serverLocation = movie.serverLocation;
-    //req.movieSize = movie.size;
-    //torrentUtils.startFileStream(req, res, next);
-    return res.status(200).send(magnet).end();
-  } catch (e) {
-    // Error.
-  }
-};
-
-// Get movie Entry
+/*
+// Get movie Entry - This is now used for the moment!
+// We save same return with get-single-movie & get-comments to serve single the movie page
 const getMovieEntry = async (req, res) => {
   const { imdb_code } = req.params;
 
@@ -166,6 +130,7 @@ const getMovieEntry = async (req, res) => {
   // res.json(movieUtils.formatSingleMovieEntry(movieInfo, comments, subtitles));
   res.json(movieUtils.formatSingleMovieEntry(movieInfo, subtitles));
 };
+*/
 
 // Set Movie Watched
 const setMovieWatched = async (req, res) => {
@@ -222,7 +187,6 @@ export default {
   getMovieComments,
   getSingleMovie,
   playMovie,
-  downloadMovie,
-  getMovieEntry,
+  // getMovieEntry,
   setMovieWatched,
 };
