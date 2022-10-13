@@ -107,22 +107,22 @@ const playMovie = async (req, res, next) => {
 	console.log('token', token);
   let movie = await movieUtils.fetchSingleMovie({ imdbCode });
 	console.log('Movie', movie);
-
   if (!movie || (!movie.downloaded && !downloadCache.has(imdbCode))) {
 		console.log('Here.');
     if (!movie) {
       movie = { imdbCode };
     }
     let magnetLink = "";
-  	magnetLink = await torrentUtils.getMagnetLink(imdbCode);
+    if (!movie.magnetLink)
+      magnetLink = await torrentUtils.getMagnetLink(imdbCode);
     await torrentUtils.downloadMovie(movie, magnetLink, downloadCache, req, res, next);
     movie = await movieUtils.fetchSingleMovie({ imdbCode }); // Move this? Refactoring around here.
   }
 	console.log('Ready to serve stream.');
-		req.imdb_code = imdbCode;
-		req.serverLocation = movie.server_location;
-		req.movieSize = movie.size;
-		torrentUtils.startFileStream(req, res, next);
+	req.imdb_code = imdbCode;
+	req.serverLocation = movie.server_location;
+	req.movieSize = movie.size;
+	torrentUtils.startFileStream(req, res, next);
 };
 
 
