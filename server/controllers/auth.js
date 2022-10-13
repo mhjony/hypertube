@@ -1,10 +1,8 @@
-import dotenv from "dotenv";
 import fetch from "isomorphic-unfetch";
 import pool from "../config/database.js";
 // import generateToken from "../utils/generateToken";
 import jwt from "jsonwebtoken";
 import * as bcrypt from "bcrypt";
-import validator from "validator";
 import crypto from "crypto";
 import nodemailer from "nodemailer";
 
@@ -249,6 +247,8 @@ const register = async (req, res) => {
     const { first_name, last_name, user_name, email, password, token } =
       req.body;
 
+    const defaultLanguage = "en";
+
     //2. check if user exists in the db (if not exists, then throw error)
     const user = await pool.query("SELECT * FROM users WHERE email = $1", [
       email,
@@ -269,9 +269,18 @@ const register = async (req, res) => {
 
     //5. create & enter the new user info with generated token inside my database
     const newUser = await pool.query(
-      "INSERT INTO users (first_name, last_name, user_name, email, password, token) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *",
-      [first_name, last_name, user_name, email, bcryptPassword, jwtToken]
+      "INSERT INTO users (first_name, last_name, user_name, email, password, token, language) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *",
+      [
+        first_name,
+        last_name,
+        user_name,
+        email,
+        bcryptPassword,
+        jwtToken,
+        defaultLanguage,
+      ]
     );
+    // TODO: Need to Fix the sendEmail import issue
     sendEmail(email, jwtToken);
     res
       .status(200)
@@ -284,11 +293,6 @@ const register = async (req, res) => {
       })
       .end();
     return;
-    // res.json(newUser.rows[0]);
-
-    // TODO: Need to Fix the sendEmail import issue
-    // If that's not working i will move the sendEmail method in this file
-    //6. Finally send the email to verify the registration
   } catch (err) {
     console.error(err.message);
     res.status(500).send("Server Error");

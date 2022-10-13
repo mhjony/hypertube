@@ -18,15 +18,18 @@ router.get(
 );
 
 // Routes for Video Player
-router.get("/player/:imdbCode", movieController.playMovie);
+router.get("/player/:imdbCode", [auth], movieController.playMovie);
 
-// Get movie entry (Return, movieDetails, subtitles, comments)
-router.get("/:imdb_code", [auth], movieController.getMovieEntry);
+// router.get("/:imdb_code", [auth], movieController.getMovieEntry); // NOTE: This route is not used
 
 // Routes to set movie watched
 router.post("/watched/:imdb_code", [auth], movieController.setMovieWatched);
 
 // Routes for Video Subtitles
-router.get("/:imdb_code/subtitles/:lang", subtitlesController.getSubtitles);
+router.get(
+  "/:imdb_code/subtitles/:lang",
+  [auth],
+  subtitlesController.getSubtitles
+);
 
 export default router;

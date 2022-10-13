@@ -1,6 +1,6 @@
-const { body } = require("express-validator");
+import { body } from "express-validator";
 
-exports.rules = (() => {
+const resetPasswordRules = (() => {
   return [
     body("password")
       .isLength({ min: 6 })
@@ -18,3 +18,5 @@ exports.rules = (() => {
       .withMessage("Password Must Contain an Uppercase Letter"),
   ];
 })();
+
+export default resetPasswordRules;
