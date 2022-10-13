@@ -11,16 +11,22 @@ router.post("/comment/add/:imdb_code", [auth], movieController.addComment);
 
 // Routes for getting movies
 router.get("/get-movie-list", [auth], movieController.getMovieList);
-router.get("/get-single-movie/:imdb_code", [auth], movieController.getSingleMovie);
+router.get(
+  "/get-single-movie/:imdb_code",
+  [auth],
+  movieController.getSingleMovie
+);
+
+// Routes for Video Player
 router.get("/player/:imdbCode", movieController.playMovie);
 
 // Get movie entry (Return, movieDetails, subtitles, comments)
 router.get("/:imdb_code", [auth], movieController.getMovieEntry);
 
-// Set Movie as Watched
+// Routes to set movie watched
 router.post("/watched/:imdb_code", [auth], movieController.setMovieWatched);
 
-// Route for getting subtitles
-router.get('/:imdb_code/subtitles/:lang', subtitlesController.getSubtitles)
+// Routes for Video Subtitles
+router.get("/:imdb_code/subtitles/:lang", subtitlesController.getSubtitles);
 
 export default router;

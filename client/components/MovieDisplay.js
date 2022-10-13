@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React from 'react'
 
 const MovieDisplay = ({ filteredMovies, loading }) => {
   const handleMovieDetails = movie => {

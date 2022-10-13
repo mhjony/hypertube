@@ -10,7 +10,6 @@ const signup = async (first_name, last_name, user_name, email, password) => {
     },
     body: JSON.stringify({ first_name, last_name, user_name, email, password })
   })
-  console.log('I am inside signup service', res)
 
   const data = await res.json()
   return data

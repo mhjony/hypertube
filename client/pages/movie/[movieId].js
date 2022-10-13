@@ -27,7 +27,7 @@ const movieId = ({ movie }) => {
 
   return (
     <div>
-      {session ? (
+      {session && (
         <>
           <Navbar />
           <section className="relative z-50">
@@ -92,9 +92,6 @@ const movieId = ({ movie }) => {
             </div>
           </section>
         </>
-      ) : (
-        <div>Redirect to login page</div>
-        // window.location('/login')
       )}
     </div>
   )
