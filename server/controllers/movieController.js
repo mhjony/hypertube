@@ -33,14 +33,9 @@ const movieSearch = async (req, res) => {
 // @access  Public
 const getMovieList = async (req, res) => {
   console.log("getMovieList end-point Hit");
-  // const { page } = req.query;
   const user_id = req.user.user_id;
   const filters = req.query;
 
-  /*   const filters = {
-    page: page || 1,
-    minimum_rating: 0,
-  }; */
   const movies = await movieUtils.buildMovieList(filters);
 
   //2. Find the user

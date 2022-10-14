@@ -17,6 +17,8 @@ const buildMovieList = async (filters) => {
     query_term: filters.search || "",
   };
 
+  console.log("buildMovieList params 02", params);
+
   const previousPage = parseInt(params.page) - 1;
   const nextPage = parseInt(params.page) + 1;
 
@@ -24,15 +26,10 @@ const buildMovieList = async (filters) => {
     const TORRENT_API = "https://yts.mx/api/v2/list_movies.json";
     const OMDB_KEY = "bba736e8";
     // let res = await axios.get(`${process.env.TORRENT_API}`, { params });
-    let res = await axios.get(`${TORRENT_API}`, {
-      params,
-    });
+    let res = await axios.get(`${TORRENT_API}`, { params });
     const moviesData = res.data.data;
     const movieList = res.data.data.movies;
 
-    if (moviesData.movie_count === 0) {
-      console.log("Error, no movies found!"); //throw notFoundError();
-    }
     if (moviesData.movie_count <= params.limit * params.page) {
       hasMore = false;
     }
@@ -72,10 +69,6 @@ const updateMovie = async (imdbCode, magnetLink, serverLocation, size) => {
     );
     return updatedMovie;
     // res.json(newUser.rows[0]);
-
-    // TODO: Need to Fix the sendEmail import issue
-    // If that's not working i will move the sendEmail method in this file
-    //6. Finally send the email to verify the registration
   } catch (err) {
     console.error(err.message);
   }
