@@ -6,15 +6,22 @@ import 'react-date-range/dist/theme/default.css'
 
 const DateRange = ({ startDate, setStartDate, setEndDate, endDate, minDate = undefined }) => {
   const handleSelect = val => {
+    console.log('onselect', val)
+
     setStartDate(val.selection.startDate)
-    setEndDate(val.selection.endDate)
+
+    const newEndDate = val.selection.endDate
+    newEndDate.setHours(23)
+    newEndDate.setMinutes(59)
+    newEndDate.setSeconds(59)
+    setEndDate(newEndDate)
   }
 
   const maxDate = new Date()
 
   const selectionRange = {
-    startDate: new Date(),
-    endDate: new Date(),
+    startDate,
+    endDate,
     key: 'selection'
   }
 
