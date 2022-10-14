@@ -10,6 +10,11 @@ const buildMovieList = async (filters) => {
   const params = {
     limit: 20,
     page: filters.page || 1,
+    minimum_rating: filters.imdb || 0,
+    genre: filters.genre,
+    sort_by: filters.sort_by,
+    order_by: filters.order_by,
+    query_term: filters.search || "",
   };
 
   const previousPage = parseInt(params.page) - 1;
@@ -24,8 +29,6 @@ const buildMovieList = async (filters) => {
     });
     const moviesData = res.data.data;
     const movieList = res.data.data.movies;
-    console.log("Movie list: ");
-    console.log(movieList);
 
     if (moviesData.movie_count === 0) {
       console.log("Error, no movies found!"); //throw notFoundError();
@@ -67,8 +70,6 @@ const updateMovie = async (imdbCode, magnetLink, serverLocation, size) => {
       "UPDATE movies SET magnet = $1, server_location = $2, size = $3 WHERE imdb_code = $4 RETURNING *",
       [magnetLink, serverLocation, size, imdbCode]
     );
-    console.log("Tried to update movie.");
-    console.log(updatedMovie);
     return updatedMovie;
     // res.json(newUser.rows[0]);
 
@@ -171,7 +172,7 @@ const getMovieInfo = async (imdbID) => {
   }
 };
 
-const formatSingleMovieEntry = (movieInfo, comments, subtitles) => ({
+const formatSingleMovieEntry = (movieInfo, /*comments,*/ subtitles) => ({
   title: movieInfo.Title,
   imdbRating: movieInfo.imdbRating,
   year: movieInfo.Year,
@@ -181,10 +182,10 @@ const formatSingleMovieEntry = (movieInfo, comments, subtitles) => ({
   runtime: parseInt(movieInfo.Runtime, 10),
   director: movieInfo.Director,
   actors: movieInfo.Actors,
-  // comments,
-  subtitles,
   thumbnail: movieInfo.Poster,
   imdb_code: movieInfo.imdbID,
+  // comments,
+  subtitles,
 });
 
 const fetchSingleMovie = async (imdbCode) => {
