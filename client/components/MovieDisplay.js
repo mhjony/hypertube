@@ -6,7 +6,7 @@ const MovieDisplay = ({ filteredMovies, loading }) => {
 
     window.location.href = `/movie/${movieId}`
   }
-
+	
   return (
     <div>
       <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-4">
@@ -14,7 +14,7 @@ const MovieDisplay = ({ filteredMovies, loading }) => {
           filteredMovies?.map((video, index) => (
             <div className="mt-8 video" key={index} onClick={() => handleMovieDetails(video)}>
               <div className="video--img">
-                <img src={video.thumbnail} alt={video.title}></img>
+                <img src={video.thumbnail === 'N/A' ? 'https://pontusandersson.tech/cv_image.jpg' : video.thumbnail} alt={video.title}></img>
               </div>
               <div className="video-overlay"></div>
               <div className="flex justify-between">
