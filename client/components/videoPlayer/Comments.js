@@ -3,20 +3,27 @@ import React, { useState, useEffect } from 'react'
 import Button from '../Button'
 import Textarea from '../Textarea'
 import api from '../../services/backend/movies'
+import ProfileModal from '../ProfileCardModal'
 
-const Comment = ({ comment, onClick = null }) => (
-  <div
-    className={`px-3 py-1 bg-gray-400 rounded mr-1 mb-1 flex justify-between items-center text-black ${
-      onClick ? 'cursor-pointer' : ''
-    }`}
-    onClick={onClick || (() => {})}
-  >
-    <div>
-      <div className="text-sm text-gray-800">{comment.comment_body}</div>
-      <div className="text-xs text-gray-600">{comment.updatedAt}</div>
+const Comment = ({ comment, onClick = null }) => {
+  return (
+    <div
+      className={`px-3 py-1 bg-gray-400 rounded mr-1 mb-1 flex justify-between items-center text-black ${
+        onClick ? 'cursor-pointer' : ''
+      }`}
+      onClick={onClick || (() => {})}
+    >
+      <div className="flex border-l-2 border-gray-300 border-solid">
+        <ProfileModal comment={comment} />
+
+        <div>
+          <div className="pt-2 mt-4 text-sm text-gray-800">{comment.comment_body}</div>
+          <div className="text-xs text-gray-600">{comment.created_at}</div>
+        </div>
+      </div>
     </div>
-  </div>
-)
+  )
+}
 
 const Comments = ({ session, user_id, imdb_code }) => {
   const [loading, setLoading] = useState(false)

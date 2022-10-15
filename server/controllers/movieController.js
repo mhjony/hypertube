@@ -44,7 +44,7 @@ const getMovieList = async (req, res) => {
   movies.movies = movies.movies.map((movie) => {
     const tempMovie = { ...movie };
     tempMovie.movies_watched = user.movies_watched.some(
-      (elem) => elem.imdb_code === movie.imdb_code
+      (elem) => elem === movie.imdb_code
     );
     return tempMovie;
   });
@@ -79,6 +79,16 @@ const getMovieComments = async (req, res) => {
     "SELECT * FROM comments WHERE imdb_code = $1",
     [imdb_code]
   );
+
+  // Get the comments user info and add it to the comment object
+  await Promise.all(
+    comments.rows.map(async (comment) => {
+      const user = await findUserInfoFromDB("user_id", comment.user_id);
+      comment.user = user;
+      return comment;
+    })
+  );
+
   return res.status(200).json(comments.rows);
 };
 
