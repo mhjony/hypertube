@@ -188,7 +188,7 @@ const MovieSearch = ({ session }) => {
             />
           </div>
 
-          <div className="mt-6 w-full">
+          <div className="mt-6">
             <p className="text-md text-white uppercase">Filter By date</p>
             <button
               type="button"
