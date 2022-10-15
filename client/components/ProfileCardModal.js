@@ -36,7 +36,7 @@ const ProfileModal = ({ comment }) => {
             isOpen={isModalOpen}
             close={() => setIsModalOpen(false)}
             minWidth={450}
-            minHeight={400}
+            minHeight={450}
           >
             <div>
               <div className="text-center font-bold py-4 text-xl">
@@ -49,8 +49,9 @@ const ProfileModal = ({ comment }) => {
                     <img className="w-auto rounded-t-xl" src={comment?.user?.avatar} alt="avatar" />
                     <div className="text-center flex flex-col p-2">
                       <span className="text-base font-bold">
-                        {comment?.user.first_name} {comment?.user.last_name}
+                        Name: {comment?.user.first_name} {comment?.user.last_name}
                       </span>
+                      <span className="text-base"> Username: {comment?.user.user_name}</span>
                     </div>
                   </div>
                 </div>
