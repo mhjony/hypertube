@@ -14,7 +14,7 @@ const savePathToMovie = async ( movie , magnet, serverLocation, size) => {
 
 const startFileStream = (req, res) => {
 	//console.log('req', req);
-	let loaded = false;
+	let notloaded = false;
 	const {imdb_code, serverLocation, movieSize} = req;
 	const path = `./movies/${serverLocation}`;
 	console.log('path ', path);
@@ -22,14 +22,17 @@ const startFileStream = (req, res) => {
 	const isMp4 = path.endsWith('mp4');
 	const size = fs.statSync(path).movieSize;
 	const { range } = req.headers;
+	console.log(`range = ${range}`);
 	const CHUNK = 20e+6;
 	let start = range ? Number(range.replace(/\D/g, '')) : 0;
 	if (start < size - 1) {
-		loaded = true;
+		notloaded = true;
 		start = 0;
 	}
+	console.log(`isMp4 = ${isMp4}`);
 	const end = isMp4 ? Math.min(start + CHUNK, movieSize - 1) : movieSize - 1;
 	const movieLength = end - start + 1;
+	console.log(`${end} (end) - ${start} (start) + 1 = ${movieLength}`);
 	const headers = isMp4
 	? {
 		'Content-Range': `bytes ${start}-${end}/${movieSize}`,
@@ -45,7 +48,7 @@ const startFileStream = (req, res) => {
 	console.log('headers', headers);
 	console.log('movieSize = ', movieSize);//890203389
 	const readStream = fs.createReadStream(path, {start, end});
-	if (loaded) {
+	if (notloaded) {
 		res.writeHead(416, headers);
 	} else {
 		res.writeHead(206, headers);
