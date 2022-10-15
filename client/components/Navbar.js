@@ -11,6 +11,8 @@ const Navbar = () => {
   const [active, setActive] = useState(false)
   const { data: session } = useSession()
 
+  const userInfo = session?.user
+
   const handleClick = () => {
     setActive(!active)
   }
