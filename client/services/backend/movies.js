@@ -158,5 +158,5 @@ export default {
   getMovieComments,
   addComment,
 	setMovieWatched,
-	getMovieSubtitles
+	getMovieSubtitles,
 }
