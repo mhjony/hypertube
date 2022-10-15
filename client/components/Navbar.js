@@ -3,15 +3,22 @@ import Link from 'next/link'
 import { useState } from 'react'
 import { signOut } from 'next-auth/react'
 import { useSession } from 'next-auth/react'
+import { useRouter } from 'next/router'
 
 import UpdateProfileModal from './UpdateProfileModal'
 
 const Navbar = () => {
   const [active, setActive] = useState(false)
   const { data: session } = useSession()
+  const router = useRouter()
 
   const handleClick = () => {
     setActive(!active)
+  }
+
+  const handleSignOut = async () => {
+    await signOut({ redirect: false, callbackUrl: '/auth/login' })
+    router.push('/auth/login')
   }
 
   return (
@@ -52,14 +59,13 @@ const Navbar = () => {
               <div className="">
                 <button
                   className="lg:inline-flex lg:w-auto w-full px-3 py-2 rounded text-white font-bold items-center justify-center hover:bg-red-200 hover:text-black"
-                  onClick={() => signOut()}
+                  onClick={() => handleSignOut()}
                   type="button"
                 >
                   LogOut
                 </button>
               </div>
             ) : (
-              // Router.push('/auth/login')
               <Link href="/auth/login">
                 <a className="lg:inline-flex lg:w-auto w-full px-3 py-2 rounded text-white font-bold items-center justify-center hover:bg-slate-800 hover:text-white">
                   LogIn
