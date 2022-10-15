@@ -21,7 +21,6 @@ const buildMovieList = async (filters) => {
 
   const previousPage = parseInt(params.page) - 1;
   const nextPage = parseInt(params.page) + 1;
-
   try {
     const TORRENT_API = "https://yts.mx/api/v2/list_movies.json";
     const OMDB_KEY = "bba736e8";
@@ -37,7 +36,7 @@ const buildMovieList = async (filters) => {
       await Promise.all(
         movieList.map(async (movie) => {
           res = await axios.get(
-            `http://www.omdbapi.com/?i=${movie.imdb_code}&apikey=${OMDB_KEY}`
+            `http://www.omdbapi.com/?i=${movie.imdb_code}&apikey=${process.env.OMDB_KEY}`
           );
           movie.thumbnail = res.data.Poster; // eslint-disable-line no-param-reassign
         })
@@ -54,21 +53,19 @@ const buildMovieList = async (filters) => {
 const updateMovie = async (imdbCode, magnetLink, serverLocation, size) => {
   try {
     //1. check if movie exists in the db.
-    const movie = await pool.query(
-      "SELECT * FROM movies WHERE imdb_code = $1",
-      [imdbCode]
-    );
+    const movie = await pool.query("SELECT * FROM movies WHERE imdb_code = $1", [
+      imdbCode,
+    ]);
 
     // if movie does not exist, then throw error
     if (movie.rows.length === 0) {
-      console.log("Movie doesn't exit.");
+      console.log("UPDATE 2: Movie doesn't exit.");
     }
     const updatedMovie = await pool.query(
       "UPDATE movies SET magnet = $1, server_location = $2, size = $3 WHERE imdb_code = $4 RETURNING *",
       [magnetLink, serverLocation, size, imdbCode]
     );
-    return updatedMovie;
-    // res.json(newUser.rows[0]);
+    return updatedMovie.rows[0];
   } catch (err) {
     console.error(err.message);
   }
@@ -84,40 +81,31 @@ const filterMovieData = (movie) => ({
 });
 
 const getTorrentData = async (imdbID) => {
-  try {
-    console.log("In getTorrentData.");
-    const res = await axios.get(
-      `${process.env.TORRENT_API}?query_term=${imdbID}`
-    );
-    const data = res.data.data;
+	try {
+		console.log('In getTorrentData.');
+		const res = await axios.get(`${process.env.TORRENT_API}?query_term=${imdbID}`);
+		const data = res.data.data;
 
-    if (res.status !== 200 || data.movie_count === 0) {
-      console.log("Get torrentData error.");
-    }
-    const { hash } = data.movies[0].torrents.reduce((current, previous) =>
-      previous.size_bytes < current.size_bytes ? previous : current
-    );
-    const magnet = `magnet:?xt=urn:btih:${hash}&dn=${data.movies[0].title_long
-      .split(" ")
-      .join("+")}`;
-    const movie = await pool.query(
-      "SELECT * FROM movies WHERE imdb_code = $1",
-      [imdbID]
-    );
-    console.log("Is movie in database?");
-    console.log(movie);
-    if (movie.rowCount === 0) {
-      const ret = await pool.query(
-        "INSERT INTO movies (imdb_code, magnet, title) VALUES ($1, $2, $3)",
-        [imdbID, magnet, data.movies[0].title_long]
-      );
-      console.log("Added movie to database.");
-      console.log(ret);
-    }
-    return magnet;
-  } catch (e) {
-    console.log(e);
-  }
+		if (res.status !== 200 || data.movie_count === 0 ) {
+			console.log('Get torrentData error.');
+		}
+		const { hash } = data.movies[0].torrents.reduce((current, previous) => previous.size_bytes < current.size_bytes ? previous : current);
+		const magnet = `magnet:?xt=urn:btih:${hash}&dn=${data.movies[0].title_long.split(' ').join('+')}`;
+		const movie = await pool.query("SELECT * FROM movies WHERE imdb_code = $1", [
+      imdbID,
+    ]);
+		
+			if (movie.rowCount === 0) {
+			const ret = await pool.query(
+				"INSERT INTO movies (imdb_code, magnet, title) VALUES ($1, $2, $3)",
+				[imdbID, magnet, data.movies[0].title_long]
+			);
+			
+		}
+		return magnet;
+	} catch (e) {
+		console.log(e);
+	}
 };
 
 const parseTorrentInfo = (res) => {
@@ -153,19 +141,19 @@ const getMovieInfo = async (imdbID) => {
     const OMDB_KEY = "bba736e8";
 
     const res = await axios.get(
-      `http://www.omdbapi.com/?i=${imdbID}&apikey=${OMDB_KEY}`
+      `http://www.omdbapi.com/?i=${imdbID}&apikey=${process.env.OMDB_KEY}`
     );
     movieInfoData = res.data;
     return movieInfoData;
   } catch (e) {
     // res = await axios.get(`${process.env.TORRENT_API}?query_term=${imbdID}`);
-    res = await axios.get(`${TORRENT_API}?query_term=${imdbID}`);
+    res = await axios.get(`${process.env.TORRENT_API}?query_term=${imdbID}`);
     const data = parseTorrentInfo(res);
     return data;
   }
 };
 
-const formatSingleMovieEntry = (movieInfo, /*comments,*/ subtitles) => ({
+const formatSingleMovieEntry = (movieInfo, subtitles) => ({
   title: movieInfo.Title,
   imdbRating: movieInfo.imdbRating,
   year: movieInfo.Year,
@@ -177,23 +165,23 @@ const formatSingleMovieEntry = (movieInfo, /*comments,*/ subtitles) => ({
   actors: movieInfo.Actors,
   thumbnail: movieInfo.Poster,
   imdb_code: movieInfo.imdbID,
-  // comments,
-  subtitles,
+	subtitles,
 });
 
 const fetchSingleMovie = async (imdbCode) => {
   try {
-    const movie = await pool.query(
-      "SELECT * FROM movies WHERE imdb_code = $1",
-      [imdbCode]
-    );
+
+    //2. check if movie exists in the db.
+  const movie = await pool.query("SELECT * FROM movies WHERE imdb_code = $1", [
+      imdbCode.imdbCode
+    ]);
 
     // if movie does not exist, then throw error
     if (movie.rows.length === 0) {
-      return res.status(401).send("Movie doesn't exit.");
+      return res.status(401).send("FETCH: Movie doesn't exit.");
     }
 
-    return movie;
+    return movie.rows[0];
   } catch (err) {
     console.error(err.message);
   }
@@ -209,17 +197,14 @@ const setMovieAsDownloaded = async (imdbCode) => {
 
     // if movie does not exist, then throw error
     if (movie.rows.length === 0) {
-      console.log("Movie doesn't exit.");
+      console.log("UPDATE: Movie doesn't exit.");
     }
 
     const updatedMovie = await pool.query(
       "UPDATE movies SET downloaded = 1 WHERE imdb_code = $1 RETURNING *",
       [imdbCode]
     );
-    console.log("Tried set movie as downloaded.");
-    console.log(updatedMovie);
-    return updatedMovie;
-    // res.json(newUser.rows[0]);
+    return updatedMovie.rows[0];
   } catch (err) {
     console.error(err.message);
   }

@@ -97,9 +97,13 @@ const getSingleMovie = async (req, res) => {
 };
 
 const playMovie = async (req, res, next) => {
+	console.log('Endpoint hit: play movie');
   const { imdbCode } = req.params;
   let movie = await movieUtils.fetchSingleMovie({ imdbCode });
-  if ((!movie || !movie.downloadComplete) && !downloadCache.has(imdbCode)) {
+	console.log('Movie', movie);
+
+  if (!movie.downloaded && !downloadCache.has(imdbCode)) {
+		console.log('Here.');
     if (!movie) {
       movie = { imdbCode };
     }
@@ -109,9 +113,10 @@ const playMovie = async (req, res, next) => {
     await torrentUtils.downloadMovie(movie, magnetLink, downloadCache);
     movie = await movieUtils.fetchSingleMovie({ imdbCode });
   }
-  req.serverLocation = movie.serverLocation;
-  req.movieSize = movie.size;
-  torrentUtils.startFileStream(req, res, next);
+	req.imdb_code = imdbCode;
+	req.serverLocation = movie.server_location;
+	req.movieSize = movie.size;
+	torrentUtils.startFileStream(req, res, next);
 };
 
 /*
@@ -122,8 +127,6 @@ const getMovieEntry = async (req, res) => {
 
   const movieInfo = await movieUtils.getMovieInfo(imdb_code);
   const subtitles = await subtitlesUtils.getSubtitles(imdb_code);
-  // const comments = await getMovieComments(imdb_code);
-  // res.json(movieUtils.formatSingleMovieEntry(movieInfo, comments, subtitles));
   res.json(movieUtils.formatSingleMovieEntry(movieInfo, subtitles));
 };
 */
@@ -133,6 +136,9 @@ const setMovieWatched = async (req, res) => {
   try {
     const { imdb_code } = req.params;
     const { user_id } = req.user;
+		console.log('Set movie watched.');
+		console.log('imdb', imdb_code);
+		
 
     const movie = await pool.query(
       "SELECT * FROM movies WHERE imdb_code = $1",

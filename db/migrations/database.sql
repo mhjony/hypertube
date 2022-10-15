@@ -15,7 +15,7 @@ CREATE TABLE users (
 	password VARCHAR(255),
 	token varchar(255) DEFAULT NULL,
 	movies_watched VARCHAR(255)[] DEFAULT '{}',
-	language VARCHAR(255),
+	language VARCHAR(255) DEFAULT 'en',
 	verified SMALLINT NOT NULL DEFAULT 0,
 	avatar varchar(255) DEFAULT NULL
 );
