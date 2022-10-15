@@ -10,21 +10,25 @@ const buildMovieList = async (filters) => {
   const params = {
     limit: 20,
     page: filters.page || 1,
+    minimum_rating: filters.imdb || 0,
+    genre: filters.genre,
+    sort_by: filters.sort_by,
+    order_by: filters.order_by,
+    query_term: filters.search || "",
   };
+
+  console.log("buildMovieList params 02", params);
 
   const previousPage = parseInt(params.page) - 1;
   const nextPage = parseInt(params.page) + 1;
   try {
-    const TORRENT_API = "https://yts.mx/api/v2/list_movies.json";    // let res = await axios.get(`${process.env.TORRENT_API}`, { params });
-    let res = await axios.get(`${TORRENT_API}`, {
-      params,
-    });
+    const TORRENT_API = "https://yts.mx/api/v2/list_movies.json";
+    const OMDB_KEY = "bba736e8";
+    // let res = await axios.get(`${process.env.TORRENT_API}`, { params });
+    let res = await axios.get(`${TORRENT_API}`, { params });
     const moviesData = res.data.data;
     const movieList = res.data.data.movies;
 
-    if (moviesData.movie_count === 0) {
-      console.log("Error, no movies found!"); //throw notFoundError();
-    }
     if (moviesData.movie_count <= params.limit * params.page) {
       hasMore = false;
     }
@@ -93,7 +97,6 @@ const updateMovie = async (imdbCode, magnetLink, serverLocation, size) => {
       [magnetLink, serverLocation, size, imdbCode]
     );
     return updatedMovie.rows[0];
-    
   } catch (err) {
     console.error(err.message);
   }
