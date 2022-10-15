@@ -44,7 +44,7 @@ const getMovieList = async (req, res) => {
   movies.movies = movies.movies.map((movie) => {
     const tempMovie = { ...movie };
     tempMovie.movies_watched = user.movies_watched.some(
-      (elem) => elem.imdb_code === movie.imdb_code
+      (elem) => elem === movie.imdb_code
     );
     return tempMovie;
   });
