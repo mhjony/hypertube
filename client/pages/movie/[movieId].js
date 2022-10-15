@@ -3,8 +3,6 @@ import { useSession, getSession } from 'next-auth/react'
 
 import api from '../../services/backend/movies'
 
-import { PlusIcon, XIcon, PlayIcon, UserGroupIcon } from '@heroicons/react/solid'
-import ReactPlayer from 'react-player/lazy'
 import Navbar from '../../components/Navbar'
 import MoviePlayerModal from '../../components/moviePlayerModal'
 
@@ -35,61 +33,24 @@ const movieId = ({ movie }) => {
               <img src={movie?.thumbnail} alt={movie?.thumbnail} style={imgClass} />
             </div>
 
-            <div className="absolute inset-y-28 md:inset-y-auto md:bottom-10 inset-x-4 md:inset-x-12 space-y-6 z-50 text-gray-300 pb-24">
-              <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold">{movie?.title}</h1>
-              <div className="flex items-center space-x-3 md:space-x-5">
+            <div className="absolute inset-y-28 inset-x-8 md:inset-x-12 lg:inset-x-12 md:inset-y-auto md:bottom-10 space-y-6 z-50 text-gray-300 pb-12 bg-gray-600 rounded-lg border shadow-md">
+              <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold pl-14 pt-4">
+                {movie?.title}
+              </h1>
+              <div className="flex items-center space-x-3 md:space-x-5 pl-14">
                 <MoviePlayerModal movie={movie} />
-
-                <div className="rounded-full border-2 border-white flex items-center justify-center w-11 h-10 cursor-pointer bg-black/60">
-                  <PlusIcon className="h-6" />
-                </div>
-
-                <div className="rounded-full border-2 border-white flex items-center justify-center w-11 h-11 cursor-pointer bg-black/60">
-                  <UserGroupIcon className="h-6" />
-                </div>
               </div>
 
-              <p className="font-bold text-lg md:text-sm">
+              <p className="font-bold text-lg md:text-sm pl-14">
                 {movie.release_date || movie.first_air_date} • {Math.floor(movie.runtime / 60)}h{' '}
                 {movie?.runtime % 60}m • {movie?.genre}{' '}
               </p>
-              {!movie?.description == 'N/A' && movie?.description == 'N/A' && (
-                <h4 className="text-sm md:text-lg max-w-4xl">{movie.description}</h4>
-              )}
             </div>
 
             {/* Bg Overlay */}
             {showPlayer && (
               <div className="absolute inset-0 bg-black opacity-50 h-full w-full z-50"></div>
             )}
-
-            <div
-              className={`absolute top-3 inset-x-[7%] md:inset-x-[13%] rounded overflow-hidden transition duration-1000 ${
-                showPlayer ? 'opacity-100 z-50' : 'opacity-0'
-              }`}
-            >
-              <div className="flex items-center justify-between bg-black text-[#f9f9f9] p-3.5">
-                <div
-                  className="cursor-pointer w-8 h-8 flex justify-center items-center rounded-lg opacity-50 hover:opacity-75 hover:bg-[#0F0F0F]"
-                  onClick={() => setShowPlayer(false)}
-                >
-                  <XIcon className="h-5 text-red-400" />
-                </div>
-              </div>
-
-              <div className="relative pt-[56.25%]">
-                {/* Play Tailer */}
-                {/* TODO: use movie streaming url here */}
-                <ReactPlayer
-                  url={`https://www.youtube.com/watch?v=zMXHYSqltmU&ab_channel=ILWYennefer`}
-                  width="100%"
-                  height="100%"
-                  style={{ position: 'absolute', top: '0', left: '0' }}
-                  controls={true}
-                  playing={showPlayer}
-                />
-              </div>
-            </div>
           </section>
         </>
       )}

@@ -66,10 +66,12 @@ const MovieSearch = ({ session }) => {
 
   useEffect(() => {
     getMovies(session)
-  }, [session, page, search, searchByGenre])
+  }, [session, page, search, searchByGenre, sortBy])
 
   useEffect(() => {
     if (Object.values(filter).filter(v => v).length > 0 || search || searchByGenre) {
+      // Reset the states to default
+      setPage(1)
       setSearch('')
       setSearchByGenre('')
       setFilter({})
@@ -114,8 +116,10 @@ const MovieSearch = ({ session }) => {
   }
 
   // const searchSplit = search.toLowerCase().split(' ')
-  const filteredMovies = movies.filter(movie => {
-    /*
+  const filteredMovies =
+    movies?.length > 0 &&
+    movies?.filter(movie => {
+      /*
     // Search By name
     let matchesSearchFilter = true
     if (search.length > 0) {
@@ -130,18 +134,18 @@ const MovieSearch = ({ session }) => {
     }
     */
 
-    // Filter By production year
-    // let matchesProductionYear = true
-    // if (startYear && endYear) {
-    //   matchesProductionYear = movie.year >= startYear && movie.year <= endYear
-    // }
+      // Filter By production year
+      // let matchesProductionYear = true
+      // if (startYear && endYear) {
+      //   matchesProductionYear = movie.year >= startYear && movie.year <= endYear
+      // }
 
-    // Filter by upload date
-    const videoUploaded = new Date(movie?.date_uploaded).getTime()
-    const inDateRange = videoUploaded >= startDateMs && videoUploaded <= endDateMs
-    // return matchesSearchFilter && movieByGenre && inDateRange
-    return inDateRange
-  })
+      // Filter by upload date
+      const videoUploaded = new Date(movie?.date_uploaded).getTime()
+      const inDateRange = videoUploaded >= startDateMs && videoUploaded <= endDateMs
+      // return matchesSearchFilter && movieByGenre && inDateRange
+      return inDateRange
+    })
 
   const formattedStart = formatDate(startDate)
   const formattedEnd = formatDate(endDate)
