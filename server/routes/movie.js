@@ -28,7 +28,7 @@ router.post("/watched/:imdb_code", [auth], movieController.setMovieWatched);
 // Routes for Video Subtitles
 router.get(
   "/:imdb_code/subtitles/:lang",
-  [auth],
+  // [auth],
   subtitlesController.getSubtitles
 );
 

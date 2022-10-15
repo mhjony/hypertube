@@ -11,8 +11,8 @@ const MovieDisplay = ({ filteredMovies, loading }) => {
     <div>
       <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-4">
         {filteredMovies &&
-          filteredMovies?.map(video => (
-            <div className="mt-8 video" key={video.id} onClick={() => handleMovieDetails(video)}>
+          filteredMovies?.map((video, index) => (
+            <div className="mt-8 video" key={index} onClick={() => handleMovieDetails(video)}>
               <div className="video--img">
                 <img src={video.thumbnail} alt={video.title}></img>
               </div>
