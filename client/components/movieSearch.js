@@ -29,62 +29,13 @@ const MovieSearch = ({ session }) => {
   const [sortBy, setSortBy] = useState('rating desc')
 
   const sortByOptions = [
-    { value: 'rating', name: 'Rating' },
-    { value: 'year', name: 'Year' },
-    { value: 'title', name: 'Title' }
+    { value: 'title asc', name: 'A - Z' },
+    { value: 'title desc', name: 'Z - A' },
+    { value: 'year desc', name: 'Newest' },
+    { value: 'year asc', name: 'Oldest' },
+    { value: 'rating desc', name: 'Most Popular' },
+    { value: 'rating asc', name: 'Least Popular' }
   ]
-
-  const getMovies = async session => {
-    try {
-      setLoading(true)
-      const { accessToken } = session
-
-      filter.page = page
-      filter.genre = searchByGenre
-
-      if (sortBy === 'title' || sortBy === 'year') {
-				// Sort ascending if sorting by title or year.
-        filter = { ...filter, sort: `${sortBy} asc ` } 
-      } else {
-				filter = { ...filter, sort: `${sortBy} desc ` }
-			}
-
-
-      const res = await galleryApi.getMoviesList(accessToken, filter, search)
-
-      if (res?.error) {
-        throw new Error(res.error)
-      }
-
-      if (
-        // search.length > 0 ||
-        // searchByGenre.length > 0 ||
-        showResults === true ||
-        sortBy === 'title' ||
-        sortBy === 'year'
-      ) {
-        setMovies([...res?.movies, ...movies])
-      } else {
-        setMovies(prevMovies => {
-          return prevMovies.length === 0 ? res?.movies : [...prevMovies, ...res?.movies]
-        })
-      }
-
-      // setMovies(prevMovies => {
-      //   return prevMovies.length === 0 ? res?.movies : [...prevMovies, ...res?.movies]
-      // })
-
-      setHasMore(res?.hasMore)
-      setLoading(false)
-    } catch (err) {
-      console.log(err)
-    }
-  }
-
-  useEffect(() => {
-    getMovies(session)
-  }, [session, page, showResults === true, sortBy])
-  // }, [session, page, showResults === true, searchByGenre, sortBy])
 
   useEffect(() => {
     if (Object.values(filter).filter(v => v).length > 0 || search || searchByGenre) {
