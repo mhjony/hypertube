@@ -40,7 +40,7 @@ const userFile = ((req, res, next) => {
     destination: function (req, file, cb) {
       const id = req.body.user_id;
 
-      const dest = `uploads/user/${id}`;
+      const dest = `public/uploads/user/${id}`;
 
       fs.access(dest, (error) => {
         // if doesn't exist
