@@ -1,17 +1,55 @@
 import React from 'react'
 
-const MovieDisplay = ({ filteredMovies, loading }) => {
+const MovieDisplay = ({ filteredMovies, sortBy, filter, search, searchByGenre, showResults }) => {
   const handleMovieDetails = movie => {
     const movieId = movie?.imdb_code
 
     window.location.href = `/movie/${movieId}`
   }
 
+  // Filter movies base on highest rating
+  // const highestRatedMovies = filteredMovies?.sort((a, b) => b.rating - a.rating)
+  // If the sortBy is rating desc, then show the highest rated movies
+  let movies
+  if (filteredMovies?.length > 0) {
+    if (sortBy === 'rating desc') {
+      movies = filteredMovies?.sort((a, b) => b.rating - a.rating)
+    } else if (sortBy === 'rating asc') {
+      movies = filteredMovies?.sort((a, b) => a.rating - b.rating)
+    } else if (sortBy === 'year desc') {
+      movies = filteredMovies?.sort((a, b) => b.year - a.year)
+    } else if (sortBy === 'year asc') {
+      movies = filteredMovies?.sort((a, b) => a.year - b.year)
+    } else if (sortBy === 'title desc') {
+      movies = filteredMovies?.sort((a, b) => {
+        if (a.title < b.title) {
+          return 1
+        }
+        if (a.title > b.title) {
+          return -1
+        }
+        return 0
+      })
+    } else if (sortBy === 'title asc') {
+      movies = filteredMovies?.sort((a, b) => {
+        if (a.title < b.title) {
+          return -1
+        }
+        if (a.title > b.title) {
+          return 1
+        }
+        return 0
+      })
+    } else {
+      movies = filteredMovies
+    }
+  }
+
   return (
     <div>
       <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-4">
-        {filteredMovies &&
-          filteredMovies?.map((video, index) => (
+        {movies &&
+          movies?.map((video, index) => (
             <div className="mt-8 video" key={index} onClick={() => handleMovieDetails(video)}>
               <div className="video--img">
                 <img src={video.thumbnail} alt={video.title}></img>

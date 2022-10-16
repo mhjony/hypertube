@@ -26,52 +26,16 @@ const MovieSearch = ({ session }) => {
 
   const [filter, setFilter] = useState({})
   const [clearInput, setClearInput] = useState(false)
-  const [sortBy, setSortBy] = useState('rating')
+  const [sortBy, setSortBy] = useState('rating desc')
 
   const sortByOptions = [
-    { value: 'rating', name: 'Rating' },
-    { value: 'date_uploaded', name: 'Date Uploaded' },
-    { value: 'year', name: 'Year' },
-    { value: 'title', name: 'Title' }
+    { value: 'title asc', name: 'A - Z' },
+    { value: 'title desc', name: 'Z - A' },
+    { value: 'year desc', name: 'Newest' },
+    { value: 'year asc', name: 'Oldest' },
+    { value: 'rating desc', name: 'Most Popular' },
+    { value: 'rating asc', name: 'Least Popular' }
   ]
-
-  const getMovies = async session => {
-    try {
-      setLoading(true)
-      const { accessToken } = session
-
-      filter.page = page
-      filter.genre = searchByGenre
-
-      if (sortBy) {
-        filter = { ...filter, sort: `${sortBy} asc ` }
-      }
-
-      const res = await galleryApi.getMoviesList(accessToken, filter, search)
-
-      if (res?.error) {
-        throw new Error(res.error)
-      }
-
-      if (search.length > 0 || searchByGenre.length > 0) {
-        setMovies(res?.movies)
-      } else {
-        setMovies(prevMovies => {
-          return prevMovies.length === 0 ? res?.movies : [...prevMovies, ...res?.movies]
-        })
-      }
-
-      setHasMore(res?.hasMore)
-      setLoading(false)
-    } catch (err) {
-      console.log(err)
-    }
-  }
-
-  useEffect(() => {
-    getMovies(session)
-  }, [session, page, showResults === true, sortBy])
-  // }, [session, page, showResults === true, searchByGenre, sortBy])
 
   useEffect(() => {
     if (Object.values(filter).filter(v => v).length > 0 || search || searchByGenre) {
@@ -104,6 +68,40 @@ const MovieSearch = ({ session }) => {
     return () => window.removeEventListener('scroll', handleScroll)
   }, [loading, hasMore])
 
+  console.log('asd  len movies', movies)
+
+  const getMovies = async session => {
+    try {
+      setLoading(true)
+      const { accessToken } = session
+
+      filter.page = page
+      filter.genre = searchByGenre
+
+      if (sortBy) {
+        filter = { ...filter, sort: sortBy }
+      }
+
+      const res = await galleryApi.getMoviesList(accessToken, filter, search)
+
+      if (res?.error) {
+        throw new Error(res.error)
+      }
+
+      setMovies([...movies, ...res?.movies])
+
+      setHasMore(res?.hasMore)
+      setLoading(false)
+    } catch (err) {
+      console.log(err)
+    }
+  }
+
+  useEffect(() => {
+    getMovies(session)
+  }, [session, page, showResults === true, sortBy])
+  // }, [session, page, showResults === true, searchByGenre, sortBy])
+
   const oldestVid = movies?.sort((a, b) => new Date(a.date_uploaded) - new Date(b.date_uploaded))[0]
 
   const [dateModalOpen, setDateModalOpen] = useState(false)
@@ -121,15 +119,7 @@ const MovieSearch = ({ session }) => {
     return date.toDateString()
   }
 
-  const filteredMovies =
-    movies?.length > 0 &&
-    movies?.filter(movie => {
-      // Filter by upload date
-      const videoUploaded = new Date(movie?.date_uploaded).getTime()
-      const inDateRange = videoUploaded >= startDateMs && videoUploaded <= endDateMs
-
-      return inDateRange
-    })
+  const filteredMovies = movies
 
   const formattedStart = formatDate(startDate)
   const formattedEnd = formatDate(endDate)
@@ -142,6 +132,11 @@ const MovieSearch = ({ session }) => {
     setShowResults(false)
   }
 
+  const onGenreInputChange = val => {
+    setSearchByGenre(val)
+    setShowResults(false)
+  }
+
   const onSearch = async () => {
     setShowResults(true)
 
@@ -149,23 +144,46 @@ const MovieSearch = ({ session }) => {
     await getMovies(session)
 
     // Reset all the filter and search states
+    setMovies([])
     setFilter({})
     setSearchByGenre('')
     setSortBy('')
     setPage(1)
   }
 
+  const onGenreSearch = async () => {
+    setShowResults(true)
+
+    // Then get the movies
+    await getMovies(session)
+
+    // Reset all the filter and search states
+    setMovies([])
+    setFilter({})
+    setSearch('')
+    // setSearchByGenre('')
+    setSortBy('')
+    setPage(1)
+  }
+
+  const handleSortByChange = val => {
+    setSortBy(val)
+    // after changing the sort by, reset the page to 1
+    setPage(1)
+    setMovies([])
+  }
+
   return (
     <div>
-      {session && isMovieDataPresent ? (
+      {session && isMovieDataPresent && (
         <div className="bg-slate-800 w-full pb-4 flex items-center justify-around mb-0.5 rounded gap-4">
           <div className="mr-4 w-full md:w-1/6">
-            <p className="text-white uppercase text-md pt-2">Search By name or Actor</p>
+            <p className="text-white uppercase text-md pt-2">Search By name</p>
             <div className="flex">
               <FormInput
                 isValid={search.length > 3}
                 value={search}
-                onChange={onInputChange}
+                onChange={val => onInputChange(val)}
                 placeholder="Search Movies"
                 className="w-full"
                 onEnter={onSearch}
@@ -174,28 +192,29 @@ const MovieSearch = ({ session }) => {
           </div>
 
           <div className="mr-4 w-full md:w-1/6">
-            <p className="text-white uppercase text-md pt-2">Filter OR Search By Genre</p>
+            <p className="text-white uppercase text-md pt-2">Search By Genre</p>
             <FormInput
               isValid={searchByGenre?.length > 3}
               placeholder="Filter by Genre"
-              onChange={val => setSearchByGenre(val)}
+              onChange={val => onGenreInputChange(val)}
+              // onChange={onGenreInputChange} // or call in a arr function
               value={searchByGenre}
-              onEnter={onSearch}
+              onEnter={onGenreSearch}
             />
           </div>
 
-          <div className="mr-4 w-full md:w-1/6 mt-6">
+          <div className="w-full md:w-1/6 mt-4">
             <Dropdown
               label="SORT BY"
               options={sortByOptions}
               selected={sortBy}
-              onChange={setSortBy}
+              onChange={val => handleSortByChange(val)}
               width={210}
             />
           </div>
 
-          <div className="mt-6">
-            <p className="text-md text-white uppercase">Filter By date</p>
+          <div className="">
+            <p className="text-md text-white uppercase mb-2">Filter By date</p>
             <button
               type="button"
               onClick={() => setDateModalOpen(true)}
@@ -216,9 +235,23 @@ const MovieSearch = ({ session }) => {
             />
           </Modal>
         </div>
-      ) : null}
+      )}
 
-      <MovieDisplay filteredMovies={filteredMovies} loading={loading} />
+      {!loading && !isMovieDataPresent && (
+        <div className="text-3xl text-white text-center">
+          Movie you searched for is not available in our platform
+        </div>
+      )}
+
+      <MovieDisplay
+        filteredMovies={filteredMovies}
+        loading={loading}
+        sortBy={sortBy}
+        filter={filter}
+        search={search}
+        searchByGenre={searchByGenre}
+        showResults={showResults}
+      />
       {hasMore && (
         <div className="flex justify-center items-center pt-12">
           <Loader />
