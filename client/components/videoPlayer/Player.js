@@ -7,11 +7,12 @@ const Player = ({ subsTracks, imdbCode, movie, accessToken }) => {
   const playerRef = useRef(null)
 	const streamUrl =
     // eslint-disable-next-line no-undef
-		`http://localhost:8000/movie/player/${imdbCode}/${accessToken}`;	// Add a token here at the end.
+		`http://localhost:8000/movie/player/${imdbCode}/${accessToken}`;
 
   const [statusPlayer, setStatusPlayer] = useState('');
   const [error, setError] = useState(false);
   const buffering = useRef(false);
+	console.log(buffering);
 
   const onClickPreview = () => {
 		console.log('Clicked on preview.');
@@ -20,29 +21,9 @@ const Player = ({ subsTracks, imdbCode, movie, accessToken }) => {
     buffering.current = true
   }
 
-	const onReady = () => {
-    buffering.current = false;
-  };
-
-  const onPlay = () => {
-		console.log('Clicked on play.');
-		// Send request to serve the damn stream.
-    setStatusPlayer('movie.playing');
-    //movieService.setWatched(imdbCode);
-  };
-
   const onBuffer = () => {
     setStatusPlayer('movie.buffering');
     buffering.current = true;
-  };
-
-  const onBufferEnd = () => {
-    setStatusPlayer('movie.playing');
-    buffering.current = false;
-  };
-
-  const onPause = () => {
-    setStatusPlayer('movie.paused');
   };
 
   const onError = err => {
@@ -96,14 +77,8 @@ const Player = ({ subsTracks, imdbCode, movie, accessToken }) => {
           onError={onError}
           onReady={onLoadedData}
           onClickPreview={onClickPreview}
-					/* onBuffer={onBuffer}
+					onBuffer={onBuffer}
 					onProgress={onProgress}
-					onError={onError}
-					onPause={onPause}
-					onReady={onReady}
-					onPlay={onPlay}
-					onBufferEnd={onBufferEnd}
-					onClickPreview={onClickPreview} */
 					config={{
 						file: {
 							attributes: {
