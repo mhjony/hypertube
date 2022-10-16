@@ -14,13 +14,10 @@ export default function Home() {
         <meta name="description" content="Movie streaming app" />
       </Head>
 
-      {/* <Header /> */}
       <Navbar />
 
-      {/* <Body /> */}
       <main className={styles.main}>{session && <MovieSearch session={session} />}</main>
 
-      {/* <Footer /> */}
       <footer className={styles.footer}>All right reserved by @team_hypertube</footer>
     </div>
   )

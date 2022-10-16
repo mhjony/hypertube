@@ -1,6 +1,6 @@
 import React from 'react'
 
-const MovieDisplay = ({ filteredMovies }) => {
+const MovieDisplay = ({ filteredMovies, loading }) => {
   const handleMovieDetails = movie => {
     const movieId = movie?.imdb_code
 

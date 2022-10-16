@@ -43,6 +43,10 @@ const MovieSearch = ({ session }) => {
       filter.page = page
       filter.genre = searchByGenre
 
+      if (sortBy) {
+        filter = { ...filter, sort: `${sortBy} asc ` }
+      }
+
       const res = await galleryApi.getMoviesList(accessToken, filter, search)
 
       if (res?.error) {
@@ -66,7 +70,8 @@ const MovieSearch = ({ session }) => {
 
   useEffect(() => {
     getMovies(session)
-  }, [session, page, search, searchByGenre, sortBy])
+  }, [session, page, showResults === true, sortBy])
+  // }, [session, page, showResults === true, searchByGenre, sortBy])
 
   useEffect(() => {
     if (Object.values(filter).filter(v => v).length > 0 || search || searchByGenre) {
@@ -104,6 +109,7 @@ const MovieSearch = ({ session }) => {
   const [dateModalOpen, setDateModalOpen] = useState(false)
   const [startDate, setStartDate] = useState(new Date(oldestVid?.date_uploaded || null))
   const [endDate, setEndDate] = useState(new Date())
+  const [showResults, setShowResults] = useState(false)
 
   const startDateMs = startDate.getTime()
   const endDateMs = endDate.getTime()
@@ -115,35 +121,13 @@ const MovieSearch = ({ session }) => {
     return date.toDateString()
   }
 
-  // const searchSplit = search.toLowerCase().split(' ')
   const filteredMovies =
     movies?.length > 0 &&
     movies?.filter(movie => {
-      /*
-    // Search By name
-    let matchesSearchFilter = true
-    if (search.length > 0) {
-      const name = (video.title || '').toLowerCase()
-      matchesSearchFilter = !searchSplit.some(splitted => !name.includes(splitted))
-    }
-    // Filter by Genre
-    let movieByGenre = true
-    if (searchByGenre?.length > 0) {
-      const genre = video.genres || []
-      movieByGenre = genre.some(genre => genre.toLowerCase().includes(searchByGenre))
-    }
-    */
-
-      // Filter By production year
-      // let matchesProductionYear = true
-      // if (startYear && endYear) {
-      //   matchesProductionYear = movie.year >= startYear && movie.year <= endYear
-      // }
-
       // Filter by upload date
       const videoUploaded = new Date(movie?.date_uploaded).getTime()
       const inDateRange = videoUploaded >= startDateMs && videoUploaded <= endDateMs
-      // return matchesSearchFilter && movieByGenre && inDateRange
+
       return inDateRange
     })
 
@@ -153,6 +137,23 @@ const MovieSearch = ({ session }) => {
   const isMovieDataPresent = movies?.length > 0
 
   // https://yts.mx/api#list_movies
+  const onInputChange = val => {
+    setSearch(val)
+    setShowResults(false)
+  }
+
+  const onSearch = async () => {
+    setShowResults(true)
+
+    // Then get the movies
+    await getMovies(session)
+
+    // Reset all the filter and search states
+    setFilter({})
+    setSearchByGenre('')
+    setSortBy('')
+    setPage(1)
+  }
 
   return (
     <div>
@@ -160,21 +161,26 @@ const MovieSearch = ({ session }) => {
         <div className="bg-slate-800 w-full pb-4 flex items-center justify-around mb-0.5 rounded gap-4">
           <div className="mr-4 w-full md:w-1/6">
             <p className="text-white uppercase text-md pt-2">Search By name or Actor</p>
-            <FormInput
-              isValid={search?.length > 0}
-              placeholder="Search by Name"
-              onChange={val => setSearch(val)}
-              value={search}
-            />
+            <div className="flex">
+              <FormInput
+                isValid={search.length > 3}
+                value={search}
+                onChange={onInputChange}
+                placeholder="Search Movies"
+                className="w-full"
+                onEnter={onSearch}
+              />
+            </div>
           </div>
 
           <div className="mr-4 w-full md:w-1/6">
             <p className="text-white uppercase text-md pt-2">Filter OR Search By Genre</p>
             <FormInput
-              isValid={searchByGenre?.length > 0}
+              isValid={searchByGenre?.length > 3}
               placeholder="Filter by Genre"
               onChange={val => setSearchByGenre(val)}
               value={searchByGenre}
+              onEnter={onSearch}
             />
           </div>
 
@@ -188,7 +194,7 @@ const MovieSearch = ({ session }) => {
             />
           </div>
 
-          <div className="mt-6 w-full">
+          <div className="mt-6">
             <p className="text-md text-white uppercase">Filter By date</p>
             <button
               type="button"
@@ -215,7 +221,7 @@ const MovieSearch = ({ session }) => {
       <MovieDisplay filteredMovies={filteredMovies} loading={loading} />
       {hasMore && (
         <div className="flex justify-center items-center pt-12">
-          <Loader className="" />
+          <Loader />
         </div>
       )}
     </div>
