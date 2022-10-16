@@ -26,7 +26,7 @@ const MovieSearch = ({ session }) => {
 
   const [filter, setFilter] = useState({})
   const [clearInput, setClearInput] = useState(false)
-  const [sortBy, setSortBy] = useState('rating')
+  const [sortBy, setSortBy] = useState('')
 
   const sortByOptions = [
     { value: 'rating', name: 'Rating' },
@@ -42,6 +42,12 @@ const MovieSearch = ({ session }) => {
 
       filter.page = page
       filter.genre = searchByGenre
+      // filter.sort_by = sortBy
+      // if (sortBy) {
+      //   // filter.sort_by = sortBy
+      //   // replace the sort_by key with the value of sortBy
+      //   filter = { ...filter, sort: sortBy, order_by: 'asc' }
+      // }
 
       const res = await galleryApi.getMoviesList(accessToken, filter, search)
 
@@ -66,7 +72,8 @@ const MovieSearch = ({ session }) => {
 
   useEffect(() => {
     getMovies(session)
-  }, [session, page, search, searchByGenre, sortBy])
+  }, [session, page, showResults === true, sortBy])
+  // }, [session, page, showResults === true, searchByGenre, sortBy])
 
   useEffect(() => {
     if (Object.values(filter).filter(v => v).length > 0 || search || searchByGenre) {
@@ -104,6 +111,7 @@ const MovieSearch = ({ session }) => {
   const [dateModalOpen, setDateModalOpen] = useState(false)
   const [startDate, setStartDate] = useState(new Date(oldestVid?.date_uploaded || null))
   const [endDate, setEndDate] = useState(new Date())
+  const [showResults, setShowResults] = useState(false)
 
   const startDateMs = startDate.getTime()
   const endDateMs = endDate.getTime()
@@ -115,7 +123,6 @@ const MovieSearch = ({ session }) => {
     return date.toDateString()
   }
 
-  // const searchSplit = search.toLowerCase().split(' ')
   const filteredMovies =
     movies?.length > 0 &&
     movies?.filter(movie => {
@@ -153,6 +160,23 @@ const MovieSearch = ({ session }) => {
   const isMovieDataPresent = movies?.length > 0
 
   // https://yts.mx/api#list_movies
+  const onInputChange = val => {
+    setSearch(val)
+    setShowResults(false)
+  }
+
+  const onSearch = async () => {
+    setShowResults(true)
+
+    // Then get the movies
+    await getMovies(session)
+
+    // Reset all the filter and search states
+    setFilter({})
+    setSearchByGenre('')
+    setSortBy('')
+    setPage(1)
+  }
 
   return (
     <div>
@@ -160,21 +184,26 @@ const MovieSearch = ({ session }) => {
         <div className="bg-slate-800 w-full pb-4 flex items-center justify-around mb-0.5 rounded gap-4">
           <div className="mr-4 w-full md:w-1/6">
             <p className="text-white uppercase text-md pt-2">Search By name or Actor</p>
-            <FormInput
-              isValid={search?.length > 0}
-              placeholder="Search by Name"
-              onChange={val => setSearch(val)}
-              value={search}
-            />
+            <div className="flex">
+              <FormInput
+                isValid={search.length > 3}
+                value={search}
+                onChange={onInputChange}
+                placeholder="Search Movies"
+                className="w-full"
+                onEnter={onSearch}
+              />
+            </div>
           </div>
 
           <div className="mr-4 w-full md:w-1/6">
             <p className="text-white uppercase text-md pt-2">Filter OR Search By Genre</p>
             <FormInput
-              isValid={searchByGenre?.length > 0}
+              isValid={searchByGenre?.length > 3}
               placeholder="Filter by Genre"
               onChange={val => setSearchByGenre(val)}
               value={searchByGenre}
+              onEnter={onSearch}
             />
           </div>
 
