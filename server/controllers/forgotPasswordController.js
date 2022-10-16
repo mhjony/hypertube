@@ -80,7 +80,7 @@ const forgotPassword = async (req, res) => {
       return res
         .status(404)
         .json(
-          "This email address doesn’t match with any account! Check & Try again!"
+          "This email address doesn't match with any account! Check & Try again!"
         );
     }
 
@@ -93,10 +93,8 @@ const forgotPassword = async (req, res) => {
 
     // Create new token to reset password
     const jwtToken = crypto.randomBytes(42).toString("hex");
-    console.log(jwtToken);
 
     // Update the token inside database with freshly generated token
-    console.log(user.rows[0].user_id);
     try {
       let ret = await updateAccount(user.rows[0].user_id, { token: jwtToken });
       console.log(ret);
@@ -106,7 +104,6 @@ const forgotPassword = async (req, res) => {
 
     // Send email to reset the password
     return res.json(resetEmail(email, jwtToken)); // Send email to reset the password
-    // res.status(200).json({ user: user.rows, jwtToken }); // After email is working, then remove this line
   } catch (err) {
     console.error(err.message);
     res.status(500).send("Server Error");
@@ -114,7 +111,6 @@ const forgotPassword = async (req, res) => {
 };
 
 const resetPassword = async (req, resp) => {
-  console.log("resetPassword end-point Hit");
   const { password, token } = req.body;
 
   // Hash the password

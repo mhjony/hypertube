@@ -1,12 +1,10 @@
 import fetch from "isomorphic-unfetch";
 import pool from "../config/database.js";
-// import generateToken from "../utils/generateToken";
 import jwt from "jsonwebtoken";
 import * as bcrypt from "bcrypt";
 import crypto from "crypto";
 import nodemailer from "nodemailer";
 
-// import sendEmail from "../utils/email";
 const sendEmail = (email, token) => {
   console.log(`Sending email to ${email}`);
   const transporter = nodemailer.createTransport({
@@ -42,11 +40,10 @@ const findUserInfoFromDB = async (key, value, ...args) => {
   return res.rows[0];
 };
 
-// Function to generate token
 const generateToken = (user) => {
   delete user.password;
-  // payload is user in this case
-  // const token = jwt.sign(user, process.env.JWT_SECRET, { expiresIn: 86400 });
+
+  // TODO: const token = jwt.sign(user, process.env.JWT_SECRET, { expiresIn: 86400 });
   const token = jwt.sign(user, "dfasdfhjsadhfkja34343", { expiresIn: 86400 });
   console.log("generateToken Function", token);
   return { ...{ user }, ...{ token } };
@@ -147,7 +144,6 @@ const login = async (req, res) => {
           );
 
           user = createdUser;
-          console.log("createdUser", createdUser.rows[0]);
         } catch (error) {
           console.log(e);
           res.status(500).send({ error: "google authentication error" }).end();
@@ -163,7 +159,6 @@ const login = async (req, res) => {
         provider: "google",
       });
     } catch (e) {
-      console.log("Server Error From Google Login controller", e);
       res
         .status(500)
         .send({ error: "Server Error From Google Login controller" })
@@ -181,7 +176,7 @@ const login = async (req, res) => {
         return;
       }
 
-      // Authoization with 42 api
+      // Authorization with 42 api
       const fortyTwoUserUrl = `https://api.intra.42.fr/v2/me?access_token=${access_token}`;
       const fortyTwoUserReq = await fetch(fortyTwoUserUrl);
       const fortyTwoUserReqJson = await fortyTwoUserReq.json();
@@ -214,13 +209,11 @@ const login = async (req, res) => {
 
           user = createdUser;
         } catch (error) {
-          console.log(e);
           res.status(500).send({ error: "42 authentication error" }).end();
         }
       }
 
       const userWithToken = generateToken(user.rows[0]);
-      console.log("fire fire userWithToken", userWithToken);
 
       return res.status(200).send({
         ...userWithToken,
@@ -303,7 +296,6 @@ const register = async (req, res) => {
 // @desc    Email verification of user registration
 // @access  Public
 const registrationVerify = async (req, resp) => {
-  console.log("registrationVerify end-point Hit");
   const { token } = req.query;
 
   await pool.query(

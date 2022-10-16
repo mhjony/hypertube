@@ -54,7 +54,6 @@ const profileUpdate = async (req, res) => {
       user_name,
       first_name,
       last_name,
-      // avatar,
     });
 
     //5. New updated user info now, then return it with data !!!
