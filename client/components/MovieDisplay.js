@@ -52,7 +52,7 @@ const MovieDisplay = ({ filteredMovies, sortBy, filter, search, searchByGenre, s
           movies?.map((video, index) => (
             <div className="mt-8 video" key={index} onClick={() => handleMovieDetails(video)}>
               <div className="video--img">
-                <img src={video.thumbnail} alt={video.title}></img>
+                <img src={video.thumbnail === 'N/A' ? 'https://pontusandersson.tech/cv_image.jpg' : video.thumbnail} alt={video.title}></img>
               </div>
               <div className="video-overlay"></div>
               <div className="flex justify-between">

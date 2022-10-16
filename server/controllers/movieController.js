@@ -98,31 +98,39 @@ const getMovieComments = async (req, res) => {
 const getSingleMovie = async (req, res) => {
   const { imdb_code } = req.params;
   console.log("get-single-movie end-point Hit", imdb_code);
-
   const movieInfo = await movieUtils.getMovieInfo(imdb_code);
+	const insertedMovie = movieUtils.insertMovie(imdb_code);
+	console.log(insertedMovie);
   const subtitles = await subtitlesUtils.getSubtitles(imdb_code);
-
   const ret = movieUtils.formatSingleMovieEntry(movieInfo, subtitles);
   res.status(200).json(ret);
 };
 
 const playMovie = async (req, res, next) => {
-  const { imdbCode } = req.params;
+	console.log('Endpoint hit: play movie');
+  const { imdbCode, token } = req.params;
+	// If no token, throw error.
+	console.log('token', token);
   let movie = await movieUtils.fetchSingleMovie({ imdbCode });
-  if ((!movie || !movie.downloadComplete) && !downloadCache.has(imdbCode)) {
+	console.log('Movie', movie);
+  if (!movie || (!movie.downloaded && !downloadCache.has(imdbCode))) {
+		console.log('Here.');
     if (!movie) {
       movie = { imdbCode };
     }
     let magnetLink = "";
     if (!movie.magnetLink)
       magnetLink = await torrentUtils.getMagnetLink(imdbCode);
-    await torrentUtils.downloadMovie(movie, magnetLink, downloadCache);
-    movie = await movieUtils.fetchSingleMovie({ imdbCode });
+    await torrentUtils.downloadMovie(movie, magnetLink, downloadCache, req, res, next);
+    movie = await movieUtils.fetchSingleMovie({ imdbCode }); // Move this? Refactoring around here.
   }
-  req.serverLocation = movie.serverLocation;
-  req.movieSize = movie.size;
-  torrentUtils.startFileStream(req, res, next);
+	console.log('Ready to serve stream.');
+	req.imdb_code = imdbCode;
+	req.serverLocation = movie.server_location;
+	req.movieSize = movie.size;
+	torrentUtils.startFileStream(req, res, next);
 };
+
 
 /*
 // Get movie Entry - This is now used for the moment!
@@ -132,8 +140,6 @@ const getMovieEntry = async (req, res) => {
 
   const movieInfo = await movieUtils.getMovieInfo(imdb_code);
   const subtitles = await subtitlesUtils.getSubtitles(imdb_code);
-  // const comments = await getMovieComments(imdb_code);
-  // res.json(movieUtils.formatSingleMovieEntry(movieInfo, comments, subtitles));
   res.json(movieUtils.formatSingleMovieEntry(movieInfo, subtitles));
 };
 */
@@ -143,6 +149,9 @@ const setMovieWatched = async (req, res) => {
   try {
     const { imdb_code } = req.params;
     const { user_id } = req.user;
+		console.log('Set movie watched.');
+		console.log('imdb', imdb_code);
+		
 
     const movie = await pool.query(
       "SELECT * FROM movies WHERE imdb_code = $1",
@@ -194,5 +203,5 @@ export default {
   getSingleMovie,
   playMovie,
   // getMovieEntry,
-  setMovieWatched,
+  setMovieWatched
 };

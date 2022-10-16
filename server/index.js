@@ -32,10 +32,15 @@ app.use("/auth", authRoutes);
 app.use("/auth", forgotPasswordRoute);
 app.use("/movie", movieRoutes);
 app.use("/profile", profileRoute);
+app.use('/uploads', express.static('public/uploads'))
 job.start();
+
+//app.timeout = 100000000;
+//app.keepAliveTimeout = 60000 * 2;
 
 app.listen(port, () => {
   console.info(
     `${`${chalk.yellow(`CORS-enabled web Server started on port: ${port}`)}`}`
   );
 });
+
