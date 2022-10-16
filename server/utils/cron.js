@@ -37,7 +37,7 @@ const job = new CronJob("0 1 * * *", async () => {
 
   if (movies.rows.length > 0) {
     console.log(`Found ${movies.rows.length} old movies to remove`);
-    await Promise.all(movies?.rows?.map((movie) => removeOldMovies(movie)));
+    await Promise.all(movies.rows.map((movie) => removeOldMovies(movie)));
   }
 });
 
