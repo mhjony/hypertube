@@ -7,7 +7,6 @@ import Navbar from '../../components/Navbar'
 import MoviePlayerModal from '../../components/moviePlayerModal'
 
 const movieId = ({ movie }) => {
-	console.log(movie);
   const { data: session } = useSession()
 
   const [showPlayer, setShowPlayer] = useState(false)
