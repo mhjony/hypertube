@@ -26,9 +26,10 @@ const MovieSearch = ({ session }) => {
   const [hasMore, setHasMore] = useState(true)
 
   const [search, setSearch] = useState('')
-  const [searchByGenre, setSearchByGenre] = useState('')
+  // const [searchByGenre, setSearchByGenre] = useState('')
   const [filter, setFilter] = useState({})
   const [sortBy, setSortBy] = useState('rating desc')
+  const [sortByGenre, setSortByGenre] = useState('')
   const [clearInput, setClearInput] = useState(false)
 
   const [startDate, setStartDate] = useState(manyYearsAgo)
@@ -45,12 +46,42 @@ const MovieSearch = ({ session }) => {
     { value: 'rating asc', name: 'Least Popular' }
   ]
 
+  const sortGenreOptions = [
+    { value: '', name: 'All' },
+    { value: 'action', name: 'Action' },
+    { value: 'adventure', name: 'Adventure' },
+    { value: 'animation', name: 'Animation' },
+    { value: 'biography', name: 'Biography' },
+    { value: 'comedy', name: 'Comedy' },
+    { value: 'crime', name: 'Crime' },
+    { value: 'documentary', name: 'Documentary' },
+    { value: 'drama', name: 'Drama' },
+    { value: 'family', name: 'Family' },
+    { value: 'fantasy', name: 'Fantasy' },
+    { value: 'history', name: 'History' },
+    { value: 'horror', name: 'Horror' },
+    { value: 'film-noir', name: 'Film noir' },
+    { value: 'musical', name: 'Musical' },
+    { value: 'mystery', name: 'Mystery' },
+    { value: 'romance', name: 'Romance' },
+    { value: 'sci-fi', name: 'Sci-fi' },
+    { value: 'sport', name: 'Sport' },
+    { value: 'superhero', name: 'Superhero' },
+    { value: 'thriller', name: 'Thriller' },
+    { value: 'war', name: 'War' }
+  ]
+
   useEffect(() => {
-    if (Object.values(filter).filter(v => v).length > 0 || search || searchByGenre) {
+    if (
+      Object.values(filter).filter(v => v).length > 0 ||
+      search ||
+      /*searchByGenre ||*/ sortByGenre
+    ) {
       // Reset the states to default
       setPage(1)
       setSearch('')
-      setSearchByGenre('')
+      setSortByGenre('')
+      // setSearchByGenre('')
       setFilter({})
       setClearInput(!clearInput)
     }
@@ -82,7 +113,8 @@ const MovieSearch = ({ session }) => {
       const { accessToken } = session
 
       filter.page = page
-      filter.genre = searchByGenre
+      // filter.genre = searchByGenre
+      filter.genre = sortByGenre
 
       if (sortBy) {
         filter = { ...filter, sort: sortBy }
@@ -105,7 +137,7 @@ const MovieSearch = ({ session }) => {
 
   useEffect(() => {
     getMovies(session)
-  }, [session, page, showResults === true, sortBy])
+  }, [session, page, showResults === true, sortBy, sortByGenre])
 
   const formatDate = date => {
     if (dayjs(date).isToday()) {
@@ -125,8 +157,12 @@ const MovieSearch = ({ session }) => {
   }
 
   const onGenreInputChange = val => {
-    setSearchByGenre(val)
-    setShowResults(false)
+    // // setSearchByGenre(val)
+    // setShowResults(false)
+
+    setSortByGenre(val)
+    setPage(1)
+    setMovies([])
   }
 
   const onSearch = async () => {
@@ -138,10 +174,13 @@ const MovieSearch = ({ session }) => {
     // Reset all the filter and search states
     setMovies([])
     setFilter({})
-    setSearchByGenre('')
+    // setSearchByGenre('')
+    setSortByGenre('')
     setSortBy('')
     setPage(1)
   }
+
+  console.log('asd genre:', sortByGenre)
 
   const onGenreSearch = async () => {
     setShowResults(true)
@@ -181,7 +220,7 @@ const MovieSearch = ({ session }) => {
             </div>
           </div>
 
-          <div className="mr-4 w-full md:w-1/6">
+          {/* <div className="mr-4 w-full md:w-1/6">
             <p className="text-white uppercase text-md pt-2">Search By Genre</p>
             <FormInput
               isValid={searchByGenre?.length > 3}
@@ -189,6 +228,16 @@ const MovieSearch = ({ session }) => {
               onChange={val => onGenreInputChange(val)}
               value={searchByGenre}
               onEnter={onGenreSearch}
+            />
+          </div> */}
+
+          <div className="w-full md:w-1/6 mt-4">
+            <Dropdown
+              label="SORT BY genre"
+              options={sortGenreOptions}
+              selected={sortByGenre}
+              onChange={val => onGenreInputChange(val)}
+              width={210}
             />
           </div>
 
