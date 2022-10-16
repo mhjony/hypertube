@@ -1,9 +1,6 @@
-import dotenv from "dotenv";
 import pool from "../config/database.js";
 // import generateToken from "../utils/generateToken";
-import jwt from "jsonwebtoken";
 import * as bcrypt from "bcrypt";
-import validator from "validator";
 import crypto from "crypto";
 import nodemailer from "nodemailer";
 

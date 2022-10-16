@@ -2,7 +2,6 @@ const API = 'http://localhost:8000'
 
 // Generate Query params for GET_MOVIE_LIST
 const generateQueryParams = (filter, search) => {
-  console.log('asd filter in generateQueryParams', filter)
   let params = Object.keys(filter).reduce((result, key) => {
     if (key === 'sort' && filter[key]) {
       const sorts = filter[key].split(' ')
@@ -23,15 +22,9 @@ const generateQueryParams = (filter, search) => {
 
 const getMoviesList = async (accessToken, filter, search) => {
   try {
-    console.log('asd search 02', search)
-
     const params = generateQueryParams(filter, search)
 
-    console.log('asd params', params)
-
     const url = `${API}/movie/get-movie-list?${params}`
-
-    console.log('asd service getMoviesList url::: ', url)
 
     if (!accessToken) {
       throw new Error('No access token provided')

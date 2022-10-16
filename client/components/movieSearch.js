@@ -26,7 +26,7 @@ const MovieSearch = ({ session }) => {
 
   const [filter, setFilter] = useState({})
   const [clearInput, setClearInput] = useState(false)
-  const [sortBy, setSortBy] = useState('')
+  const [sortBy, setSortBy] = useState('rating')
 
   const sortByOptions = [
     { value: 'rating', name: 'Rating' },
@@ -42,12 +42,10 @@ const MovieSearch = ({ session }) => {
 
       filter.page = page
       filter.genre = searchByGenre
-      // filter.sort_by = sortBy
-      // if (sortBy) {
-      //   // filter.sort_by = sortBy
-      //   // replace the sort_by key with the value of sortBy
-      //   filter = { ...filter, sort: sortBy, order_by: 'asc' }
-      // }
+
+      if (sortBy) {
+        filter = { ...filter, sort: `${sortBy} asc ` }
+      }
 
       const res = await galleryApi.getMoviesList(accessToken, filter, search)
 
@@ -126,31 +124,10 @@ const MovieSearch = ({ session }) => {
   const filteredMovies =
     movies?.length > 0 &&
     movies?.filter(movie => {
-      /*
-    // Search By name
-    let matchesSearchFilter = true
-    if (search.length > 0) {
-      const name = (video.title || '').toLowerCase()
-      matchesSearchFilter = !searchSplit.some(splitted => !name.includes(splitted))
-    }
-    // Filter by Genre
-    let movieByGenre = true
-    if (searchByGenre?.length > 0) {
-      const genre = video.genres || []
-      movieByGenre = genre.some(genre => genre.toLowerCase().includes(searchByGenre))
-    }
-    */
-
-      // Filter By production year
-      // let matchesProductionYear = true
-      // if (startYear && endYear) {
-      //   matchesProductionYear = movie.year >= startYear && movie.year <= endYear
-      // }
-
       // Filter by upload date
       const videoUploaded = new Date(movie?.date_uploaded).getTime()
       const inDateRange = videoUploaded >= startDateMs && videoUploaded <= endDateMs
-      // return matchesSearchFilter && movieByGenre && inDateRange
+
       return inDateRange
     })
 
@@ -244,7 +221,7 @@ const MovieSearch = ({ session }) => {
       <MovieDisplay filteredMovies={filteredMovies} loading={loading} />
       {hasMore && (
         <div className="flex justify-center items-center pt-12">
-          <Loader className="" />
+          <Loader />
         </div>
       )}
     </div>
