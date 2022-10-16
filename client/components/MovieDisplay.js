@@ -1,15 +1,18 @@
 import React from 'react'
+import dayjs from 'dayjs'
+import relativeTime from 'dayjs/plugin/relativeTime'
+import isToday from 'dayjs/plugin/isToday'
 
-const MovieDisplay = ({ filteredMovies, sortBy, filter, search, searchByGenre, showResults }) => {
+dayjs.extend(isToday)
+dayjs.extend(relativeTime)
+
+const MovieDisplay = ({ filteredMovies, sortBy, startDate, endDate, dateModalOpen }) => {
   const handleMovieDetails = movie => {
     const movieId = movie?.imdb_code
 
     window.location.href = `/movie/${movieId}`
   }
 
-  // Filter movies base on highest rating
-  // const highestRatedMovies = filteredMovies?.sort((a, b) => b.rating - a.rating)
-  // If the sortBy is rating desc, then show the highest rated movies
   let movies
   if (filteredMovies?.length > 0) {
     if (sortBy === 'rating desc') {
@@ -45,6 +48,21 @@ const MovieDisplay = ({ filteredMovies, sortBy, filter, search, searchByGenre, s
     }
   }
 
+  // Check if dateModalOpen is true then filter movies by date
+  if (dateModalOpen) {
+    movies = movies?.filter(movie => {
+      const movieProductionYear = new Date(movie.year).getTime()
+
+      // get the year from startDate and endDate
+      const startDateYear = new Date(startDate).getFullYear()
+      const endDateYear = new Date(endDate).getFullYear()
+
+      const inDateRange = movieProductionYear >= startDateYear && movieProductionYear <= endDateYear
+
+      return inDateRange
+    })
+  }
+
   return (
     <div>
       <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-4">
@@ -53,6 +71,33 @@ const MovieDisplay = ({ filteredMovies, sortBy, filter, search, searchByGenre, s
             <div className="mt-8 video" key={index} onClick={() => handleMovieDetails(video)}>
               <div className="video--img">
                 <img src={video.thumbnail === 'N/A' ? 'https://pontusandersson.tech/cv_image.jpg' : video.thumbnail} alt={video.title}></img>
+              </div>
+              <div className="video-overlay"></div>
+              <div className="flex justify-between">
+                <div>
+                  <div className="text-sm font-bold text-gray-200">
+                    {' '}
+                    {video.title} ({video.year})
+                  </div>
+                  <div className="text-xs text-gray-200 font-light">
+                    IMBD rating: {video.rating}
+                  </div>
+                </div>
+
+                <div className="text-xs text-gray-200 font-light mt-1">
+                  {video?.movies_watched && (
+                    <button className="bg-red-500 text-white rounded px-2 py-1">Watched</button>
+                  )}
+                </div>
+              </div>
+            </div>
+          ))}
+
+        {movies &&
+          movies?.map((video, index) => (
+            <div className="mt-8 video" key={index} onClick={() => handleMovieDetails(video)}>
+              <div className="video--img">
+                <img src={video.thumbnail} alt={video.title}></img>
               </div>
               <div className="video-overlay"></div>
               <div className="flex justify-between">

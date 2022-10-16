@@ -15,6 +15,10 @@ import Dropdown from './Dropdown'
 dayjs.extend(isToday)
 dayjs.extend(relativeTime)
 
+const manyYearsAgo = new Date()
+manyYearsAgo.setDate(manyYearsAgo.getDate() - 2000)
+const today = new Date()
+
 const MovieSearch = ({ session }) => {
   const [movies, setMovies] = useState([])
   const [loading, setLoading] = useState(false)
@@ -22,11 +26,16 @@ const MovieSearch = ({ session }) => {
   const [hasMore, setHasMore] = useState(true)
 
   const [search, setSearch] = useState('')
-  const [searchByGenre, setSearchByGenre] = useState('')
-
+  // const [searchByGenre, setSearchByGenre] = useState('')
   const [filter, setFilter] = useState({})
-  const [clearInput, setClearInput] = useState(false)
   const [sortBy, setSortBy] = useState('rating desc')
+  const [sortByGenre, setSortByGenre] = useState('')
+  const [clearInput, setClearInput] = useState(false)
+
+  const [startDate, setStartDate] = useState(manyYearsAgo)
+  const [endDate, setEndDate] = useState(today)
+  const [showResults, setShowResults] = useState(false)
+  const [dateModalOpen, setDateModalOpen] = useState(false)
 
   const sortByOptions = [
     { value: 'title asc', name: 'A - Z' },
@@ -37,12 +46,42 @@ const MovieSearch = ({ session }) => {
     { value: 'rating asc', name: 'Least Popular' }
   ]
 
+  const sortGenreOptions = [
+    { value: '', name: 'All' },
+    { value: 'action', name: 'Action' },
+    { value: 'adventure', name: 'Adventure' },
+    { value: 'animation', name: 'Animation' },
+    { value: 'biography', name: 'Biography' },
+    { value: 'comedy', name: 'Comedy' },
+    { value: 'crime', name: 'Crime' },
+    { value: 'documentary', name: 'Documentary' },
+    { value: 'drama', name: 'Drama' },
+    { value: 'family', name: 'Family' },
+    { value: 'fantasy', name: 'Fantasy' },
+    { value: 'history', name: 'History' },
+    { value: 'horror', name: 'Horror' },
+    { value: 'film-noir', name: 'Film noir' },
+    { value: 'musical', name: 'Musical' },
+    { value: 'mystery', name: 'Mystery' },
+    { value: 'romance', name: 'Romance' },
+    { value: 'sci-fi', name: 'Sci-fi' },
+    { value: 'sport', name: 'Sport' },
+    { value: 'superhero', name: 'Superhero' },
+    { value: 'thriller', name: 'Thriller' },
+    { value: 'war', name: 'War' }
+  ]
+
   useEffect(() => {
-    if (Object.values(filter).filter(v => v).length > 0 || search || searchByGenre) {
+    if (
+      Object.values(filter).filter(v => v).length > 0 ||
+      search ||
+      /*searchByGenre ||*/ sortByGenre
+    ) {
       // Reset the states to default
       setPage(1)
       setSearch('')
-      setSearchByGenre('')
+      setSortByGenre('')
+      // setSearchByGenre('')
       setFilter({})
       setClearInput(!clearInput)
     }
@@ -68,15 +107,14 @@ const MovieSearch = ({ session }) => {
     return () => window.removeEventListener('scroll', handleScroll)
   }, [loading, hasMore])
 
-  console.log('asd  len movies', movies)
-
   const getMovies = async session => {
     try {
       setLoading(true)
       const { accessToken } = session
 
       filter.page = page
-      filter.genre = searchByGenre
+      // filter.genre = searchByGenre
+      filter.genre = sortByGenre
 
       if (sortBy) {
         filter = { ...filter, sort: sortBy }
@@ -99,18 +137,7 @@ const MovieSearch = ({ session }) => {
 
   useEffect(() => {
     getMovies(session)
-  }, [session, page, showResults === true, sortBy])
-  // }, [session, page, showResults === true, searchByGenre, sortBy])
-
-  const oldestVid = movies?.sort((a, b) => new Date(a.date_uploaded) - new Date(b.date_uploaded))[0]
-
-  const [dateModalOpen, setDateModalOpen] = useState(false)
-  const [startDate, setStartDate] = useState(new Date(oldestVid?.date_uploaded || null))
-  const [endDate, setEndDate] = useState(new Date())
-  const [showResults, setShowResults] = useState(false)
-
-  const startDateMs = startDate.getTime()
-  const endDateMs = endDate.getTime()
+  }, [session, page, showResults === true, sortBy, sortByGenre])
 
   const formatDate = date => {
     if (dayjs(date).isToday()) {
@@ -118,23 +145,24 @@ const MovieSearch = ({ session }) => {
     }
     return date.toDateString()
   }
-
-  const filteredMovies = movies
-
   const formattedStart = formatDate(startDate)
   const formattedEnd = formatDate(endDate)
 
   const isMovieDataPresent = movies?.length > 0
 
-  // https://yts.mx/api#list_movies
+  // API_LINK: https://yts.mx/api#list_movies
   const onInputChange = val => {
     setSearch(val)
     setShowResults(false)
   }
 
   const onGenreInputChange = val => {
-    setSearchByGenre(val)
-    setShowResults(false)
+    // // setSearchByGenre(val)
+    // setShowResults(false)
+
+    setSortByGenre(val)
+    setPage(1)
+    setMovies([])
   }
 
   const onSearch = async () => {
@@ -146,10 +174,13 @@ const MovieSearch = ({ session }) => {
     // Reset all the filter and search states
     setMovies([])
     setFilter({})
-    setSearchByGenre('')
+    // setSearchByGenre('')
+    setSortByGenre('')
     setSortBy('')
     setPage(1)
   }
+
+  console.log('asd genre:', sortByGenre)
 
   const onGenreSearch = async () => {
     setShowResults(true)
@@ -161,14 +192,12 @@ const MovieSearch = ({ session }) => {
     setMovies([])
     setFilter({})
     setSearch('')
-    // setSearchByGenre('')
     setSortBy('')
     setPage(1)
   }
 
   const handleSortByChange = val => {
     setSortBy(val)
-    // after changing the sort by, reset the page to 1
     setPage(1)
     setMovies([])
   }
@@ -191,15 +220,24 @@ const MovieSearch = ({ session }) => {
             </div>
           </div>
 
-          <div className="mr-4 w-full md:w-1/6">
+          {/* <div className="mr-4 w-full md:w-1/6">
             <p className="text-white uppercase text-md pt-2">Search By Genre</p>
             <FormInput
               isValid={searchByGenre?.length > 3}
               placeholder="Filter by Genre"
               onChange={val => onGenreInputChange(val)}
-              // onChange={onGenreInputChange} // or call in a arr function
               value={searchByGenre}
               onEnter={onGenreSearch}
+            />
+          </div> */}
+
+          <div className="w-full md:w-1/6 mt-4">
+            <Dropdown
+              label="SORT BY genre"
+              options={sortGenreOptions}
+              selected={sortByGenre}
+              onChange={val => onGenreInputChange(val)}
+              width={210}
             />
           </div>
 
@@ -244,13 +282,11 @@ const MovieSearch = ({ session }) => {
       )}
 
       <MovieDisplay
-        filteredMovies={filteredMovies}
-        loading={loading}
+        filteredMovies={movies}
         sortBy={sortBy}
-        filter={filter}
-        search={search}
-        searchByGenre={searchByGenre}
-        showResults={showResults}
+        startDate={startDate}
+        endDate={endDate}
+        dateModalOpen={dateModalOpen}
       />
       {hasMore && (
         <div className="flex justify-center items-center pt-12">
