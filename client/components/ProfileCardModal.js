@@ -18,7 +18,7 @@ const ProfileModal = ({ comment }) => {
           <a>
             <div className="px-4 py-2 mt-4 flex items-center justify-start">
               <img
-                src={comment?.user?.avatar}
+                src={comment.user.avatar}
                 alt="user-avatar"
                 className="h-10 w-10 rounded-full"
               />
@@ -46,7 +46,7 @@ const ProfileModal = ({ comment }) => {
               {session && (
                 <div className="flex justify-center items-center">
                   <div className="w-48 h-64 rounded-xl bg-gray-200 flex flex-col shadow">
-                    <img className="w-auto rounded-t-xl" src={comment?.user?.avatar} alt="avatar" />
+                    <img className="w-auto rounded-t-xl" src={comment.user.avatar ? `http://localhost:8000/uploads/user/${comment.user.user_id}/${comment.user.avatar}` : 'http://localhost:8000/uploads/user/default/default.jpeg'/*`http://localhost:5000/uploads/user/${profile.user_id}/${profile.avatar}` */} alt="avatar" />
                     <div className="text-center flex flex-col p-2">
                       <span className="text-base font-bold">
                         Name: {comment?.user.first_name} {comment?.user.last_name}
