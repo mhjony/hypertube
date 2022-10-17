@@ -4,7 +4,6 @@ import crypto from "crypto";
 import nodemailer from "nodemailer";
 
 const resetEmail = (email, token) => {
-  console.log(`Sending email to ${email}`);
   const transporter = nodemailer.createTransport({
     service: "gmail",
     auth: {
@@ -25,19 +24,11 @@ const resetEmail = (email, token) => {
 
   transporter.sendMail(mailOptions, function (error, info) {
     if (error) {
-      console.log(error);
+      console.error(error);
     } else {
-      console.log("Email sent: " + info.response);
+      console.error("Email sent: " + info.response);
     }
   });
-};
-
-const findUserInfoFromDB = async (key, value, ...args) => {
-  const info = args.length == 0 ? "*" : args.join(", ");
-  const res = await pool.query(`SELECT ${info} FROM users WHERE ${key} = $1`, [
-    value,
-  ]);
-  return res.rows[0];
 };
 
 // Helper Function to update the token in the database
@@ -59,8 +50,6 @@ const updateAccount = async (user_id, data) => {
 // @desc    Reset the Password if the user forgot it
 // @access  Public
 const forgotPassword = async (req, res) => {
-  console.log("forgotPassword end-point Hit", req.body);
-
   try {
     const { email } = req.body;
 
@@ -96,9 +85,9 @@ const forgotPassword = async (req, res) => {
     // Update the token inside database with freshly generated token
     try {
       let ret = await updateAccount(user.rows[0].user_id, { token: jwtToken });
-      console.log(ret);
+      console.error(ret);
     } catch (e) {
-      console.log(e);
+      console.error(e);
     }
 
     // Send email to reset the password
@@ -111,7 +100,6 @@ const forgotPassword = async (req, res) => {
 
 const resetPassword = async (req, resp) => {
   const { password, token } = req.body;
-
   // Hash the password
   const saltRounds = 10;
   const hashedPassword = await bcrypt.hash(password, saltRounds);
