@@ -81,7 +81,7 @@ export default function Register({ providers, csrfToken }) {
         Router.push('/auth/login')
       }
     } catch (e) {
-      console.log('Registration Error:', e)
+      console.error('Registration Error:', e)
       setError('An error occured while registering. Please try again.')
     }
 

@@ -7,12 +7,6 @@ const UploadProfilePicture = ({ user_id, accessToken }) => {
   const { mutate: uploadImage } = useMutate({
     verb: 'POST',
     path: 'http://localhost:8000/profile/updateProfilePicture'
-    // TODO: For some reason passing token with header
-    // is not working, so passing it as a parameter instead
-    // I need to fix this
-    // headers: {
-    //   Authorization: `Bearer ${accessToken}`
-    // }
   })
 
   const handleChange = event => {
@@ -29,9 +23,9 @@ const UploadProfilePicture = ({ user_id, accessToken }) => {
 
     uploadImage(formData)
       .then(uploadedImage => {
-        console.log('Image Uploaded successfully', uploadedImage)
+        //console.log('Image Uploaded successfully', uploadedImage)
       })
-      .catch(console.log('Oooops, something went wrong!'))
+      //.catch(console.error('Oooops, something went wrong!'))
   }
 
   return (

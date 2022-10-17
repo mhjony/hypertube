@@ -10,8 +10,8 @@ const login = ({ providers, csrfToken }) => {
 
   const { error, success } = query
 
-  const [username, setUsername] = useState('admin')
-  const [password, setPassword] = useState('aaaa11')
+  const [username, setUsername] = useState('')
+  const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)
 
   const onSubmit = async event => {

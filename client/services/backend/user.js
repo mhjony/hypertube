@@ -1,5 +1,3 @@
-// import fetch from 'isomorphic-unfetch'
-
 const API = 'http://localhost:8000'
 
 const signup = async (first_name, last_name, user_name, email, password) => {
