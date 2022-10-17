@@ -18,6 +18,7 @@ const UpdateProfileModal = () => {
   const [lastname, setLastname] = useState(userInfo?.last_name)
   const [username, setUsername] = useState(userInfo?.user_name)
   const [email, setEmail] = useState(userInfo?.email)
+  const [language, setLanguage] = useState(userInfo?.language)
 
   const {
     accessToken,
@@ -34,7 +35,8 @@ const UpdateProfileModal = () => {
         username,
         firstname,
         lastname,
-        accessToken
+        accessToken,
+        language
       )
 
       setIsModalOpen(false)
@@ -94,6 +96,15 @@ const UpdateProfileModal = () => {
                   onChange={setEmail}
                   value={email}
                   autocomplete="Email"
+                />
+              </div>
+              <div className="mb-4">
+                <FormInput
+                  label="Language"
+                  placeholder="Default Language"
+                  onChange={setLanguage}
+                  value={language}
+                  autocomplete="language"
                 />
               </div>
             </form>

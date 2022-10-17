@@ -21,7 +21,8 @@ const updateAccount = async (user_id, data) => {
 // @access  Private
 const profileUpdate = async (req, res) => {
   try {
-    const { user_id, email, user_name, first_name, last_name } = req.body;
+    const { user_id, email, user_name, first_name, last_name, language } =
+      req.body;
 
     if (!validator.isEmail(email)) {
       return res.status(400).json("Invalid Email");
@@ -54,6 +55,7 @@ const profileUpdate = async (req, res) => {
       user_name,
       first_name,
       last_name,
+      language,
     });
 
     //5. New updated user info now, then return it with data !!!
