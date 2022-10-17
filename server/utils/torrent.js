@@ -4,7 +4,7 @@
 import fs from 'fs';
 import torrentStream from 'torrent-stream';
 import ffmpeg from 'fluent-ffmpeg';
-
+import path from 'node:path';
 import movieUtils from './movie.js';
 
 // Save path to database.
@@ -16,11 +16,11 @@ const startFileStream = (req, res) => {
 	//console.log('req', req);
 	let notloaded = false;
 	const {imdb_code, serverLocation, movieSize} = req;
-	const path = `./movies/${serverLocation}`;
-	console.log('path ', path);
+	const pathToMovie = `./movies/${serverLocation}`;
+	console.log('path ', pathToMovie);
 	console.log('imdb ', imdb_code);
-	const isMp4 = path.endsWith('mp4');
-	const size = fs.statSync(path).movieSize;
+	const isMp4 = pathToMovie.endsWith('mp4');
+	const size = fs.statSync(pathToMovie).movieSize;
 	const { range } = req.headers;
 	console.log(`range = ${range}`);
 	const CHUNK = 20e+6;
@@ -46,8 +46,10 @@ const startFileStream = (req, res) => {
 		'Content-Type': 'video/webm',
 	};
 	console.log('headers', headers);
-	console.log('movieSize = ', movieSize);//890203389
-	const readStream = fs.createReadStream(path, {start, end});
+	console.log('movieSize = ', movieSize);
+	const pathResolved = path.resolve(pathToMovie);
+	console.log(pathResolved);
+	const readStream = fs.createReadStream(pathResolved, {start, end});
 	if (notloaded) {
 		res.writeHead(416, headers);
 	} else {
