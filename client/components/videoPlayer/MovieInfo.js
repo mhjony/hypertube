@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import Player from './Player'
 import Comments from './Comments'
-import movieService from '../../services/backend/movies.js'
 
 const MovieInfo = ({ session, movie, user_id }) => {
 	const [subsTracks, setSubsTracks] = useState([])
@@ -17,7 +16,6 @@ const MovieInfo = ({ session, movie, user_id }) => {
     imdb_code,
 		subtitles
   } = movie
-	console.log('Here is our movie; ', movie);
 
   useEffect(() => {
     setSubsTracks(buildTracks(imdb_code, subtitles))
@@ -27,17 +25,14 @@ const MovieInfo = ({ session, movie, user_id }) => {
     const subsLabels = { en: 'en', sv: 'sv', fi: 'fi', bn: 'bn' }
     // eslint-disable-next-line no-undef
     const baseUrl = 'http://localhost:8000'
-		console.log(subtitles)
 
     const tracks = subtitles.reduce((acc, lang) => {
-			console.log('lang ', lang);
-			console.log('subsLabels[lang] ', subsLabels[lang]);
       acc.push({
         label: subsLabels[lang],
         kind: 'subtitles',
 				src: `${baseUrl}/movie/${imdb_code}/subtitles/${lang}`,
         srcLang: lang,
-				default: false,//default: true,
+				default: false,
 				mode: "showing"
       })
       return acc

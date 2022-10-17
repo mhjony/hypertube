@@ -15,7 +15,7 @@ const forgotPassword = () => {
     try {
       await api.forgotPassword(email)
     } catch (error) {
-      console.log(error)
+      console.error(error)
     }
   }
 

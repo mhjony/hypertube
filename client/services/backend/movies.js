@@ -143,7 +143,6 @@ const setMovieWatched = async (accessToken, imdb_code) => {
 					'Content-Type': 'application/json'
 				}
 			})
-			console.log('Response in service', res);
 			const data = res;
 			return data
 		} catch (error) {

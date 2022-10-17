@@ -41,7 +41,7 @@ const providers = [
           ...backendJWTJson
         }
       } catch (e) {
-        console.log(e)
+        console.error(e)
         return {
           provider: 'credentials',
           error: true
@@ -90,7 +90,7 @@ const options = {
           user.user_id = backendJWTJson.user.user_id
           return true
         } catch (error) {
-          console.log('Error from nextAuth callback for Google:', error)
+          console.error('Error from nextAuth callback for Google:', error)
         }
       }
 
@@ -114,7 +114,7 @@ const options = {
           user.user_id = backendJWTJson.user.user_id
           return true
         } catch (error) {
-          console.log('Error from nextAuth callback for 42:', error)
+          console.error('Error from nextAuth callback for 42:', error)
         }
       }
 

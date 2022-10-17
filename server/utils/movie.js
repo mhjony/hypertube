@@ -1,6 +1,3 @@
-/*
- * Place movie stuff here.
- */
 import axios from "axios";
 import pool from "../config/database.js";
 
