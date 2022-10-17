@@ -71,6 +71,7 @@ const MovieSearch = ({ session }) => {
 
   const getMovies = async existingMovies => {
     try {
+      setMovies(existingMovies)
       setLoading(true)
       const { accessToken } = session
 
@@ -91,7 +92,6 @@ const MovieSearch = ({ session }) => {
         throw new Error(res.error)
       }
 
-      // setMovies([...movies, ...res?.movies])
       setMovies([...existingMovies, ...newMovies])
 
       setHasMore(res?.hasMore)

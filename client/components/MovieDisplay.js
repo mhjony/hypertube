@@ -92,33 +92,6 @@ const MovieDisplay = ({ filteredMovies, sortBy, startDate, endDate, dateModalOpe
               </div>
             </div>
           ))}
-
-        {movies &&
-          movies?.map((video, index) => (
-            <div className="mt-8 video" key={index} onClick={() => handleMovieDetails(video)}>
-              <div className="video--img">
-                <img src={video.thumbnail} alt={video.title}></img>
-              </div>
-              <div className="video-overlay"></div>
-              <div className="flex justify-between">
-                <div>
-                  <div className="text-sm font-bold text-gray-200">
-                    {' '}
-                    {video.title} ({video.year})
-                  </div>
-                  <div className="text-xs text-gray-200 font-light">
-                    IMBD rating: {video.rating}
-                  </div>
-                </div>
-
-                <div className="text-xs text-gray-200 font-light mt-1">
-                  {video?.movies_watched && (
-                    <button className="bg-red-500 text-white rounded px-2 py-1">Watched</button>
-                  )}
-                </div>
-              </div>
-            </div>
-          ))}
       </div>
 
       <style jsx>{`
