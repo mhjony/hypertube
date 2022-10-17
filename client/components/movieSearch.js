@@ -16,7 +16,7 @@ dayjs.extend(isToday)
 dayjs.extend(relativeTime)
 
 const manyYearsAgo = new Date()
-manyYearsAgo.setDate(manyYearsAgo.getDate() - 2000)
+manyYearsAgo.setDate(manyYearsAgo.getDate() - 44119)
 const today = new Date()
 
 const MovieSearch = ({ session }) => {
