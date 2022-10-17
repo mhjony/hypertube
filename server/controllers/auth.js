@@ -130,6 +130,9 @@ const login = async (req, res) => {
 
       const { email, given_name, family_name, picture } = googleReqJson;
 
+      // Get the first capital letter of the first name the lowercase the family name and concat them
+      const user_name = `${family_name.toLowerCase()}${given_name[0].toLowerCase()}`;
+
       //2. check if user exists in the db (if not exists, then throw error)
       let user = await pool.query("SELECT * FROM users WHERE email = $1", [
         email,
@@ -138,9 +141,19 @@ const login = async (req, res) => {
       if (user.rows.length === 0) {
         try {
           const verified = "1";
+          const defaultLanguage = "en";
+
           const createdUser = await pool.query(
-            "INSERT INTO users (first_name, last_name, user_name, email, verified, avatar) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *",
-            [given_name, family_name, given_name, email, verified, picture]
+            "INSERT INTO users (first_name, last_name, user_name, email, verified, avatar, language) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *",
+            [
+              given_name,
+              family_name,
+              user_name,
+              email,
+              verified,
+              picture,
+              defaultLanguage,
+            ]
           );
 
           user = createdUser;
@@ -194,8 +207,10 @@ const login = async (req, res) => {
         try {
           // Create a new user in the db if not exists
           const verified = "1";
+          const defaultLanguage = "en";
+
           const createdUser = await pool.query(
-            "INSERT INTO users (first_name, last_name, user_name, email, verified, avatar, token) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *",
+            "INSERT INTO users (first_name, last_name, user_name, email, verified, avatar, token, language) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *",
             [
               first_name,
               last_name,
@@ -204,6 +219,7 @@ const login = async (req, res) => {
               verified,
               image_url,
               access_token,
+              defaultLanguage,
             ]
           );
 
