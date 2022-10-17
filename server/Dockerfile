@@ -3,9 +3,14 @@
 FROM node:12
 
 WORKDIR /server
+RUN chmod 777 /server
 
 # copy json files inside container
 COPY package*.json ./
+
+RUN apt-get -y update
+RUN apt-get -y upgrade
+RUN apt-get install -y ffmpeg
 
 # Install Dependencies
 RUN npm install
