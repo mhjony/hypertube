@@ -31,7 +31,6 @@ const profileUpdate = async (req, res) => {
     // get the uploaded picture data
     let avatar = null;
     if (req.file) {
-      // req.body.avatar = req.file.filename;
       avatar = req.file.filename;
     }
 
@@ -40,15 +39,14 @@ const profileUpdate = async (req, res) => {
       return res.status(400).json("Fields can not be empty");
     }
 
-    //1. check if user exists in the db (if not exists, then throw error)
+    // Check if user exists in the db (if not exists, then throw error)
     const user = await pool.query("SELECT * FROM users WHERE user_id = $1", [
       user_id,
     ]);
 
-    //2. Check if user found
     if (!user) return res.status(404).json({ message: "User not found!" });
 
-    //3. If user does not exist in the db, then throw error
+    // If user does not exist in the db, then throw error
     if (user.rows[0].length === 0) {
       return res.status(404).json({
         message:
@@ -56,7 +54,7 @@ const profileUpdate = async (req, res) => {
       });
     }
 
-    //4. Update the user table inside database with new information
+    // Update the user table inside database with new information
     const updatedProfile = await updateAccount(user.rows[0].user_id, {
       email,
       user_name,
@@ -65,7 +63,7 @@ const profileUpdate = async (req, res) => {
       avatar,
     });
 
-    //5. New updated user info now, then return it with data !!!
+    // New updated user info now, then return it with data
     let updatedData;
     if (updatedProfile === 1) {
       updatedData = await pool.query("SELECT * FROM users WHERE user_id = $1", [

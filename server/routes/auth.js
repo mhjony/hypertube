@@ -3,7 +3,6 @@ import authController from "../controllers/auth.js";
 
 import validate from "../validators/index.js";
 import registerRules from "../validators/auth/register.js";
-import loginRules from "../validators/auth/login.js";
 
 const router = express.Router();
 

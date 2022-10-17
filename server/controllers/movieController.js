@@ -19,7 +19,6 @@ const downloadCache = new NodeCache({ checkPeriod: 0 });
 // @desc    return movie search results
 // @access  Public
 const movieSearch = async (req, res) => {
-  console.log("movie-search end-point Hit");
   const { string } = req.query;
 
   const ret = await axios.get(
@@ -32,7 +31,6 @@ const movieSearch = async (req, res) => {
 // @desc    return movie list
 // @access  Public
 const getMovieList = async (req, res) => {
-  console.log("getMovieList end-point Hit");
   const user_id = req.user.user_id;
   const filters = req.query;
 
@@ -97,7 +95,7 @@ const getMovieComments = async (req, res) => {
 // @access  Public
 const getSingleMovie = async (req, res) => {
   const { imdb_code } = req.params;
-  console.log("get-single-movie end-point Hit", imdb_code);
+
   const movieInfo = await movieUtils.getMovieInfo(imdb_code);
 	const insertedMovie = movieUtils.insertMovie(imdb_code);
 	console.log(insertedMovie);
@@ -130,19 +128,6 @@ const playMovie = async (req, res, next) => {
 	req.movieSize = movie.size;
 	torrentUtils.startFileStream(req, res, next);
 };
-
-
-/*
-// Get movie Entry - This is now used for the moment!
-// We save same return with get-single-movie & get-comments to serve single the movie page
-const getMovieEntry = async (req, res) => {
-  const { imdb_code } = req.params;
-
-  const movieInfo = await movieUtils.getMovieInfo(imdb_code);
-  const subtitles = await subtitlesUtils.getSubtitles(imdb_code);
-  res.json(movieUtils.formatSingleMovieEntry(movieInfo, subtitles));
-};
-*/
 
 // Set Movie Watched
 const setMovieWatched = async (req, res) => {
@@ -202,6 +187,5 @@ export default {
   getMovieComments,
   getSingleMovie,
   playMovie,
-  // getMovieEntry,
   setMovieWatched
 };

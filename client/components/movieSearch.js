@@ -26,7 +26,6 @@ const MovieSearch = ({ session }) => {
   const [hasMore, setHasMore] = useState(true)
 
   const [search, setSearch] = useState('')
-  // const [searchByGenre, setSearchByGenre] = useState('')
   const [filter, setFilter] = useState({})
   const [sortBy, setSortBy] = useState('rating desc')
   const [sortByGenre, setSortByGenre] = useState('')
@@ -72,16 +71,11 @@ const MovieSearch = ({ session }) => {
   ]
 
   useEffect(() => {
-    if (
-      Object.values(filter).filter(v => v).length > 0 ||
-      search ||
-      /*searchByGenre ||*/ sortByGenre
-    ) {
+    if (Object.values(filter).filter(v => v).length > 0 || search || sortByGenre) {
       // Reset the states to default
       setPage(1)
       setSearch('')
       setSortByGenre('')
-      // setSearchByGenre('')
       setFilter({})
       setClearInput(!clearInput)
     }
@@ -113,7 +107,6 @@ const MovieSearch = ({ session }) => {
       const { accessToken } = session
 
       filter.page = page
-      // filter.genre = searchByGenre
       filter.genre = sortByGenre
 
       if (sortBy) {
@@ -157,9 +150,6 @@ const MovieSearch = ({ session }) => {
   }
 
   const onGenreInputChange = val => {
-    // // setSearchByGenre(val)
-    // setShowResults(false)
-
     setSortByGenre(val)
     setPage(1)
     setMovies([])
@@ -174,24 +164,7 @@ const MovieSearch = ({ session }) => {
     // Reset all the filter and search states
     setMovies([])
     setFilter({})
-    // setSearchByGenre('')
     setSortByGenre('')
-    setSortBy('')
-    setPage(1)
-  }
-
-  console.log('asd genre:', sortByGenre)
-
-  const onGenreSearch = async () => {
-    setShowResults(true)
-
-    // Then get the movies
-    await getMovies(session)
-
-    // Reset all the filter and search states
-    setMovies([])
-    setFilter({})
-    setSearch('')
     setSortBy('')
     setPage(1)
   }
@@ -219,17 +192,6 @@ const MovieSearch = ({ session }) => {
               />
             </div>
           </div>
-
-          {/* <div className="mr-4 w-full md:w-1/6">
-            <p className="text-white uppercase text-md pt-2">Search By Genre</p>
-            <FormInput
-              isValid={searchByGenre?.length > 3}
-              placeholder="Filter by Genre"
-              onChange={val => onGenreInputChange(val)}
-              value={searchByGenre}
-              onEnter={onGenreSearch}
-            />
-          </div> */}
 
           <div className="w-full md:w-1/6 mt-4">
             <Dropdown
