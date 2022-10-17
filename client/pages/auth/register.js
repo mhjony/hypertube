@@ -91,7 +91,7 @@ export default function Register({ providers, csrfToken }) {
   const disabled = password.length === 0 || passwordConfirmation.length === 0 || email.length === 0
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen w-full  bg-gradient-to-r from-red-400 to-red-800">
+    <div className="flex flex-col items-center justify-center min-h-screen w-full bg-slate-800">
       <div className="shadow-lg rounded-lg bg-white border-0 px-14 pt-6 pb-8 mb-4 flex flex-col">
         <h2 className="font-bold text-xl md:text-2xl mb-4">Register</h2>
 

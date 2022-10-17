@@ -6,7 +6,7 @@ const AuthProviderButtons = ({ type = 'login', providers }) => {
     const { id, name } = provider
 
     // Forward all Google logins to / since user can technically register also
-    if ((name = 'Google')) {
+    if (id === 'google') {
       signIn('google', { callbackUrl: '/' })
     }
 

@@ -26,7 +26,7 @@ const login = ({ providers, csrfToken }) => {
   const hasEmptyField = username.length === 0 || password.length === 0
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen w-full bg-gradient-to-r from-red-400 to-red-800">
+    <div className="flex flex-col items-center justify-center min-h-screen w-full bg-slate-800">
       <div className="shadow-lg rounded-lg bg-white border-0 px-14 pt-6 pb-8 mb-4 flex flex-col">
         <div>
           <Link href="/auth/login">
