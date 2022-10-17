@@ -29,7 +29,6 @@ const MovieSearch = ({ session }) => {
   const [filter, setFilter] = useState({})
   const [sortBy, setSortBy] = useState('rating desc')
   const [sortByGenre, setSortByGenre] = useState('')
-  const [clearInput, setClearInput] = useState(false)
 
   const [startDate, setStartDate] = useState(manyYearsAgo)
   const [endDate, setEndDate] = useState(today)
@@ -70,16 +69,37 @@ const MovieSearch = ({ session }) => {
     { value: 'war', name: 'War' }
   ]
 
-  useEffect(() => {
-    if (Object.values(filter).filter(v => v).length > 0 || search || sortByGenre) {
-      // Reset the states to default
-      setPage(1)
-      setSearch('')
-      setSortByGenre('')
-      setFilter({})
-      setClearInput(!clearInput)
+  const getMovies = async existingMovies => {
+    try {
+      setLoading(true)
+      const { accessToken } = session
+
+      filter.page = page
+
+      if (sortByGenre) {
+        filter.genre = sortByGenre
+      }
+
+      if (sortBy) {
+        filter = { ...filter, sort: sortBy }
+      }
+
+      const res = await galleryApi.getMoviesList(accessToken, filter, search)
+      const newMovies = res?.movies
+
+      if (res?.error) {
+        throw new Error(res.error)
+      }
+
+      // setMovies([...movies, ...res?.movies])
+      setMovies([...existingMovies, ...newMovies])
+
+      setHasMore(res?.hasMore)
+      setLoading(false)
+    } catch (err) {
+      console.error(err)
     }
-  }, [clearInput])
+  }
 
   const handleScroll = async () => {
     if (loading || !hasMore) {
@@ -101,36 +121,25 @@ const MovieSearch = ({ session }) => {
     return () => window.removeEventListener('scroll', handleScroll)
   }, [loading, hasMore])
 
-  const getMovies = async session => {
-    try {
-      setLoading(true)
-      const { accessToken } = session
-
-      filter.page = page
-      filter.genre = sortByGenre
-
-      if (sortBy) {
-        filter = { ...filter, sort: sortBy }
-      }
-
-      const res = await galleryApi.getMoviesList(accessToken, filter, search)
-
-      if (res?.error) {
-        throw new Error(res.error)
-      }
-
-      setMovies([...movies, ...res?.movies])
-
-      setHasMore(res?.hasMore)
-      setLoading(false)
-    } catch (err) {
-      console.log(err)
-    }
+  const filtersChanged = async () => {
+    // Reset state
+    setPage(1)
+    getMovies([])
   }
 
   useEffect(() => {
-    getMovies(session)
-  }, [session, page, showResults === true, sortBy, sortByGenre])
+    getMovies(movies)
+  }, [page])
+
+  useEffect(() => {
+    filtersChanged()
+  }, [sortBy, sortByGenre, showResults === true, filter])
+
+  const onEnterForSearch = async e => {
+    e.preventDefault()
+    setPage(1)
+    getMovies([])
+  }
 
   const formatDate = date => {
     if (dayjs(date).isToday()) {
@@ -155,20 +164,6 @@ const MovieSearch = ({ session }) => {
     setMovies([])
   }
 
-  const onSearch = async () => {
-    setShowResults(true)
-
-    // Then get the movies
-    await getMovies(session)
-
-    // Reset all the filter and search states
-    setMovies([])
-    setFilter({})
-    setSortByGenre('')
-    setSortBy('')
-    setPage(1)
-  }
-
   const handleSortByChange = val => {
     setSortBy(val)
     setPage(1)
@@ -188,7 +183,7 @@ const MovieSearch = ({ session }) => {
                 onChange={val => onInputChange(val)}
                 placeholder="Search Movies"
                 className="w-full"
-                onEnter={onSearch}
+                onEnter={onEnterForSearch}
               />
             </div>
           </div>
