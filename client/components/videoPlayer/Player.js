@@ -3,7 +3,7 @@ import ReactPlayer from 'react-player/lazy'
 import movieService from '../../services/backend/movies'
 
 const Player = ({ subsTracks, imdbCode, movie, accessToken }) => {
-	console.log(subsTracks);
+	//console.log(movie);
   const playerRef = useRef(null)
 	const streamUrl =
     // eslint-disable-next-line no-undef
@@ -71,7 +71,7 @@ const Player = ({ subsTracks, imdbCode, movie, accessToken }) => {
 					playing={true}
 					playsinline={true}
 					url={[
-						{ src: streamUrl, type: 'video/mp4' }
+						{ src: streamUrl }
 					]}
           width="100%"
           onError={onError}
