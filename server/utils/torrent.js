@@ -102,7 +102,7 @@ const getMagnetLink = async (imdbID) => {
 		const torrentData = await movieUtils.getTorrentData(imdbID);
 		return torrentData;
 	} catch (e) {
-		//console.log(e);
+		console.error(e);
 	}
 }
 

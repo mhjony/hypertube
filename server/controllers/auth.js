@@ -6,7 +6,6 @@ import crypto from "crypto";
 import nodemailer from "nodemailer";
 
 const sendEmail = (email, token) => {
-  console.log(`Sending email to ${email}`);
   const transporter = nodemailer.createTransport({
     service: "gmail",
     auth: {
@@ -25,9 +24,7 @@ const sendEmail = (email, token) => {
   };
   transporter.sendMail(mailOptions, function (error, info) {
     if (error) {
-      console.log(error);
-    } else {
-      console.log("Email sent: " + info.response);
+      console.error(error);
     }
   });
 };
@@ -44,7 +41,6 @@ const generateToken = (user) => {
   delete user.password;
 
   const token = jwt.sign(user, "dfasdfhjsadhfkja34343", { expiresIn: 86400 });
-  console.log("generateToken Function", token);
   return { ...{ user }, ...{ token } };
 };
 
@@ -157,7 +153,7 @@ const login = async (req, res) => {
 
           user = createdUser;
         } catch (error) {
-          console.log(e);
+          console.error(e);
           res.status(500).send({ error: "google authentication error" }).end();
         }
       }
