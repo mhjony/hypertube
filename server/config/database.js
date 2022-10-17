@@ -1,5 +1,3 @@
-//www.npmjs.com/package/pg-pool
-// import Pool from "pg-pool";
 import pkg from "pg";
 const { Pool } = pkg;
 

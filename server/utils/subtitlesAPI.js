@@ -6,7 +6,6 @@ import {promisify} from 'node:util'
 import fetch from 'node-fetch';
 
 const downloadSubtitles = async ({language, file_id}, imb_code ) => {
-	let downloadLink;
 	let url = 'https://api.opensubtitles.com/api/v1/download';
 	let options = {
 		method: 'POST',
@@ -27,8 +26,6 @@ const downloadSubtitles = async ({language, file_id}, imb_code ) => {
 			.then(res => res.json())
 			.then(json => {
 				
-				downloadLink = json.link;
-				//console.log('Link:', downloadLink);
 				return json.link;
 			}) 
 	.catch(err => console.error('error:' + err));
@@ -64,7 +61,6 @@ const getSubtitles = async (imdb_code) => {
     if (fs.existsSync(parentDir)) {
       subtitles = options.reduce((accum, option) => {
         if (fs.existsSync(option.dir)) {
-					
           accum.push(option.lang);
         }
         return accum;
@@ -102,7 +98,6 @@ const getSubtitles = async (imdb_code) => {
 				subs_to_download.forEach((sub) => {
           subtitles.push(sub.language);
         });
-				console.log(subtitles);
     }
 		
     return subtitles; 

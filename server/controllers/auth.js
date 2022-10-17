@@ -43,7 +43,6 @@ const findUserInfoFromDB = async (key, value, ...args) => {
 const generateToken = (user) => {
   delete user.password;
 
-  // TODO: const token = jwt.sign(user, process.env.JWT_SECRET, { expiresIn: 86400 });
   const token = jwt.sign(user, "dfasdfhjsadhfkja34343", { expiresIn: 86400 });
   console.log("generateToken Function", token);
   return { ...{ user }, ...{ token } };

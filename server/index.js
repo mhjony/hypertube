@@ -19,12 +19,6 @@ app.use(cors());
 
 // parse application/x-www-form-urlencoded: Parse URL-encoded bodies
 app.use(express.urlencoded({ extended: true }));
-
-// to be able to serve image from a static source
-// app.use(express.static(__dirname + "/public"));
-// app.use("/uploads", express.static(__dirname + "/uploads"));
-
-// parse application/json
 app.use(express.json());
 
 // Use imported routes
@@ -34,9 +28,6 @@ app.use("/movie", movieRoutes);
 app.use("/profile", profileRoute);
 app.use('/uploads', express.static('public/uploads'))
 job.start();
-
-//app.timeout = 100000000;
-//app.keepAliveTimeout = 60000 * 2;
 
 app.listen(port, () => {
   console.info(

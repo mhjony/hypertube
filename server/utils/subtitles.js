@@ -1,3 +1,0 @@
-/*
-* Place subtitle stuff here.
-*/

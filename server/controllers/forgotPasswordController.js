@@ -1,5 +1,4 @@
 import pool from "../config/database.js";
-// import generateToken from "../utils/generateToken";
 import * as bcrypt from "bcrypt";
 import crypto from "crypto";
 import nodemailer from "nodemailer";

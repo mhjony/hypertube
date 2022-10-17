@@ -98,21 +98,19 @@ const getSingleMovie = async (req, res) => {
 
   const movieInfo = await movieUtils.getMovieInfo(imdb_code);
 	const insertedMovie = movieUtils.insertMovie(imdb_code);
-	console.log(insertedMovie);
   const subtitles = await subtitlesUtils.getSubtitles(imdb_code);
   const ret = movieUtils.formatSingleMovieEntry(movieInfo, subtitles);
   res.status(200).json(ret);
 };
 
 const playMovie = async (req, res, next) => {
-	console.log('Endpoint hit: play movie');
   const { imdbCode, token } = req.params;
-	// If no token, throw error.
-	console.log('token', token);
+	if (!token) {
+		console.error("No token.");
+		return ;
+	}
   let movie = await movieUtils.fetchSingleMovie({ imdbCode });
-	console.log('Movie', movie);
   if (!movie || (!movie.downloaded && !downloadCache.has(imdbCode))) {
-		console.log('Here.');
     if (!movie) {
       movie = { imdbCode };
     }
@@ -122,7 +120,6 @@ const playMovie = async (req, res, next) => {
     await torrentUtils.downloadMovie(movie, magnetLink, downloadCache, req, res, next);
     movie = await movieUtils.fetchSingleMovie({ imdbCode }); // Move this? Refactoring around here.
   }
-	console.log('Ready to serve stream.');
 	req.imdb_code = imdbCode;
 	req.serverLocation = movie.server_location;
 	req.movieSize = movie.size;
@@ -134,8 +131,6 @@ const setMovieWatched = async (req, res) => {
   try {
     const { imdb_code } = req.params;
     const { user_id } = req.user;
-		console.log('Set movie watched.');
-		console.log('imdb', imdb_code);
 		
 
     const movie = await pool.query(
@@ -144,7 +139,7 @@ const setMovieWatched = async (req, res) => {
     );
 
     if (movie.rows.length === 0) {
-      console.log("Movie doesn't exit.");
+      console.error("Movie doesn't exit.");
     }
 
     const updatedMovie = await pool.query(
@@ -158,7 +153,7 @@ const setMovieWatched = async (req, res) => {
     ]);
 
     if (user.rows.length === 0) {
-      console.log("User doesn't exit.");
+      console.error("User doesn't exit.");
     }
 
     let updatedUser;
