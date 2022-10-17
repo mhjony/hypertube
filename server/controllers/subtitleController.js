@@ -2,12 +2,9 @@ import fs from "fs";
 
 const getSubtitles = async (req, res) => {
   const { imdb_code, lang } = req.params;
-	//console.log('Get sub triggered: ', imdb_code, lang);
 
-  const filename = `./subtitles/${imdb_code}/${lang}/subtitle.vtt`;//server/subtitles/tt0111161/en/subtitle.vtt
-	//console.log('String: ', filename);
+  const filename = `./subtitles/${imdb_code}/${lang}/subtitle.vtt`;
   const readStream = fs.createReadStream(filename);
-	//console.log('ReadStream', readStream);
 
   readStream.on("open", () => {
     const head = {

@@ -20,8 +20,6 @@ router.get(
 // Routes for Video Player
 router.get("/player/:imdbCode/:token"/* , [auth] */, movieController.playMovie);
 
-// router.get("/:imdb_code", [auth], movieController.getMovieEntry); // NOTE: This route is not used
-
 // Routes to set movie watched
 router.post("/watched/:imdb_code", [auth], movieController.setMovieWatched);
 

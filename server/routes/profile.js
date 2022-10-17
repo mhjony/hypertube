@@ -18,8 +18,6 @@ router.post(
 router.post(
   "/updateProfilePicture",
   [fileUpload],
-  //TODO: Tasmia: We need to add auth middleware here
-  // [auth],
   profileController.profilePictureUpdate
 );
 
