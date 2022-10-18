@@ -14,11 +14,11 @@ const UpdateProfileModal = () => {
 
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [loading, setLoading] = useState(false)
-  const [firstname, setFirstname] = useState(userInfo?.first_name)
-  const [lastname, setLastname] = useState(userInfo?.last_name)
-  const [username, setUsername] = useState(userInfo?.user_name)
+  const [firstname, setFirstname] = useState(userInfo?.first_name || session?.first_name)
+  const [lastname, setLastname] = useState(userInfo?.last_name || session?.last_name)
+  const [username, setUsername] = useState(userInfo?.user_name || session?.user_name)
   const [email, setEmail] = useState(userInfo?.email)
-  const [language, setLanguage] = useState(userInfo?.language)
+  const [language, setLanguage] = useState(userInfo?.language || session?.language)
 
   const {
     accessToken,

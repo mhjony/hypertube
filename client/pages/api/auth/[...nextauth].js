@@ -88,6 +88,10 @@ const options = {
           const backendJWTJson = await backendJWT.json()
           user.accessToken = backendJWTJson.token
           user.user_id = backendJWTJson.user.user_id
+		  user.first_name = backendJWTJson.user.first_name
+		  user.last_name = backendJWTJson.user.last_name
+		  user.user_name = backendJWTJson.user.user_name
+		  user.language = backendJWTJson.user.language
           return true
         } catch (error) {
           console.error('Error from nextAuth callback for Google:', error)
@@ -112,6 +116,10 @@ const options = {
           const backendJWTJson = await backendJWT.json()
           user.accessToken = backendJWTJson.token
           user.user_id = backendJWTJson.user.user_id
+		  user.first_name = backendJWTJson.user.first_name
+		  user.last_name = backendJWTJson.user.last_name
+		  user.user_name = backendJWTJson.user.user_name
+		  user.language = backendJWTJson.user.language
           return true
         } catch (error) {
           console.error('Error from nextAuth callback for 42:', error)

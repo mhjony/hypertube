@@ -27,10 +27,13 @@ services:
       dockerfile: Dockerfile
     image: app-client
     container_name: app-frontend
-    command: npm start
+    command: npm run dev
+    environment:
+      - NODE_ENV=development
     volumes:
       - ./client/:/client
       - /client/node_modules
+      - /client/.next
     depends_on:
       - server
     ports:
