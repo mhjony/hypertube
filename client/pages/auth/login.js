@@ -12,15 +12,26 @@ const login = ({ providers, csrfToken }) => {
 
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
+  const [passwordError, setPasswordError] = useState('')
   const [loading, setLoading] = useState(false)
 
   const onSubmit = async event => {
     event.preventDefault()
     setLoading(true)
+
+	setPasswordError(null)
+
+	// Password complexity check (uppercase, lowercase, number, special character)
+	if (!password.match(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/)) {
+		setPasswordError(
+		  'Password must contain at least one uppercase, one lowercase, one number and one special character'
+		)
+		return
+	}
+
     signIn('credentials', { username, password })
   }
 
-  const showError = password.length === 0
   const showSuccess = success && username.length === 0 && password.length === 0
   const hasEmptyField = username.length === 0 || password.length === 0
 
@@ -52,6 +63,7 @@ const login = ({ providers, csrfToken }) => {
               value={password}
               type="password"
               autocomplete="password"
+              errorMsg={passwordError}
             />
             {showSuccess && <p className="text-green-600 text-sm mt-2 mb-2">{t(success)}</p>}
           </div>
@@ -62,7 +74,7 @@ const login = ({ providers, csrfToken }) => {
             className="bg-gradient-to-r from-red-400 to-red-800 hover:bg-red-600 text-white font-bold py-2 px-4 rounded w-full"
 			disabled={hasEmptyField}
           >
-            {loading ? 'Loading...' : 'Sign In'}
+            {'Sign In'}
           </button>
           {error && (
             <p className="text-red-600 text-center text-sm mt-2 mb-2">
