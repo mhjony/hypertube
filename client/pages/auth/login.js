@@ -21,7 +21,6 @@ const login = ({ providers, csrfToken }) => {
   }
 
   const showError = password.length === 0
-  const errorMessage = showError ? 'Password can`t be empty' : null
   const showSuccess = success && username.length === 0 && password.length === 0
   const hasEmptyField = username.length === 0 || password.length === 0
 
@@ -43,7 +42,6 @@ const login = ({ providers, csrfToken }) => {
               onChange={setUsername}
               value={username}
               autocomplete="username"
-              errorMsg={username.length === 0 ? 'Username is required' : null}
             />
           </div>
           <div className="mb-4">
@@ -54,7 +52,6 @@ const login = ({ providers, csrfToken }) => {
               value={password}
               type="password"
               autocomplete="password"
-              errorMsg={showError ? errorMessage : null}
             />
             {showSuccess && <p className="text-green-600 text-sm mt-2 mb-2">{t(success)}</p>}
           </div>
@@ -63,12 +60,13 @@ const login = ({ providers, csrfToken }) => {
             type="submit"
             onClick={onSubmit}
             className="bg-gradient-to-r from-red-400 to-red-800 hover:bg-red-600 text-white font-bold py-2 px-4 rounded w-full"
+			disabled={hasEmptyField}
           >
             {loading ? 'Loading...' : 'Sign In'}
           </button>
           {error && (
             <p className="text-red-600 text-center text-sm mt-2 mb-2">
-              Something Went Wring, Please try again!
+              Invalid credentials, Please try again!
             </p>
           )}
         </form>

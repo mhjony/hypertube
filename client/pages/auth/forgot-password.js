@@ -28,7 +28,7 @@ const forgotPassword = () => {
   )
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen w-full">
+    <div className="flex flex-col items-center justify-center min-h-screen w-full bg-slate-800">
       <div className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4 flex flex-col">
         <form onSubmit={onSubmit} className="mb-6 md:mb-8">
           <h1 className="font-bold text-xl md:text-2xl mb-4">Hypertube</h1>

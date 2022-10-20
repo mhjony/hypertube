@@ -1,7 +1,6 @@
 /* eslint-disable jsx-a11y/label-has-associated-control */
 import React, { useState } from 'react'
 import Router, { useRouter } from 'next/router'
-import Link from 'next/link'
 
 import FormInput from '../../components/FormInput'
 
@@ -55,10 +54,8 @@ export default function resetPassword() {
     setLoading(false)
   }
 
-  // const disabled = password.length === 0 || passwordConfirmation.length === 0 // I will disable the button if the password is empty
-
   return (
-    <div className="flex flex-col items-center justify-center  min-h-screen">
+    <div className="flex flex-col items-center justify-center  min-h-screen bg-slate-800">
       <div className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4 flex flex-col">
         <h className="font-bold text-xl md:text-xl flex justify-center">Create a strong password</h>
         <p className="text-gray-400 mb-8 flex justify-center">
