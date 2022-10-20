@@ -2,7 +2,7 @@
 import React, { useState } from 'react'
 import Router from 'next/router'
 import Link from 'next/link'
-import { getSession, signIn, getCsrfToken, getProviders } from 'next-auth/react'
+import { getCsrfToken, getProviders } from 'next-auth/react'
 
 import FormInput from '../../components/FormInput'
 import AuthProviderButtons from '../../components/AuthProviderButton'
