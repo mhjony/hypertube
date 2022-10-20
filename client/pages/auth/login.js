@@ -109,22 +109,25 @@ const login = ({ providers, csrfToken }) => {
             ))}
         </div>
 
-        <div className="flex items-center justify-center mt-4">
-          <div className="text-xs sm:text-sm">
-            <Link href="/auth/forgot-password">
-              <a className="font-bold border-b-2 border-solid border-gray-300">
-                Forgotten your password?
-              </a>
-            </Link>
-          </div>
-        </div>
 
-        <div className="text-xs sm:text-sm rounded w-full">
+
+        <div className="text-xs sm:text-sm rounded w-full mt-6">
           Don't have an account? &nbsp;
           <Link href="/auth/register">
             <a className="font-bold border-b-2 border-solid border-gray-300">Sign up</a>
           </Link>
         </div>
+
+		<div className="flex items-center justify-center mt-4">
+          <div className="text-xs sm:text-sm">
+            <Link href="/auth/forgot-password">
+              <a className="font-bold border-b-2 border-solid border-gray-300">
+                Forgot your password?
+              </a>
+            </Link>
+          </div>
+        </div>
+
       </div>
       <style jsx>{`
         .auth-logo {
