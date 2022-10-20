@@ -6,7 +6,9 @@
     "start": "next start"
   },
   "dependencies": {
+    "@date-io/date-fns": "^2.16.0",
     "@heroicons/react": "^1.0.5",
+    "date-fns": "^2.29.3",
     "dayjs": "^1.11.3",
     "isomorphic-unfetch": "^3.1.0",
     "loadsh": "^0.0.4",
