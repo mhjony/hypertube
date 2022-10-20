@@ -20,10 +20,9 @@ const UpdateProfileModal = () => {
   const [email, setEmail] = useState(userInfo?.email)
   const [language, setLanguage] = useState(userInfo?.language || session?.language)
 
-  const {
-    accessToken,
-    user: { user_id }
-  } = session
+  const { accessToken } = session
+
+  const user_id = session?.user_id || user?.user_id
 
   const handleProfileUpdate = async () => {
     try {
