@@ -13,13 +13,13 @@ const Player = ({ subsTracks, imdbCode, movie, accessToken }) => {
   const buffering = useRef(false);
 
   const onClickPreview = () => {
-		movieService.setMovieWatched(accessToken, imdbCode)
-    setStatusPlayer('buffering')
+	movieService.setMovieWatched(accessToken, imdbCode)
+    setStatusPlayer(buffering)
     buffering.current = true
   }
 
   const onBuffer = () => {
-    setStatusPlayer('movie.buffering');
+    setStatusPlayer(buffering);
     buffering.current = true;
   };
 
@@ -30,7 +30,7 @@ const Player = ({ subsTracks, imdbCode, movie, accessToken }) => {
       err.target.error &&
       (err.target.error.code === 3 || err.target.error.code === 4 || err.target.error.code === 1)
     ) {
-      setStatusPlayer('sourceFileError')
+      setStatusPlayer(sourceFileError)
       setError(true)
       playerRef.current.showPreview()
     }
@@ -38,7 +38,7 @@ const Player = ({ subsTracks, imdbCode, movie, accessToken }) => {
 
 	const onProgress = ({ playedSeconds, loadedSeconds }) => {
     if (playedSeconds > loadedSeconds && !error) {
-      setStatusPlayer('movie.notLoadedError');
+      setStatusPlayer(notLoadedError);
       playerRef.current.showPreview();
     }
   };
@@ -56,10 +56,8 @@ const Player = ({ subsTracks, imdbCode, movie, accessToken }) => {
 
   return (
     <div>
-			
       <div className="flex items-center justify-center">
-			
-        <ReactPlayer
+	  <ReactPlayer
           className="react-player"
           ref={playerRef}
           controls={true}
