@@ -22,7 +22,7 @@ const UpdateProfileModal = () => {
 
   const { accessToken } = session
 
-  const user_id = session?.user_id || user?.user_id
+  const user_id = session?.user_id || session?.user?.user_id
 
   const handleProfileUpdate = async () => {
     try {
