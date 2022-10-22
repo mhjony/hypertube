@@ -7,15 +7,38 @@ import FormInput from '../../components/FormInput'
 
 const forgotPassword = () => {
   const [email, setEmail] = useState('')
+  const [emailError, setEmailError] = useState('')
   const [successMessage, setSuccessMessage] = useState(false)
 
   const onSubmit = async event => {
     event.preventDefault()
-    setSuccessMessage(true)
+	setEmailError(null)
+
+	 if (!email.match(/^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/))
+	 {
+	 	setEmailError('Please enter a valid email')
+	 	return
+	 }
+
     try {
-      await api.forgotPassword(email)
+      const apiResponsee = await api.forgotPassword(email)
+
+	  if (apiResponsee === "This email address doesn't match with any account! Check & Try again!")
+	  {
+		setEmailError("This email address doesn't match with any account! Check & Try again!")
+	  }
+
+	  if (apiResponsee === "Account is not activated yet, please check your email!")
+	  {
+		setEmailError("Account is not activated yet, please check your email!")
+	  }
+
+	  if (apiResponsee.sucess === true)
+	  {
+		setSuccessMessage(true)
+	  }
     } catch (error) {
-      console.error(error)
+		setEmailError("Something went wrong. Please try again!")
     }
   }
 
@@ -40,6 +63,7 @@ const forgotPassword = () => {
               onChange={setEmail}
               value={email}
               autocomplete="email"
+              errorMsg={emailError}
             />
           </div>
 
@@ -59,7 +83,7 @@ const forgotPassword = () => {
         <div className="flex items-center justify-center mb-2">
           <div className="text-xs sm:text-sm">
             Back to Login
-            <Link href="/auth/register">
+            <Link href="/auth/login">
               <a className="font-bold border-b-2 border-solid border-gray-300"> Login</a>
             </Link>
           </div>
