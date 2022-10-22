@@ -64,7 +64,7 @@ const forgotPassword = async (req, res) => {
     ]);
 
     // If user does not exist in the db, then throw error
-    if (user.rows[0].length === 0) {
+    if (user.rows.length === 0) {
       return res
         .status(404)
         .json(
@@ -91,7 +91,9 @@ const forgotPassword = async (req, res) => {
     }
 
     // Send email to reset the password
-    return res.json(resetEmail(email, jwtToken)); // Send email to reset the password
+	resetEmail(email, jwtToken)
+
+    return res.status(200).json({sucess: true, message: 'Password email has been sent to your email, Please check that and cahnge your password!'}); // Send email to reset the password
   } catch (err) {
     console.error(err.message);
     res.status(500).send("Server Error");
@@ -119,7 +121,7 @@ const resetPassword = async (req, resp) => {
             else resp.status(500).send(err);
           }
         );
-      } else if (res) resp.status(500).send({ error: "No token found" });
+      } else if (res) resp.status(404).send({ error: "No token found" });
       else resp.status(500).send({ error: err.detail });
     }
   );
