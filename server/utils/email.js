@@ -8,9 +8,9 @@ export const sendEmail = (email, token) => {
       type: "OAuth2",
       user: process.env.USER_EMAIL,
       pass: process.env.USER_PASS,
-      clientId: CLIENT_ID,
-      clientSecret: CLIENT_SECRET,
-      refreshToken: REFRESH_TOKEN,
+      clientId: process.env.CLIENT_ID,
+      clientSecret: process.env.CLIENT_SECRET,
+      refreshToken: process.env.REFRESH_TOKEN,
     },
   });
   const mailOptions = {

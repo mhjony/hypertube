@@ -3,11 +3,12 @@ import { body } from "express-validator";
 const registerRules = (() => {
   return [
     body("first_name").notEmpty().isAlpha().isLength({ min: 1 }).withMessage("Firstname Can not be empty"),
-    body("last_name").notEmpty().isAlpha().isLength({ min: 1 }).withMessage("Firstname Can not be empty"),
+    body("last_name").notEmpty().isAlpha().isLength({ min: 1 }).withMessage("Lastname Can not be empty"),
     body("user_name")
 		.notEmpty()
 		.isLength({ min: 3 })
-		.withMessage("Username need to be 3 Characters long"),
+		.withMessage("Username need to be 3 Characters long")
+		.matches('^[a-zA-Z0-9_.-]*$'),
     body("email").isEmail(),
     body("password")
       .isLength({ min: 6 })

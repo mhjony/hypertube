@@ -66,7 +66,7 @@ const login = async (req, res) => {
       //3. Check if user found or not
       if (!user) {
         return res
-          .status(500)
+          .status(404)
           .send({
             error:
               "User Not Found. Please check your username and password and try again.",
