@@ -50,7 +50,7 @@ const startFileStream = (req, res) => {
 	}
 };
 
-const downloadMovie = async (movie, magnet, downloadCache, req, res, next) => new Promise((resolve) => {
+const downloadMovie = async (movie, magnet, downloadCache) => new Promise((resolve) => {
 	let path;
 	let size = 0;
 	const engine = torrentStream(magnet, {

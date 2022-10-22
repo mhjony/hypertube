@@ -117,7 +117,7 @@ const playMovie = async (req, res, next) => {
     let magnetLink = "";
     if (!movie.magnetLink)
       magnetLink = await torrentUtils.getMagnetLink(imdbCode);
-    await torrentUtils.downloadMovie(movie, magnetLink, downloadCache, req, res, next);
+    await torrentUtils.downloadMovie(movie, magnetLink, downloadCache);
     movie = await movieUtils.fetchSingleMovie({ imdbCode }); // Move this? Refactoring around here.
   }
 	req.imdb_code = imdbCode;
